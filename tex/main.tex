@@ -54,7 +54,7 @@
  %
  % Autor: Stanisław Polak <polak[aT]agh[DoT]edu[DoT]pl>
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- \documentclass{agh-wi} % Praca po polsku; na stronie tytułowej, najpierw jest widoczny polskojęzyczny tytuł, a potem angielskojęzyczny.
+ \documentclass[data-science]{agh-wi} % Praca po polsku; na stronie tytułowej, najpierw jest widoczny polskojęzyczny tytuł, a potem angielskojęzyczny.
  % Kierunek 'Informatyka'.
  % Przeznaczona do oglądania przy użyciu przeglądarki PDF.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,10 +74,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Parametry dla strony tytułowej
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\titlePL{Tytuł zgodny z tematyką/dziedziną pracy dyplomowej}  % Tytuł po polsku
-\titleEN{Title consistent with the topic/field of the thesis} % Tytuł po angielsku
-\author{Imiona i nazwisko dyplomanta}
-\supervisor{Stopień lub tytuł naukowy imiona i nazwisko promotora}
+\titlePL{Generacja muzyki przy pomocy dużych modeli językowych}  % Tytuł po polsku
+\titleEN{Music generation with Lange Language Models} % Tytuł po angielsku
+\author{Filip Ręka}
+\supervisor{Doktor habilitowany Maciej Smołka}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Pakiety
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,6 +100,7 @@
 \usepackage[newfloat]{minted}                 % Formatowanie kodów źródłowych programów
 \usepackage{hyperref}                         % Obsługa adresów URL — zbędny jeżeli używasz 'biblatex'
 \usepackage{csquotes}                         % Polskie cudzysłowy — rekomendowany jeżeli używasz 'biblatex'
+\usepackage{tocloft}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  % Konfiguracja rysunków TikZ
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +127,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newtheorem{theorem}{Twierdzenie}
 \newtheorem{definition}{Definicja}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ustawienie licznika do subsubsection
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{secnumdepth}{5}
 
 \newcounter{comment}[chapter]
 \newenvironment{comment}[1][]{\begin{shaded}\refstepcounter{comment}
@@ -154,14 +160,18 @@
 \end{flushright}
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstractPL}
-    Streszczenie po polsku \ldots
+    Duże modele językowe (ang. \textit{Large Language Models} \textbf{LLM}) charakteryzują się zdolnością do generacji języka oraz innych zadań w przetwarzania języka naturalnego, takich jak na przykład klasyfikacja. Zdolność tą nabierają podczas czasochłonnego oraz intensywnego obliczeniowego treningu metodami samo odraz pół-nadzorowanego, podczas którego uczą się one relacji z wielkiej ilości dokumentów tekstowych. LLMy mogą zostać wykorzystane do generacji tekstu, formy generatywnej sztucznej inteligencji, poprzez pobieranie tekstu wejściowego i wielokrotne przewidywanie kolejnego tokenu lub słowa w tekście. Strukturę muzyki można porównać struktury tekstu pisanego, gdzie każda nuta odpowiada literze lub słowu, akordy zdaniom a dłuższe i sekwencję paragrafom. Poniższa praca, zamierza zbadać możliwości generacyjne LLMów wytrenowanych na muzycznych zbiorach danych.
 \end{abstractPL}
 \begin{abstractEN}
-    Abstract in English \ldots
+    Abstract in English \cite{attention} \ldots
 \end{abstractEN}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\tableofcontents   % Wygeneruj spis treści
+% \setlength{\cftsecnumwidth}{4em} % Adjust according to your needs
+% \setlength{\cftsubsubsecindent}{8em} % Adjust according to your needs
+\setcounter{tocdepth}{5}
+\tableofcontents{5}   % Wygeneruj spis treści
+
 \begin{shaded}
     Zawartość spisu treści \pauza tytuły rozdziałów oraz ich liczba zależą od tematyki pracy \pauza należy ustalić z opiekunem pracy.
 \end{shaded}
@@ -183,6 +193,62 @@ Wprowadzenie w tematykę pracy.
 \section{Cel i zakres pracy}
 Streszczenie specyfikacji wymagań Promotora.
 \chapter{Część literaturowa}
+
+\section{Cyfrowa reprezentacja muzyki}
+
+\subsection{WAV (ang. \textit{waveform audio format})}
+
+\subsection{MIDI (ang. \textit{Musical Instrument Digital Interface})}
+
+\subsection{Podobieństwa reprezentacji muzyki oraz tekstu}
+
+\subsection{Tokenizacja}
+\cite{miditok2021}
+
+\section{Zbiory danych}
+
+\subsection{Johann Sebastian Bach Chorales}
+Datset \cite{bachchorales}
+
+\subsection{The MAESTRO v3.0}
+Dataset \cite{maestrov3}
+
+\subsection{Million Song Dataset}
+Dataset i takie cytowanko \cite{milionsongs}
+
+\section{STOA}
+Tutaj nie wiem do końca w jakiej kolejności chciałbym o tym pisać, ponieważ z jednej strony przedstawienie STOA przed czymkolwiek jest ok, ale nie chciałbym pisać o czymś czego jeszcze w pracy nie wprowadziłem.
+
+\section{Architekturze transformera}
+\subsection{Algorytm uwagi (ang. \textit{attention})}
+\subsection{Warianty mechanizmu uwagi}
+\subsubsection{Self attention}
+\subsubsection{Multi-headed attention}
+\subsubsection{Flash attention}
+\subsection{Budowa transformera}
+\begin{figure}[!ht]
+    \begin{center}
+        \includegraphics[width=0.7\linewidth]{img/transformer1}
+    \end{center}
+    \caption{Schemat transformera.}
+    \label{fig:transformer1}
+\end{figure}
+\subsection{Modele tranformerowe}
+\subsubsection{\textit{Classic} transformer}
+\subsubsection{SeqGAN}
+\subsubsection{Mistral}
+
+\section{Architektura \textit{state space}}
+\subsection{Mamba}
+\subsection{Tutaj się rozdrobnić trzeba}
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{img/mamba1.png}
+    \end{center}
+    \caption{Schemat modelu Mamba.}
+    \label{fig:mamba1}
+\end{figure}
+
 \begin{comment}
 Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
 \end{comment}
@@ -192,13 +258,13 @@ Aktualny stan wiedzy, na dany temat, na podstawie dostępnej literatury naukowej
 \begin{comment}
 Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
 \end{comment}
+\section{Opis \textit{pipeline-u}}
+Tutaj zamierzam opisać w jaki sposób modele zostały stworzone, jakie bilbioteki zostały użyte, jaki sprzęto został użyty podczas treningu
+\section{Porównanie architektur użytych modeli}
+\section{Prezentacja otrzymanych wyników}
+\section{Porwanie wyników}
+\dots
 
-\begin{itemize}
-    \item Problemy / pytania badawcze.
-    \item Opis idei / metod rozwiązania postawionego problemu.
-    \item Opis przebiegu badań.
-    \item Interpretacja uzyskanych wyników.
-\end{itemize}
 \chapter{Zakończenie}
 \begin{comment}
 Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
