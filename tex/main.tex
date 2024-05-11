@@ -101,6 +101,24 @@
 \usepackage{hyperref}                         % Obsługa adresów URL — zbędny jeżeli używasz 'biblatex'
 \usepackage{csquotes}                         % Polskie cudzysłowy — rekomendowany jeżeli używasz 'biblatex'
 \usepackage{tocloft}
+\usepackage{lipsum}
+
+% NAJWAŻNIEJSZE POLECENIE
+\newcommand{\shrug}[1][]{%
+\begin{tikzpicture}[baseline,x=0.8\ht\strutbox,y=0.8\ht\strutbox,line width=0.125ex,#1]
+\def\arm{(-2.5,0.95) to (-2,0.95) (-1.9,1) to (-1.5,0) (-1.35,0) to (-0.8,0)};
+\draw \arm;
+\draw[xscale=-1] \arm;
+\def\headpart{(0.6,0) arc[start angle=-40, end angle=40,x radius=0.6,y radius=0.8]};
+\draw \headpart;
+\draw[xscale=-1] \headpart;
+\def\eye{(-0.075,0.15) .. controls (0.02,0) .. (0.075,-0.15)};
+\draw[shift={(-0.3,0.8)}] \eye;
+\draw[shift={(0,0.85)}] \eye;
+% draw mouth
+\draw (-0.1,0.2) to [out=15,in=-100] (0.4,0.95); 
+\end{tikzpicture}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  % Konfiguracja rysunków TikZ
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,19 +204,53 @@
 \mainmatter % Część główna
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Wstęp}
+Muzyka od zawsze stanowiła istotny element ludzkiego życia, inspirując, emocjonując i łącząc ludzi na różnych poziomach. Tradycyjnie proces tworzenia muzyki był zarezerwowany dla utalentowanych muzyków i kompozytorów, którzy posiadali wyjątkowy dar tworzenia dźwięków i melodii. Jednakże, w erze cyfrowej i rozwoju sztucznej inteligencji, pojawiają się nowe możliwości w dziedzinie generacji muzyki. Modelowanie generatywne, będące obszarem sztucznej inteligencji, pozwala na tworzenie nowych danych, w tym również muzyki, na podstawie wzorców i reguł wykrytych w zbiorze treningowym. Dynamiczny rozwój dziedziny przetwarzania języka naturalnego (\textit{NLP}) ukazuje skuteczność tego podejścia w problemach generacji danych sekwencyjnych, do których należy właśnie tekst oraz muzyka.
+\section{Motywacja}
+Przez ostatnie lata widzimy szybki rozwój dużych modeli językowych (\textit{LLM}), które w szczególnie dobry sposób radzą sobie z rozumieniem tekstu w wielu językach. Modele te uczone są na wielkich korpusach danych, przez co są w stanie nauczyć się słownictwa oraz zasad gramatyki, a nastepnie ma podstawie \textit{promptu} udzielonego przez użytkownika wygenerować odpowiednią odpowiedź. Modele te znalazły zastosowanie w maszynowej translacji tekstu, analizie sentymentu, odpowiadaniu na pytania użytkownika czy nawet generacji kodu na podstawie poleceń oraz kontekstu nawet dużych projektów. Muzyka swoją strukturą jest bardzo podobna do tekstu. Każda nuta, tak jak słowo, nie tylko jest zależna od tych, które występują przed nią, ale również od szerszego kontekstu utworu jak również i tonacji w której dany utwór został napisany. Wykonując to porównanie, można łatwo zauważyć, dlaczego modele analizujące tekst oraz języki pisany są potencjalnie dobrymi kandydatami do próby analizy i generacji muzyki.
+\section{Cel pracy}
+Celem pracy jest przyjrzenie się dużym modelom językowym oraz ich zastosowaniu w celu generacji muzyki. Zawierać będzie opis modeli, które obecnie są wykorzystywane w architekturach \textit{LLM}-ów oraz analizę odpowiadającą na pytanie dlaczego dane rozwiązanie sprawdza się w przedstawionym w pracy problemie. Nastepnie zostanie przedstawiony problem analizy oraz generacji muzyki oraz jej możliwe cyfrowe reprezentacje. Zostaną również przedstawione dostępne zbiory danych, na podstawie których modele mogą zostać trenowane. Praca przedstawi wyniki użytych metod w celu ustalenia, który model i która reprezentacja muzyki najlepiej nadaje się do problemu przedstawionego w pracy.
+
+\section{Zarys pracy dyplomowej}
 \begin{comment}
-Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
+Tutaj napiszę dopiero jak będzie więcej treści bo chyba troszkę bez sensu na razie pisać o strukturze jak jej jeszcze nie ma \shrug
 \end{comment}
-Wprowadzenie w tematykę pracy.
-\section{Cel i zakres pracy}
-Streszczenie specyfikacji wymagań Promotora.
-\chapter{Część literaturowa}
+\chapter{Opis aktualnego stanu wiedzy}
 
 \section{Cyfrowa reprezentacja muzyki}
 
 \subsection{WAV (ang. \textit{waveform audio format})}
 
 \subsection{MIDI (ang. \textit{Musical Instrument Digital Interface})}
+\subsection{Notacja ABC}
+Notacja ABC jest systemem zapisywania nut w postaci czystego tekstu znakami ASCII. Notacja pojawiła sie w latach 70 XX wieku w celu zapisu i nauki tradycyjnych irlandzkich melodii, a nastepnie w kolejnej dekadzie została rozwinięta przez Chrisa Walshawa, który zapisywał w niej tradycyjne melodie zanim nauczył się standardowego zachodniego zapisu nutowego. Zapis ten posłużył do stworzonego przez niego programu \textit{abc2mtex}, który na podstawie notacji ABC generował komendy pozwalające zapis partytur w postaci \textit{MusicTex}. Obecnie używanym standardem jest wersja z roku 2011.
+% https://abcnotation.com/tunePage?a=tunearch.org/wiki/Farder_Ben_da_Welcomer_(Da).no-ext/0002
+\begin{minted}{text}
+X:1
+T:Da farder bein, da welcomer
+M:2/4
+L:1/8
+Q:"Moderate"
+S:John Stickle (1875-1957), of Baltasound, Unst, via Pat Shaw (1946)
+B:Pat Shuldham Shaw - "Folk Music and Dance in Shetland"
+B:Journal of the English Folk Dance and Song Society, vol. V, No. 2, 1947
+K:D
+DD A/B/A/F/|AD d>B|AD A/B/A|[A,E]>[B,E] [=CE]>[EE]|
+DD A/B/A/F/|AA/B/ d>f|ed/B/ d/B/A/F/|{E/F/}E2 =C2:|
+|:e>d ea/f/|{f/g/}fe/d/ [^ce]>[AA]|d>e fa/f/|{f/g/}fe/f/ d>A|
+d>e fa/f/|e>d e/f/a/f/|fe/f/ d>f|ed/B/ d/B/A/F/|{E/F/}E2 =C2:||
+\end{minted}
+
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=\linewidth]{img/abc_notaion.pdf}
+    \end{center}
+    \caption{Zapis nutowy notacji ABC.}
+    \label{fig:abc_notaion1}
+\end{figure}
+
+Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (L:), metrum (M:) oraz tonacja (K:) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do "odgadnięcia" przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
+
+
 
 \subsection{Podobieństwa reprezentacji muzyki oraz tekstu}
 
@@ -208,7 +260,7 @@ Streszczenie specyfikacji wymagań Promotora.
 \section{Zbiory danych}
 
 \subsection{Johann Sebastian Bach Chorales}
-Datset \cite{bachchorales}
+Dataset \cite{bachchorales}
 
 \subsection{The MAESTRO v3.0}
 Dataset \cite{maestrov3}
@@ -254,7 +306,8 @@ Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
 \end{comment}
 
 Aktualny stan wiedzy, na dany temat, na podstawie dostępnej literatury naukowej oraz specjalistycznej.
-\chapter{Część badawcza}
+\chapter{Propozycja rozwiązania}
+\chapter{Przeprowadzenie eksperymentów}
 \begin{comment}
 Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
 \end{comment}
@@ -269,6 +322,7 @@ W przypadku muzyki, istnieje możliwość aby zweryfikować poprawność wygener
 \begin{comment}
 W mojej pracy prawdopodobnie zostanie zastosowane podejście MOS dla dość niewielkiej grupy ludzi, jednak jeśli triale oprogramowania pozwola, spróbuję przynajmniej sprawdzić czy taka analiza pozwala na jakieś sensowne obliczenie metryki
 \end{comment}
+Brak obiektywnych metryk, którymi można się posłużyć podczas ewaluacji modelu jest dodatkowym problemem w momencie \textit{fine-tunigu} modelu. Ciężko jest wybrać odpowiednie rozwiązanie architektoniczne lub odpowiednie hiperparametry, kiedy jedyną miarą jakości wygenerowanych danych jest subiektywna opinia programisty lub grupy osób wybranych jako wyrocznia.
 \chapter{Zakończenie}
 \begin{comment}
 Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.

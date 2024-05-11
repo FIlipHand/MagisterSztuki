@@ -186,12 +186,12 @@ literate={ą}{{\k{a}}}1
             \scshape\Large Praca dyplomowa
         }\par
         \vspace*{3\baselineskip}%
-        {\sffamily\Large\bfseries \@title}\par%
+        {\large\bfseries \@title}\par%
         \vspace*{\baselineskip}%
         \ifenglish
-        {\selectlanguage{polish}\sffamily\small\bfseries \@titlePL}\par%
+        {\selectlanguage{polish}\small\bfseries \@titlePL}\par%
         \else
-        {\selectlanguage{english}\sffamily\small\bfseries \@titleEN}\par%
+        {\selectlanguage{english}\small\bfseries \@titleEN}\par%
         \fi
         \vfill
         \par
