@@ -215,16 +215,39 @@ Celem pracy jest przyjrzenie się dużym modelom językowym oraz ich zastosowani
 Tutaj napiszę dopiero jak będzie więcej treści bo chyba troszkę bez sensu na razie pisać o strukturze jak jej jeszcze nie ma \shrug
 \end{comment}
 \chapter{Opis aktualnego stanu wiedzy}
-
 \section{Cyfrowa reprezentacja muzyki}
+Muzyka, lub szerzej zapis dowolnego audio, może być zapisywana na dysku na wiele sposobów. Nie wszystkie jednak mogą być przetwarzane w taki sam sposób przez modele uczenia maszynowego. Poniżej zostały przeanalizowane typowe cyfrowe zapisy dźwięku, które są typowo używane w problemach wymagających sztucznej inteligencji.
+\subsection{WAV i MP3}
+WAV (ang. \textit{Waveform audio format}) jest binarnym zapisem plików, który jest znany z tego, że jest w stanie zapisywać dźwięk nie używając żadnego algorytmu kompresji. W związku z tym rozmiary tych plików są bardzo duże, co sprawia, że ich przechowywanie ich wymaga znacznego miejsca na dysku co może być problematyczne, kiedy zbiór danych jest bardzo duży. Plik WAV jest najrzetelniejszą cyfrową reprezentacją dźwięku analogowego. Tak duży rozmiar danych zawdzięcza się temu, że dźwięk jest zapisywany z częstotliwością 44.1 kHz, czyli 44100 sampli na sekundę. Format został stworzony w roku 1991 roku, jest jednym z najbardziej rozpowszechnionym formatów i jest obsługiwany przez praktycznie każde oprogramowanie edycji dźwięku.
 
-\subsection{WAV (ang. \textit{waveform audio format})}
-
+Często nie jest potrzebne przechowywanie bezstratne dźwięku, ponieważ i tak większość informacji, można zachować przy użyciu mniejszej ilości danych. Jednym z najpopularniejszych standardów kodowania stratnego jest MP3. Kompresja zmniejsza dokładność kodowania jak i również ``ucina" częstotliwości, które nie są słyszalne dla człowieka. Stratne kodowanie próbuje zachować równowagę pomiędzy jakością dźwięku a rozmiarem pliku. W kontekście uczenie maszynowego, zmniejszona ilość sampli przy zachowaniu większości informacji jest zjawiskiem pożądanym, ponieważ udaje nam się przynajmniej częściowo rozwiązać problem związany z ``przekleństwem wymiarowości".
 \subsection{MIDI (ang. \textit{Musical Instrument Digital Interface})}
+MIDI jest standardem, który opisuje protokół komunikacji, interfejs cyfrowy oraz złącze pozwalające połączyć ze sobą elektroniczne instrumenty, komputery oraz inne muzyczne peryferia. Pojedynczy kabel MIDI jest w stanie przekazać informacje na temat szesnastu na raz nadających kanałów z czego każdy może pochodzić z innego instrumentu. Każda interakcja z instrumentem, czyli przykładowo naciśnięty klawisz, szarpnięta struna, jest zapisana jako ``\textit{event}'', który zachowuje wartości takie jak konkretny znacznik czasu, wysokość dźwięku czy jego głośność. Dane pochodzące z urządzeń są zapisywane w specjalnym pliku, głównie o rozszerzeniu \textit{.mid} lub \textit{.midi}. Plik pozwala na przechowanie, rozpowszechnianie jak i również edycje dźwięków. W związku z tym, że w pliku nie jest przechowywany zapis konkretnej fali dźwiękowej zapisanej przez mikrofon, pozwala to na późniejszą zmianę np. instrumentu, który będzie odtwarzał zapisane dźwięki.
+
+Typowym przedstawieniem zapisanych danych jest tak zwany \textit{piano roll}, który można porównać do dwuwymiarowego układy współrzędnych, gdzie wspołrzedna horyzontalna opisuje czas, a horyzontalna konkretne dźwięki pokazane jako klawisze pianina. Przykładowe porównanie zapisu MIDI z zapisem nutowym przedstawiono na grafice \ref*{fig:jsb_pianoroll} oraz \ref*{fig:jsb_sheet}.
+
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics*[width=\linewidth]{./img/piano_roll.png}
+    \end{center}
+    \caption{Muzyka zapisana w pliku MIDI}\label{fig:jsb_pianoroll}
+\end{figure}
+
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics*[width=\linewidth]{./img/midi_output_5_sheet.pdf}
+    \end{center}
+    \caption{Muzyka zapisana z pliku MIDI}\label{fig:jsb_sheet}
+\end{figure}
+
+Warto zaobserwować, że
+
 \subsection{Notacja ABC}
 Notacja ABC jest systemem zapisywania nut w postaci czystego tekstu znakami ASCII. Notacja pojawiła sie w latach 70 XX wieku w celu zapisu i nauki tradycyjnych irlandzkich melodii, a nastepnie w kolejnej dekadzie została rozwinięta przez Chrisa Walshawa, który zapisywał w niej tradycyjne melodie zanim nauczył się standardowego zachodniego zapisu nutowego. Zapis ten posłużył do stworzonego przez niego programu \textit{abc2mtex}, który na podstawie notacji ABC generował komendy pozwalające zapis partytur w postaci \textit{MusicTex}. Obecnie używanym standardem jest wersja z roku 2011.
 % https://abcnotation.com/tunePage?a=tunearch.org/wiki/Farder_Ben_da_Welcomer_(Da).no-ext/0002
-\begin{minted}{text}
+
+\begin{figure}[ht!]
+    \begin{minted}{text}
 X:1
 T:Da farder bein, da welcomer
 M:2/4
@@ -238,7 +261,8 @@ DD A/B/A/F/|AD d>B|AD A/B/A|[A,E]>[B,E] [=CE]>[EE]|
 DD A/B/A/F/|AA/B/ d>f|ed/B/ d/B/A/F/|{E/F/}E2 =C2:|
 |:e>d ea/f/|{f/g/}fe/d/ [^ce]>[AA]|d>e fa/f/|{f/g/}fe/f/ d>A|
 d>e fa/f/|e>d e/f/a/f/|fe/f/ d>f|ed/B/ d/B/A/F/|{E/F/}E2 =C2:||
-\end{minted}
+    \end{minted}
+\end{figure}
 
 \begin{figure}[ht!]
     \begin{center}
@@ -250,7 +274,50 @@ d>e fa/f/|e>d e/f/a/f/|fe/f/ d>f|ed/B/ d/B/A/F/|{E/F/}E2 =C2:||
 
 Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (L:), metrum (M:) oraz tonacja (K:) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do "odgadnięcia" przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
 
+\begin{figure}[ht!]
+    \begin{minted}{text}
+X: 267
+T: Nocturne No. 1 Op. 32
+C: F. Chopin
+L: 1/8
+M: C
+N: Derived from 032-1-Sm-001.krn
+P: Deux Nocturnes
+Q: "Andante sostenuto."
+%%staves {1 2}
+V: 1 clef=treble
+V: 2 clef=bass
+K: B
+[V:1] d2e>dc2d2 |
+[V:2] B,,,FF,F [EA,]FF,F |
+[V:1] B2-B/d/b/g/f3e |
+[V:2] [DB,]FF,F [CA,]FF,F |
+[V:1] d(3d/e/f/e>dc2d3/A/ |
+[V:2] B,,FF,F [EA,]FF,F |
+[V:1] B/c/!mordent!B/^A/ B/d/b/g/f3e |
+[V:2] [DB,]FF,F [CA,]FF,F |
+[V:1] d2^^c>d^e2{/eg} f3/e/ |
+[V:2] B,,F,=A,D ^A,,G,^A,^^C |
+[V:1] d2A2c2G3/ !fermata!z/ |
+[V:2] D,,F,A,D E,,E,G,C/ !fermata!z/ |
+[V:1] z z/ B/ (5:4:5B/c/B/^A/B/ dd2c |
+[V:2] .=G,,E,B,E .F,,F,^A,E |
+[V:1] x2g2c2d2 & B4A2=A2 |
+[V:2] xx2xE2^B,2 & xF,2^F,2F,2x |
+[V:1] {/f}e2dcB2c2 & ^A4F2G2 |
+    \end{minted}
+    \caption{Zapis wielu głosów w notacji ABC.}\label{abc:polyphony}
+\end{figure}
 
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{img/abc_notation2.pdf}
+    \end{center}
+    \caption{Reprezentacja melodii z notacji \ref*{abc:polyphony}}
+    \label{fig:abc_polyphony}
+\end{figure}
+
+Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów V. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 instrumentów \cite{beethoven}.
 
 \subsection{Podobieństwa reprezentacji muzyki oraz tekstu}
 
