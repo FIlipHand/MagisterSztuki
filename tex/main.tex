@@ -285,10 +285,44 @@ Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konk
 
 Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów V. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 instrumentów \cite{beethoven}.
 
+\subsubsection{Tokenizacja plików MIDI}
+Token jest odrębnym elementem, częścią sekwencji tokenów. W języku naturalnym tokenem może być znak, zaimek lub słowo. Zdanie może być następnie tokenizowane na sekwencję tokenów reprezentujących słowa i znaki interpunkcyjne. W przypadku muzyki tokeny mogą reprezentować wartości atrybutów nut (wysokość, wartość, czas trwania) lub zdarzenia czasowe. Token może przyjmować jedną z trzech form:
+\begin{itemize}
+    \item nazwa tokenu - słowna reprezentacja \textit{eventu} MIDI np. \textit{Pitch\_50}
+    \item id - unikalna wartość liczbowa przypisana konkretnemu zdarzeniu
+    \item bajt - unikalny bajt, który został przydzielony podczas treningu tokenizera
+\end{itemize}
+
+Słownictwo jest zapisywane w postaci \textit{look up table} łączącej nazwę tokenu z odpowiadającym jej id lub bajtem. Trening tokenizera polega na obliczeniu kodowania gramatykowego np. \textit{byte pair encoding} do postaci tabelarycznej w celu wykorzystania ich w dalszym modelowaniu.
+
+Poza tokenami, które tokenizer tworzy na podstawie pliku MIDI dodaje on również dodatkowe takie jak:
+\begin{itemize}
+    \item PAD - token używany w przypadku kiedy w \textit{batchu} długość sekwencji jest różna; w takim przypadku tym tokenem wydłuża się sekwencje aby wszystkie miały długość najdłuższej
+    \item BOS - token oznaczający początek sekwencji
+    \item EOS - token oznaczający koniec sekwencji
+\end{itemize}
+
+Istnieje wiele algorytmów tokenizacji MIDI, jednak aby przedstawić mechanizm działania przyjrzymy?? się algorytmowi REMI. Revamped MIDI \cite{remi} reprezentuje nuty jako sekwencja tokenów wysokości tonu, mocy? i długości trwania oraz czas przy pomocy tokenu taktu oraz pozycji. Token taktu oznacza początek nowego taktu, a pozycji jego miejsce w obecnym takcie. Porównanie pomiędzy zapisem nutowym a jego reprezentacją można zaobserwować na grafice \ref*{fig:remi_notes} i \ref*{fig:remi_tokens}. Wiele algorytmów jest zaimplementowana w bibliotece MidiTok dla języka Python \cite{miditok2021}.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/tokenizer_notes.pdf}
+    \end{center}
+    \caption{Prosta sekwencja muzyczna}\label{fig:remi_notes}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/remi.png}
+    \end{center}
+    \caption{Reprezentacja muzyki w postaci tokenów}\label{fig:remi_tokens}
+\end{figure}
+
 \subsection{Porównanie zapisu muzycznego}
 
-\subsection{Tokenizacja}
-\cite{miditok2021}
+\begin{comment}
+Tutaj na pewno opiszę 1. ile na dysku zajmują dane i 2. jaka jest długość sekwencji danych 3. Pros and cons jakiejś takie sensowne
+\end{comment}
 
 \section{Zbiory danych}
 
