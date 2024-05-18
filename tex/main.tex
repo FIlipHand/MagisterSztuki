@@ -285,7 +285,7 @@ Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konk
 
 Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów V. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 instrumentów \cite{beethoven}.
 
-\subsubsection{Tokenizacja plików MIDI}
+\subsubsection{Tokenizacja plików MIDI}\label{sec:REMI}
 Token jest odrębnym elementem, częścią sekwencji tokenów. W języku naturalnym tokenem może być znak, zaimek lub słowo. Zdanie może być następnie tokenizowane na sekwencję tokenów reprezentujących słowa i znaki interpunkcyjne. W przypadku muzyki tokeny mogą reprezentować wartości atrybutów nut (wysokość, wartość, czas trwania) lub zdarzenia czasowe. Token może przyjmować jedną z trzech form:
 \begin{itemize}
     \item nazwa tokenu - słowna reprezentacja \textit{eventu} MIDI np. \textit{Pitch\_50}
@@ -297,9 +297,9 @@ Słownictwo jest zapisywane w postaci \textit{look up table} łączącej nazwę 
 
 Poza tokenami, które tokenizer tworzy na podstawie pliku MIDI dodaje on również dodatkowe takie jak:
 \begin{itemize}
-    \item PAD - token używany w przypadku kiedy w \textit{batchu} długość sekwencji jest różna; w takim przypadku tym tokenem wydłuża się sekwencje aby wszystkie miały długość najdłuższej
-    \item BOS - token oznaczający początek sekwencji
-    \item EOS - token oznaczający koniec sekwencji
+    \item \texttt{PAD} (\textit{padding}) - token używany w przypadku kiedy w \textit{batchu} długość sekwencji jest różna; w takim przypadku tym tokenem wydłuża się sekwencje aby wszystkie miały długość najdłuższej
+    \item \texttt{BOS} (\textit{beginning of section}) - token oznaczający początek sekwencji
+    \item \texttt{EOS} (\textit{end of section}) - token oznaczający koniec sekwencji
 \end{itemize}
 
 Istnieje wiele algorytmów tokenizacji MIDI, jednak aby przedstawić mechanizm działania przyjrzymy?? się algorytmowi REMI. Revamped MIDI \cite{remi} reprezentuje nuty jako sekwencja tokenów wysokości tonu, mocy? i długości trwania oraz czas przy pomocy tokenu taktu oraz pozycji. Token taktu oznacza początek nowego taktu, a pozycji jego miejsce w obecnym takcie. Porównanie pomiędzy zapisem nutowym a jego reprezentacją można zaobserwować na grafice \ref*{fig:remi_notes} i \ref*{fig:remi_tokens}. Wiele algorytmów jest zaimplementowana w bibliotece MidiTok dla języka Python \cite{miditok2021}.
@@ -319,10 +319,24 @@ Istnieje wiele algorytmów tokenizacji MIDI, jednak aby przedstawić mechanizm d
 \end{figure}
 
 \subsection{Porównanie zapisu muzycznego}
+W tabeli \ref*{tab:music_diff} zostało przedstawione porównanie zapisu całego utworu, którego fragment przedstawiono na grafice \ref*{fig:jsb_sheet}.
 
-\begin{comment}
-Tutaj na pewno opiszę 1. ile na dysku zajmują dane i 2. jaka jest długość sekwencji danych 3. Pros and cons jakiejś takie sensowne
-\end{comment}
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+                      & rozmiar pliku na dysku & długość sekwencji \\ \hline
+        \texttt{wav}  & 3971116 B              & 992768            \\ \hline
+        \texttt{mp3}  & 360951 B               & 992768            \\ \hline
+        \texttt{midi} & 1638 B                 & 740               \\ \hline
+        \texttt{abc}  & 953 B                  & 562               \\ \hline
+    \end{tabular}
+    \caption{Porównanie różnych zapisów muzyki}\label{tab:music_diff}
+\end{table}
+
+Jak widać zapis w postaci fali dźwiękowej zajmuje najwięcej miejsca na dysku, jak i również długość sekwencji, która zapisuje cały utwór jest najdłuższa. W celu uzyskania sekwencji z pliku MIDI został użyty tokenizer REMI o którym jest mowa w rozdziale \ref*{sec:REMI}. Przy uzyciu innego tokenizera niż REMI, liczba powstałych tokenów może lekko różnić się od tej w tabeli. Różnica w rozmiarze na dysku oraz długością sekwencji pomiędzy zapisem MIDI oraz ABC nie jest widoczna, jenak oba te formaty są zdecydowanie lepszymi rozwiązaniami w przypadku generacji notacji muzycznej (dziwne zdanie do poprawy raczej). Warto zwrócić uwagę, że gdyby w oryginalnym utworze pojawiły się powtórzenia danych sekwencji melodii notacja ABC byłaby jeszcze bardziej oszczędna w obu przypadkach od plików MIDI.  Powodem tego jest fakt, że notacja ABC zapisuje bezpośrednio w postaci tekstowej zapis nutowy, czyli znak powtórzenia zostanie zapisany jako \texttt{:|} oraz \texttt{|:}, a w pliku MIDI cała powtarzana sekwencja musi zostać ponownie odtworzona przez artystę.
+
+Do głównej zalety plików MIDI należy ich wszechstronność. Nie są one ograniczone do kodowania sztywno określonego rytmu tak jak w notacji muzycznej. Dodatkowo jest bardzo łatwo przy użyciu narzędzi komputerowych zamienić dowolny zapis nutowy (MusicXML, ABC) na plik MIDI. Niestety w drugą stronę nie jest już tak łatwo, właśnie w związku z nie konkretnym rytmem, który może zostać zakodowany w MIDI. Istnieją narzędzia takie jak np. MuseScore, które jest w stanie wygenerować partyturę z pliku MIDI, jednak nie jest ono w każdym przypadku jednakowo skuteczne.
 
 \section{Zbiory danych}
 
