@@ -281,7 +281,7 @@ D,8G,,4D,,4|D,4A,4E,4F,4|C,2D,2E,4E,,4A,,4|F,4^A,4A,2^G,2A,4|
     \caption{Zapis wielu głosów w notacji ABC.}\label{abc:polyphony}
 \end{figure}
 
-Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (L:), metrum (M:) oraz tonacja (K:) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do "odgadnięcia" przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
+Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (\texttt{L:}), metrum (\texttt{M:}) oraz tonacja (\texttt{K:}) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do "odgadnięcia" przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
 
 Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów V. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 instrumentów \cite{beethoven}.
 
@@ -338,6 +338,21 @@ Jak widać zapis w postaci fali dźwiękowej zajmuje najwięcej miejsca na dysku
 
 Do głównej zalety plików MIDI należy ich wszechstronność. Nie są one ograniczone do kodowania sztywno określonego rytmu tak jak w notacji muzycznej. Dodatkowo jest bardzo łatwo przy użyciu narzędzi komputerowych zamienić dowolny zapis nutowy (MusicXML, ABC) na plik MIDI. Niestety w drugą stronę nie jest już tak łatwo, właśnie w związku z nie konkretnym rytmem, który może zostać zakodowany w MIDI. Istnieją narzędzia takie jak np. MuseScore, które jest w stanie wygenerować partyturę z pliku MIDI, jednak nie jest ono w każdym przypadku jednakowo skuteczne.
 
+Plik w postaci fali dźwiękowej nie jest idealnym sposobem zapisu muzyki, jednak jest to często jedyne rozwiązanie aby zebrać dużą ilość danych. Szczegolnie jeśli mamy do czynienia z muzyką nowoczesną zazwyczaj twórcy nie udostępniają plików MIDI lub zapisu nutowego na podstawie którego powstała dana piosenka. Z tego powodu zostaje albo praca z plikami \texttt{mp3} lub czasochłonna translacja muzyki na jej zapis w innym formacie. Dodatkowo zaletą plików z dzwiekiem w zapisie cyfrowym jest dostęp do potencjalnie istniejącego zapisu odśpiewanego tekstu. Co prawda przykładowo zapis w notacji ABC pozwala na przekazanie tekstu w tagu \texttt{W:}, jednak jest to tylko jego zapis a nie faktyczne odśpiewanie. Z tego powodu pliki \texttt{wav} nadają się np. do próby replikacji czyjegoś głosu.
+
+Główną zaletą plików ABC jest ich tekstowa reprezentacja notacji muzycznej. Z tego powodu nie wymagaja one wiedzy na temat struktury, budowy oraz standardów plików np. MIDI aby zacząć z nimi pracować. Ponieważ notacja ABC jest tekstowa, można ją łatwo integrować z narzędziami do przetwarzania tekstu. Zwięzłość zapisu jest również przyczyną dla której model uczenia maszynowego może być mniejszy w związku z krótszą ilością tokenów w sekwencji, na podstawie której model się uczy. Zapis w postaci tekstu pozwala na bardzo proste dodanie pewnych dodatkowych danych, które można policzyć w etapie \textit{preprocessingu} danych. Podejście takie zostało zaproponowane w modelu \textit{Tunesformer}\cite{tunesformer}, który wziął przykład z artykułu CTRL \cite{keskarCTRL2019}, w którym autorzy dodawali do korpusu treningowego takie tagi jak \textit{Books}, \textit{Horror}, \textit{Relationships}, \textit{Legal}. Tagi te były podawana na początku \textit{promptu} podawanego dla modelu, przez co model "wiedział" w jakim stylu powinien udzielić odpowiedzi. W przypadku muzyki w zapisie ABC zostały wprowadzone nowe \textit{control codes}:
+\begin{itemize}
+    \item \texttt{S:} - liczba sekcji w całym utworze. Tag jest prost do policzenia ponieważ początek i koniec taktu jest jawnie oznaczany przy pomocy symboli \texttt{[|}, \texttt{||}, \texttt{|]}, \texttt{|:}, \texttt{::} i \texttt{:|}.
+    \item \texttt{B:} - liczba taktów w danej sekcji. Liczy tylko wystąpienia znaku \texttt{|}
+    \item \texttt{E:} - podobieństwo. Kontroluje poziom podobieństwa pomiędzy dwoma następującymi po sobie sekcjami. W związku z tym, że zapis melodii jest w postaci tekstu, można policzyć podobieństwo używając odległości Levenshteina używając wzoru
+          \begin{equation}
+              E(c,p) = 1 - \dfrac{lev(c, p)}{max(|c|, |p|)}
+          \end{equation}
+          gdzie $c$ oraz $p$ to następujące po sobie sekwencje, a $|c|$, $|p|$ to ich długości.
+\end{itemize}
+
+Policzone kody wraz z ich odpowiednim oznaczeniem dodawane są do pliku tekstowego, który zapisuje notacje. Dodanie ich nie powoduje, że notacja staje się nieprawidłowa.
+
 \section{Zbiory danych}
 
 \subsection{Johann Sebastian Bach Chorales}
@@ -349,8 +364,8 @@ Dataset \cite{maestrov3}
 \subsection{Million Song Dataset}
 Dataset i takie cytowanko \cite{milionsongs}
 
-\section{STOA}
-Tutaj nie wiem do końca w jakiej kolejności chciałbym o tym pisać, ponieważ z jednej strony przedstawienie STOA przed czymkolwiek jest ok, ale nie chciałbym pisać o czymś czego jeszcze w pracy nie wprowadziłem.
+\subsection{Irishman}
+Dataset \cite{irishman}
 
 \section{Architekturze transformera}
 \subsection{Algorytm uwagi (ang. \textit{attention})}
@@ -369,7 +384,7 @@ Tutaj nie wiem do końca w jakiej kolejności chciałbym o tym pisać, ponieważ
 \subsection{Modele tranformerowe}
 \subsubsection{\textit{Classic} transformer}
 \subsubsection{SeqGAN}
-\subsubsection{Mistral}
+\subsubsection{GPT-2}
 
 \section{Architektura \textit{state space}}
 \subsection{Mamba}
