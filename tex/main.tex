@@ -215,7 +215,27 @@ Celem pracy jest przyjrzenie się dużym modelom językowym oraz ich zastosowani
 Tutaj napiszę dopiero jak będzie więcej treści bo chyba troszkę bez sensu na razie pisać o strukturze jak jej jeszcze nie ma \shrug
 \end{comment}
 \chapter{Opis aktualnego stanu wiedzy}
-\section{Cyfrowa reprezentacja muzyki}
+\section{Podobieństwa pomiędzy muzyką a tekstem}
+Struktura tekstu i muzyki wykazuje wiele podobieństw, co pozwala na ich analizę za pomocą podobnych narzędzi i metod. Muzyka tak jak i tekst składa się z sekwencji znaków następujących w pewnej sekwencji. W obu przypadkach pojawiają się pewne schematy, czym w przypadku muzyki jest pewna progresja akordów lub powtarzający się fragment, a w tekście pewne związki frazeologiczne, powtarzające się wyrażenia lub ściśle określone reguły ortograficzne i składniowe. Te reguły w kontekście muzycznym są odpowiednikiem harmonii oraz strukturze i poprawności zapisu muzycznego. Sam sposób generacji sekwencji rozumianych przez komputer z muzyki zostanie poruszony w rozdziale \ref*{sec:muzyka_cyfrowa}.
+
+Generacja muzyki w zasadzie nie różni się od generacji tekstu. Oba modele działają autoregresyjnie. Model autoregresyjny (\textit{AR}) jest modelem, który modeleuje pewne zjawisko sekwencyjne, a nastepnie iteracyjne na podstawie poprzednich sekwencji, przewiduje kolejny element, dokłada go do przewidzianej sekwencji, i ponownie ``przepuszcza'' ją przez model z dodatkowym elementem. Wyjściem modelu podczas jego pojedynczego kroku jest rozkład prawdopodobieństwa nad możliwymi tokenami zazwyczaj obliczanego z pomocą funkcji \textit{softmax}.
+
+\begin{equation}
+    \begin{matrix}
+        \text{sekwencja wejściowa: } x_1, x_2, x_3, \text{gdzie} x_i \in X \\
+        P_{t1}(X) = \text{Model}(x_1, x_2, x_3)                            \\
+        x_4 \sim P_{t_1}(X)                                                \\
+        P_{t2}(X) = \text{Model}(x_1, x_2, x_3, x_4)                       \\
+        x_5 \sim P_{t_2}(X)                                                \\
+        \dots
+    \end{matrix}
+    % \caption{Algorytm generacji autoregresyjnej}.
+    \label{equ:ar_model}
+\end{equation}
+
+Przykładowe podejście do autoregresyjnej generacji sekwencji pokazano w równaniu \ref*{equ:ar_model}. Algorytm jest agnostyczny w stosunku do typu danych, więc w $X$ mogą być zarówno wszystkie słowa, litery lub elementy notacji muzycznej.
+
+\section{Cyfrowa reprezentacja muzyki}\label{sec:muzyka_cyfrowa}
 W kulturze zachodniej nuty zapisuje się na pięcioliniach ułożonych jedna pod drugą. Jeśli muzyka jest wielogłosowa typowo pięciolinie są okalane przy pomocy nawiasów klamrowych. Na pięciolinia umieszczone są takie elementy jak nuty, pauzy oznaczenia dynamiki, tempa i inne znaki dotyczące oznaczenia w jaki sposób należy wykonać dany utwór. Najpierw muzykę zapisywano na papierze, jednak po pojawieniu się komputerów zapis nutowy jak i samo nagranie odtworzenia mogło zostać zapisane na dysku. Nuty typowo są zapisywane jako obrazy lub pliki PDF, jednak dane zapisane w taki sposób nie nadają się do edycji lub przetwarzania przez algorytmy komputerowe. Jednym z pierwszych ustandaryzowanych formatów był \textit{MusicXML}, który przy pomocy zwykłych tagów XML opisywał notację muzyczną.
 
 Przykładowy zapis muzyki zapisano na obrazku \ref*{fig:jsb_sheet}. Przedstawiony fragment składa się z czterech głosów grających na raz oraz z czterech taktów.
@@ -233,7 +253,7 @@ WAV (ang. \textit{Waveform audio format}) jest binarnym zapisem plików, który 
     \begin{center}
         \includegraphics[width=\linewidth]{./img/jsb_wav.png}
     \end{center}
-    \caption{Plik \textit{.wav} otworzony w programie Audacity.}\label{fig:jsb_wav}
+    \caption{Plik \texttt{.wav} otworzony w programie Audacity.}\label{fig:jsb_wav}
 \end{figure}
 
 Często nie jest potrzebne przechowywanie bezstratne dźwięku, ponieważ i tak większość informacji, można zachować przy użyciu mniejszej ilości danych. Jednym z najpopularniejszych standardów kodowania stratnego jest MP3. Kompresja zmniejsza dokładność kodowania jak i również ``ucina" częstotliwości, które nie są słyszalne dla człowieka. Stratne kodowanie próbuje zachować równowagę pomiędzy jakością dźwięku a rozmiarem pliku. W kontekście uczenie maszynowego, zmniejszona ilość sampli przy zachowaniu większości informacji jest zjawiskiem pożądanym, ponieważ udaje nam się przynajmniej częściowo rozwiązać problem związany z ``przekleństwem wymiarowości".
@@ -278,7 +298,7 @@ M:4/4
 K:C clef=F4
 D,8G,,4D,,4|D,4A,4E,4F,4|C,2D,2E,4E,,4A,,4|F,4^A,4A,2^G,2A,4|        
 \end{minted}
-    \caption{Zapis wielu głosów w notacji ABC.}\label{abc:polyphony}
+    \caption{Zapis wielu głosów w notacji ABC.}\label{fig:abc_polyphony}
 \end{figure}
 
 Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (\texttt{L:}), metrum (\texttt{M:}) oraz tonacja (\texttt{K:}) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do "odgadnięcia" przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
@@ -351,7 +371,7 @@ Główną zaletą plików ABC jest ich tekstowa reprezentacja notacji muzycznej.
           gdzie $c$ oraz $p$ to następujące po sobie sekwencje, a $|c|$, $|p|$ to ich długości.
 \end{itemize}
 
-Policzone kody wraz z ich odpowiednim oznaczeniem dodawane są do pliku tekstowego, który zapisuje notacje. Dodanie ich nie powoduje, że notacja staje się nieprawidłowa.
+Policzone kody wraz z ich odpowiednim oznaczeniem dodawane są do pliku tekstowego, który zapisuje notacje. Dodanie ich nie powoduje, że notacja staje się nieprawidłowa. Tak samo jak w przypadku tagów, które opisują elementy zapisu jak tonacja czy metrum, służą one nam oraz modelowi jako wskazówki, którymi powinien się sugerować podczas generacji muzyki. Wartości podawane w tagach są elementami, które policzyliśmy na podstawie danych, co znaczy że model mógłby je w czasie treningu wywnioskować jednak podawanie ich w sposób \textit{explicite} przekazuje uzytkownikowi kontrolę nad tymi parametrami.
 
 \section{Zbiory danych}
 
@@ -359,7 +379,16 @@ Policzone kody wraz z ich odpowiednim oznaczeniem dodawane są do pliku tekstowe
 Dataset \cite{bachchorales}
 
 \subsection{The MAESTRO v3.0}
-Dataset \cite{maestrov3}
+Zbiór danych MAESTRO w wersji trzeciej \cite{maestrov3} powstał w współpracy z \textit{Minnesota International Piano-e-Competition}, czyli międzynarodowym konkursem pianistycznym. Litera \textit{e} w nazwie odnosi się do fortepianów używanych podczas konkursu którymi są Yamaha Disklavier. Jest to rodzaj fortepianu, który poza tradycyjną funkcjonalnością jest obudowany elektronicznymi sensorami, które pozwalają między innymi zapis odegranej muzyki w formacie MIDI. Z tego powodu organizacja Magenta działająca wewnątrz Google użyła zapisu melodii z wielu edycji konkursu aby stworzyć dataset zawierający około 200 godzin muzyki fortepianowej. W tych 200 godzinach znajduje się 1276 wystąpień w skład których wchodzi ponad 7 milionów nut. Dwa rodzaje zbioru jakie można pobrać to zbiór w wersji WAV oraz MIDI. Pierwszy, z powodów, które przedstawiono w tabeli \ref*{tab:music_diff} zajmuje aż 122 GB, natomiast wersja MIDI zajmuje tylko 81 MB. Jak widać zapis plików WAV jest zdecydowanie mniej oszczędny jeśli chodzi o przechowywanie danych na dysku.
+% MIDI-Unprocessed_08_R1_2009_01-04_ORIG_MID--AUDIO_08_R1_2009_08_R1_2009_01_WAV.midi
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/maestro_1.png}
+    \end{center}
+    \caption{{Przykład utworu pochodzącego ze zbioru MAESTRO.}}\label{fig:maestro_midi}
+\end{figure}
+
+Porównując zapis prostego utworu widoczny na grafice \ref*{fig:jsb_pianoroll} z tym na grafice \ref*{fig:maestro_midi} osoby nawet nie znające się na muzyce są w stanie wywnioskowac że ten utwór bardziej złożony. Jak widać odegrane nuty często nie padaja na sztywno określone rozpoczęcie taktu, przez co potencjalnie wygenerowana muzyka na podstawie tego zbioru będzie wydawała się bardziej ekspresyjna oraz ``ludzka''.
 
 \subsection{Million Song Dataset}
 Dataset i takie cytowanko \cite{milionsongs}
