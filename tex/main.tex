@@ -395,7 +395,8 @@ Porównując zapis prostego utworu widoczny na grafice \ref*{fig:jsb_pianoroll} 
 \subsection{IrishMAN}
 Zbiór danych IrishMAN (\textit{ang. Irish Massive ABC Notation}) \cite{irishman} zawiera 216,248 fragmentów melodii podzielonych na zbiór treningowy i walidacyjny. Melodie zebrane są ze stron takich jak \texttt{thesession.org} oraz \texttt{abcnotation.org}, które znane są z udostepniania tradycyjnej muzyki. Aby zapewnić jednolitość formatowania najpierw wszystkie utwory zostały przekonwertowane do notacji MusicXML, a nastepnie do notacji ABC. Istnieje bliźniacze zbiory IrishMAN-MIDI oraz IrishMAN-XML, które zawierają te same utwory jednak zapisane w innych formatach. Wszystkie fragmenty muzyki należą do domeny publicznej, w związku z czym bez obaw o łamania praw autorskich można korzystać z tych melodii. Zbiór jest o tyle ciekawy że zawiera w sobie muzykę jedno jak i wielogłosową. Autorzy zbioru udostępnili również skrypty napisane w języku Python przy pomocy których, można samemu stworzyć własne zbiory danych na podstawie swoich plików ABC lub MusicXML. Jest to również jeden z niewielu zbiorów, który ustostępnia te same fragmentu muzyki w różnych formatach, przez co nadaje się on wyjątkowo dobrze do porównywania różnych algorytmów generacyjnych.
 
-\begin{figure}
+\begin{figure}[ht!]
+    %valid/98.mid
     \begin{center}
         \includegraphics[width=0.9\linewidth]{./img/irishman_midi.png}
     \end{center}
@@ -403,11 +404,41 @@ Zbiór danych IrishMAN (\textit{ang. Irish Massive ABC Notation}) \cite{irishman
 \end{figure}
 
 \section{Architekturze transformera}
-\subsection{Algorytm uwagi (ang. \textit{attention})}
-\subsection{Warianty mechanizmu uwagi}
-\subsubsection{Self attention}
-\subsubsection{Multi-headed attention}
-\subsubsection{Flash attention}
+Pierwszymi próbami użycia sieci neuronowych w przetwarzaniu sekwencji było użycie rekurencyjnych sieci neuronowych. Architektura ich była prosta i dodawała ona pętlę w taki sposób aby wartości mogły być przekazywane pomiędzy krokami. Rysunek \ref*{fig:rnn_scheme} przedstawia fragment sieci oraz rozwinięcie pętli.
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/rnn_scheme.png}
+    \end{center}
+    \caption{Schemat budowy fragmentu sieci RNN.}\label{fig:rnn_scheme}
+\end{figure}
+
+Prezentowane podejście jest dość proste, jednak niesie ze sobą pewne problemy.
+
+Pierwszym z nich jest brak selekcji, które informacje są rzeczywiście istotne w danym kontekście, a które nie. W zadaniu przewidywania kolejnego słowa np. dla zdania ``Kupiłem zegarek na \textit{rękę}'' nie jest wymagany żaden dodatkowy kontekst, a odległość pomiedzy ważnymi informacjami jest mała. Jednak dla zdania ``Rok temu ukończyłem kurs lotnika ... Teraz staram się o licencje \textit{pilota}'' wymagany jest szersze spojrzenie na całą strukturę wypowiedzi i ``przypomnienie'' informacji z początku zdania. W przypadku muzyki sytuacja ma się dokładnie tak samo. Dla przykładu aby rozwiązać akord dysonansowy, wymagana jest jedynie informacja na jego temat, tak aby dobrać odpowiedni akord konsonansowy lub akord dominantowy na tonikę, jednak jeśli w muzyce przewija się pewien temat, to wymagane jest zachowanie informacji w sieci, w jakich momentach się on pojawia, aby móc dodać go w odpowiednie miejsce. W teorii zwyczajna sieć rekurencyjna jest zdolna do zapamiętywania długich zależności, jednak w praktyce nie jest to bardzo rzadko osiągalne.
+
+Dodatkowym problemem podczas treningu modeli jest problem zanikającego gradientu.
+
+\begin{equation}
+    \begin{matrix}
+        H_{i+1}=A(H_i, x_i)             \\
+        H_3=A(A(A(H_0, x_0), x_1), x_2) \\
+        \text{gdzie:}                   \\
+        A(H, x) := Wx+ZH                \\
+        H_N=W^Nx_0 + W^{N-1}x_1  + \dots
+    \end{matrix}
+\end{equation}
+
+Jak widać z powyższego równania, kiedy $N$ będzie wystarczająco duże (a na pewno będzie ponieważ jest to długość okna kontekstowego) macierz wag $W$ będzie podnoszona do bardzo wysokiej potęgi przez co jej wartości poniżej $1$ będą zanikać do $0$, a te będące powyżej $1$ będą eksplodować w nieskończoność.
+
+Mechanizm uwagi (\textit{ang. attention}) został zaproponowany w artykule ``\textit{Attention is all you needs}'' \cite{attention}. Algorytm działa na ustalonym oknie kontekstowym (\textit{ang. context window}) w którym przydziela każdemu słowu odpowiedzią wagę reprezentującą jak ważne jest to słowo w danym kontekście. Metoda ta ma imitować w jaki sposób człowiek skupia się na tekście w danym czasie. Mechanizm ten powstał aby zwalczyć problem występujący w rekurencyjnych sieciach neuronowych (\textit{RNN}) w których ``ważność'' słowa była tym mocniejsza im bliżej końca sekwencji się znajdował. Przez to modele ignorowały informacje zawarte np. na początku okna kontekstowego.
+
+W kontekście muzyki sytuacja z zanikającym kontekstem jest nawet bardziej widoczna niż w przypadku tradycyjnych problemów NLP, ponieważ to na samym początku zapisu nutowego znajdują się takie informacje jak metrum lub tonacja danego utworu przez zapisana przy pomocy krzyżyków lub bemoli. Z tego powodu model znajdując się w dalszych momentach sekwencji, jest w stanie ignorować jej najistotniejsze elementy.
+
+% \subsection{Algorytm uwagi (ang. \textit{attention})}
+% \subsection{Warianty mechanizmu uwagi}
+% \subsubsection{Self attention}
+% \subsubsection{Multi-headed attention}
+% \subsubsection{Flash attention}
 \subsection{Budowa transformera}
 \begin{figure}[!ht]
     \begin{center}
@@ -416,9 +447,9 @@ Zbiór danych IrishMAN (\textit{ang. Irish Massive ABC Notation}) \cite{irishman
     \caption{Schemat transformera.}
     \label{fig:transformer1}
 \end{figure}
-\subsection{Modele tranformerowe}
+\subsection{Modele transformerowe}
 \subsubsection{\textit{Classic} transformer}
-\subsubsection{SeqGAN}
+% \subsubsection{SeqGAN}
 \subsubsection{GPT-2}
 
 \section{Architektura \textit{state space}}
