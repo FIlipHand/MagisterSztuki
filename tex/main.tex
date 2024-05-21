@@ -301,7 +301,7 @@ D,8G,,4D,,4|D,4A,4E,4F,4|C,2D,2E,4E,,4A,,4|F,4^A,4A,2^G,2A,4|
     \caption{Zapis wielu głosów w notacji ABC.}\label{fig:abc_polyphony}
 \end{figure}
 
-Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (\texttt{L:}), metrum (\texttt{M:}) oraz tonacja (\texttt{K:}) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do "odgadnięcia" przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
+Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (\texttt{L:}), metrum (\texttt{M:}) oraz tonacja (\texttt{K:}) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do ``odgadnięcia'' przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
 
 Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów V. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 instrumentów \cite{beethoven}.
 
@@ -376,7 +376,9 @@ Policzone kody wraz z ich odpowiednim oznaczeniem dodawane są do pliku tekstowe
 \section{Zbiory danych}
 
 \subsection{Johann Sebastian Bach Chorales}
-Dataset \cite{bachchorales}
+\textit{JSB Chorales} \cite{bachchorales} to zbiór krótkich, czterogłosowych utworów. Chorały zostały pierwotnie skomponowane przez Johanna Sebastiana Bacha w XVIII wieku. Napisał je najpierw biorąc wcześniej istniejące melodie ze współczesnych hymnów luterańskich, a następnie harmonizując je w celu stworzenia części dla pozostałych trzech głosów. Wersja zbioru danych używana kanonicznie w kontekście uczenia się reprezentacji w kontekście uczenia się reprezentacji składa się z 382 takich chorałów. Utwory przed złożeniem w zbiór danych zostały ztransponowane do tonacji C-dur przez co stają się poostrze do analizy przez algorytmy. Dodatkowo ich rytm został znormalizowany, i najmniejszą wartością jest szesnastka. Dzięki temu uproszczeniu zbiór jest bardzo łatwo konwertowalny do dowolnego zapisu które zostały zaprezentowane na grafikach \ref*{fig:jsb_sheet} \ref*{fig:jsb_pianoroll} \ref*{fig:abc_polyphony}.
+
+Dodatkową zaletą takiego rytmu jest możliwość pominięcia użycia tokenizera MIDI, ponieważ wiedząc że rytm jest stały i wyznaczony przez szesnastkę, można użyć naiwnego podejścia i zapisać każdy głos jako wektor, którego wartościami jest obecnie grająca nuta. Po złożeniu wektorów w macierz $4\times$ długość utworu można przejść do analizy. Wadą tego podejścia jest możliwość wystąpienia macierzy rzadkich, które często stanowią problem dla algorytmów uczenia maszynowego (CITATION NEEDED!), jednak w tym zbiorze ten problem nie wystepuje.
 
 \subsection{The MAESTRO v3.0}
 Zbiór danych MAESTRO w wersji trzeciej \cite{maestrov3} powstał w współpracy z \textit{Minnesota International Piano-e-Competition}, czyli międzynarodowym konkursem pianistycznym. Litera \textit{e} w nazwie odnosi się do fortepianów używanych podczas konkursu którymi są Yamaha Disklavier. Jest to rodzaj fortepianu, który poza tradycyjną funkcjonalnością jest obudowany elektronicznymi sensorami, które pozwalają między innymi zapis odegranej muzyki w formacie MIDI. Z tego powodu organizacja Magenta działająca wewnątrz Google użyła zapisu melodii z wielu edycji konkursu aby stworzyć dataset zawierający około 200 godzin muzyki fortepianowej. W tych 200 godzinach znajduje się 1276 wystąpień w skład których wchodzi ponad 7 milionów nut. Dwa rodzaje zbioru jakie można pobrać to zbiór w wersji WAV oraz MIDI. Pierwszy, z powodów, które przedstawiono w tabeli \ref*{tab:music_diff} zajmuje aż 122 GB, natomiast wersja MIDI zajmuje tylko 81 MB. Jak widać zapis plików WAV jest zdecydowanie mniej oszczędny jeśli chodzi o przechowywanie danych na dysku.
@@ -390,11 +392,15 @@ Zbiór danych MAESTRO w wersji trzeciej \cite{maestrov3} powstał w współpracy
 
 Porównując zapis prostego utworu widoczny na grafice \ref*{fig:jsb_pianoroll} z tym na grafice \ref*{fig:maestro_midi} osoby nawet nie znające się na muzyce są w stanie wywnioskowac że ten utwór bardziej złożony. Jak widać odegrane nuty często nie padaja na sztywno określone rozpoczęcie taktu, przez co potencjalnie wygenerowana muzyka na podstawie tego zbioru będzie wydawała się bardziej ekspresyjna oraz ``ludzka''.
 
-\subsection{Million Song Dataset}
-Dataset i takie cytowanko \cite{milionsongs}
+\subsection{IrishMAN}
+Zbiór danych IrishMAN (\textit{ang. Irish Massive ABC Notation}) \cite{irishman} zawiera 216,248 fragmentów melodii podzielonych na zbiór treningowy i walidacyjny. Melodie zebrane są ze stron takich jak \texttt{thesession.org} oraz \texttt{abcnotation.org}, które znane są z udostepniania tradycyjnej muzyki. Aby zapewnić jednolitość formatowania najpierw wszystkie utwory zostały przekonwertowane do notacji MusicXML, a nastepnie do notacji ABC. Istnieje bliźniacze zbiory IrishMAN-MIDI oraz IrishMAN-XML, które zawierają te same utwory jednak zapisane w innych formatach. Wszystkie fragmenty muzyki należą do domeny publicznej, w związku z czym bez obaw o łamania praw autorskich można korzystać z tych melodii. Zbiór jest o tyle ciekawy że zawiera w sobie muzykę jedno jak i wielogłosową. Autorzy zbioru udostępnili również skrypty napisane w języku Python przy pomocy których, można samemu stworzyć własne zbiory danych na podstawie swoich plików ABC lub MusicXML. Jest to również jeden z niewielu zbiorów, który ustostępnia te same fragmentu muzyki w różnych formatach, przez co nadaje się on wyjątkowo dobrze do porównywania różnych algorytmów generacyjnych.
 
-\subsection{Irishman}
-Dataset \cite{irishman}
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/irishman_midi.png}
+    \end{center}
+    \caption{Przykład wielogłosowego fragmentu ze zbioru IrishMAN.}\label{fig:irish_midi}
+\end{figure}
 
 \section{Architekturze transformera}
 \subsection{Algorytm uwagi (ang. \textit{attention})}
