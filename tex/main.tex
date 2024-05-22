@@ -404,17 +404,18 @@ Zbiór danych IrishMAN (\textit{ang. Irish Massive ABC Notation}) \cite{irishman
 \end{figure}
 
 \section{Architekturze transformera}
+\subsection{Sieci RNN}
 Pierwszymi próbami użycia sieci neuronowych w przetwarzaniu sekwencji było użycie rekurencyjnych sieci neuronowych. Architektura ich była prosta i dodawała ona pętlę w taki sposób aby wartości mogły być przekazywane pomiędzy krokami. Rysunek \ref*{fig:rnn_scheme} przedstawia fragment sieci oraz rozwinięcie pętli.
 \begin{figure}[ht!]
     \begin{center}
-        \includegraphics[width=0.9\linewidth]{./img/rnn_scheme.png}
+        \includegraphics[width=0.7\linewidth]{./img/rnn_scheme.png}
     \end{center}
     \caption{Schemat budowy fragmentu sieci RNN.}\label{fig:rnn_scheme}
 \end{figure}
 
 Prezentowane podejście jest dość proste, jednak niesie ze sobą pewne problemy.
 
-Pierwszym z nich jest brak selekcji, które informacje są rzeczywiście istotne w danym kontekście, a które nie. W zadaniu przewidywania kolejnego słowa np. dla zdania ``Kupiłem zegarek na \textit{rękę}'' nie jest wymagany żaden dodatkowy kontekst, a odległość pomiedzy ważnymi informacjami jest mała. Jednak dla zdania ``Rok temu ukończyłem kurs lotnika ... Teraz staram się o licencje \textit{pilota}'' wymagany jest szersze spojrzenie na całą strukturę wypowiedzi i ``przypomnienie'' informacji z początku zdania. W przypadku muzyki sytuacja ma się dokładnie tak samo. Dla przykładu aby rozwiązać akord dysonansowy, wymagana jest jedynie informacja na jego temat, tak aby dobrać odpowiedni akord konsonansowy lub akord dominantowy na tonikę, jednak jeśli w muzyce przewija się pewien temat, to wymagane jest zachowanie informacji w sieci, w jakich momentach się on pojawia, aby móc dodać go w odpowiednie miejsce. W teorii zwyczajna sieć rekurencyjna jest zdolna do zapamiętywania długich zależności, jednak w praktyce nie jest to bardzo rzadko osiągalne.
+Pierwszym z nich jest brak selekcji, które informacje są rzeczywiście istotne w danym kontekście, a które nie. W zadaniu przewidywania kolejnego słowa np. dla zdania ``Kupiłem zegarek na \textit{rękę}'' nie jest wymagany żaden dodatkowy kontekst, a odległość pomiedzy ważnymi informacjami jest mała. Jednak dla zdania ``Rok temu ukończyłem kurs lotnika ... Teraz staram się o licencje \textit{pilota}'' wymagany jest szersze spojrzenie na całą strukturę wypowiedzi i ``przypomnienie'' informacji z początku zdania. W przypadku muzyki sytuacja ma się dokładnie tak samo. Przykładowo, aby rozwiązać akord dysonansowy, wymagana jest jedynie informacja na jego temat, tak aby dobrać odpowiedni akord konsonansowy lub akord dominantowy na tonikę, jednak jeśli w muzyce przewija się pewien temat, to wymagane jest zachowanie informacji w sieci, w jakich momentach się on pojawia, aby móc dodać go w odpowiednie miejsce. W teorii zwyczajna sieć rekurencyjna jest zdolna do zapamiętywania długich zależności, jednak w praktyce nie jest to bardzo rzadko osiągalne.
 
 Dodatkowym problemem podczas treningu modeli jest problem zanikającego gradientu.
 
@@ -430,9 +431,32 @@ Dodatkowym problemem podczas treningu modeli jest problem zanikającego gradient
 
 Jak widać z powyższego równania, kiedy $N$ będzie wystarczająco duże (a na pewno będzie ponieważ jest to długość okna kontekstowego) macierz wag $W$ będzie podnoszona do bardzo wysokiej potęgi przez co jej wartości poniżej $1$ będą zanikać do $0$, a te będące powyżej $1$ będą eksplodować w nieskończoność.
 
-Mechanizm uwagi (\textit{ang. attention}) został zaproponowany w artykule ``\textit{Attention is all you needs}'' \cite{attention}. Algorytm działa na ustalonym oknie kontekstowym (\textit{ang. context window}) w którym przydziela każdemu słowu odpowiedzią wagę reprezentującą jak ważne jest to słowo w danym kontekście. Metoda ta ma imitować w jaki sposób człowiek skupia się na tekście w danym czasie. Mechanizm ten powstał aby zwalczyć problem występujący w rekurencyjnych sieciach neuronowych (\textit{RNN}) w których ``ważność'' słowa była tym mocniejsza im bliżej końca sekwencji się znajdował. Przez to modele ignorowały informacje zawarte np. na początku okna kontekstowego.
+\subsection{LSTM}
+Aby rozwiązać omawiane problemy sieci rekurencyjnych została zaproponowana architektura sieci nazwana \textit{Long Short Term Memory}. Ich budowa pozwala na długofalowe zapamiętywanie i przekazywanie informacji. Zazwyczaj są łączone między sobą co pozytywnie wpływa na działanie sieci.
+
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.6\linewidth]{./img/LSTM3-chain.png}
+    \end{center}
+    \caption{Komórki LSTM połączone między sobą.}\label{fig:lstm_chain}
+\end{figure}
+
+Główną częścią budowy komórki jest górna strzałka na obrazku \ref*{fig:lstm_chain}, która posiadając jedynie proste operacje liniowe przekazuje z stany ukryte z jednej części do drugiej. Dolna część komórki zawiera tak zwane bramki, które kontrolują jaka które informacje są ważne i mają być zachowane a które można zignorować. Są one zbudowane z warstw sigmoidalnych oznaczonych na grafice literami $\sigma$. Wartościami zwrotnymi jest liczba pomiędzy $0$ a $1$ gdzie mała wartość znaczy niską ważność, a wysoka dużą. LSTM zwraca dwa wektory. Pierwszy to stan ukryty (\textit{hidden state}), który przechowuje informacje o bieżącym stanie sieci i jest aktualizowany przy każdym kroku czasowym. To ten wektor jest bezpośrednio wykorzystywany do przewidywania kolejnych słów lub innych zadań wyjściowych. Drugi nazywany stanem komórki (\textit{cell state}) jest dodatkowy i przechowuje informacje na dłuższą metę, przez co jest odpowiedzialny za przechowywanie bardziej trwałego kontekstu. Stan komórki jest modyfikowany przez tzw. bramki (gate), które decydują, które informacje powinny być dodane, usunięte lub zaktualizowane.
+
+Architektura takiego modelu sprawia, że jest on o wiele mniej podatny na problem zanikającego gradientu, jednak jest to sytuacja, która niestety może nadal występować. Dodatkową wadą modelu LSTM jak i klasycznego RNN jest ich wysoka złożoność treningu, która występuje z powodu konieczności użycia specjalnego wariantu algorytmu wstecznej propagacji błędu nazywanego ``wsteczną propagacją błędu w czacie'' \textit{backpropagation through time}, która rozwija sieci rekurencyjne, aby propagować gradienty.
+
+Istnieje kilka wariantów LSTM-ów np. dwukierunkowe LSTM, które pozwalają aby informacja przepływa w dwóch kierunkach na raz a nie tylko z lewej strony do prawej. Użycie takich modeli poprawia skuteczność i wyniki w stosunku do klasycznego modelu, jednak problemy z ich treningiem dalej pozostają lub nawet stają się jeszcze większe.
+
+\begin{comment}
+Można cos więcej opisać ale czy jest po co? Jak będzie brakowało stron a będzie czas to się dopisze \shrug Plus trzeba dodać cytowania
+\end{comment}
+
+\subsection{Attention}
+Mechanizm uwagi (\textit{ang. attention}) został zaproponowany w artykule ``\textit{Attention is all you needs}'' \cite{attention}. Algorytm działa na ustalonym oknie kontekstowym (\textit{ang. context window}) w którym przydziela każdemu słowu odpowiedzią wagę reprezentującą jak ważne jest to słowo w danym kontekście. Metoda ta ma imitować w jaki sposób człowiek skupia się na tekście w danym czasie. Mechanizm ten powstał aby zwalczyć problem występujący w rekurencyjnych sieciach neuronowych (\textit{RNN}) w których ``ważność'' słowa była tym mocniejsza im bliżej końca sekwencji się znajdował. Przez to modele ignorowały informacje zawarte np. na samym początku okna kontekstowego.
 
 W kontekście muzyki sytuacja z zanikającym kontekstem jest nawet bardziej widoczna niż w przypadku tradycyjnych problemów NLP, ponieważ to na samym początku zapisu nutowego znajdują się takie informacje jak metrum lub tonacja danego utworu przez zapisana przy pomocy krzyżyków lub bemoli. Z tego powodu model znajdując się w dalszych momentach sekwencji, jest w stanie ignorować jej najistotniejsze elementy.
+
+Zależności pomiędzy słowami w mechanizmie uwagi można przedstawić jako graf pełny skierowany, gdzie wierzchołkami sa poszczególne słowa lub inne tokeny z okna czasowego. Krawędziami są wartości, które mówią o tym, jak istotne dla danego słowa są wszystkie inne. Jest to o zdecydowanie lepsze podejście niż w rekurencyjnych sieciach neuronowych lub LSTM-ach, gdzie poszczególne zależności dla danego słowa są przekazywane jedynie w wektorze, który kompresuje kontekst ze wszystkich innych poprzednich słów. Z tego powodu mechanizm uwagi pozwala na bardziej dynamiczną kontrolę i monitoring tego w jaki sposób zależności pomiędzy tokenami formują się podczas treningu.
 
 % \subsection{Algorytm uwagi (ang. \textit{attention})}
 % \subsection{Warianty mechanizmu uwagi}
