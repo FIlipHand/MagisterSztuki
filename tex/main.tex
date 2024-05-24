@@ -322,7 +322,7 @@ Poza tokenami, które tokenizer tworzy na podstawie pliku MIDI dodaje on równie
     \item \texttt{EOS} (\textit{end of section}) - token oznaczający koniec sekwencji
 \end{itemize}
 
-Istnieje wiele algorytmów tokenizacji MIDI, jednak aby przedstawić mechanizm działania przyjrzymy?? się algorytmowi REMI. Revamped MIDI \cite{remi} reprezentuje nuty jako sekwencja tokenów wysokości tonu, mocy? i długości trwania oraz czas przy pomocy tokenu taktu oraz pozycji. Token taktu oznacza początek nowego taktu, a pozycji jego miejsce w obecnym takcie. Porównanie pomiędzy zapisem nutowym a jego reprezentacją można zaobserwować na grafice \ref*{fig:remi_notes} i \ref*{fig:remi_tokens}. Wiele algorytmów jest zaimplementowana w bibliotece MidiTok dla języka Python \cite{miditok2021}.
+Istnieje wiele algorytmów tokenizacji MIDI, jednak aby przedstawić mechanizm działania, przyjrzymy się popularnemu algorytmowi REMI. REvamped MIDI (REMI) reprezentuje zdarzenia jako sekwencje tokenów wysokości tonu, dynamiki (głośności), długości trwania oraz czasu poprzez tokeny taktu i pozycji. Token taktu oznacza początek nowego taktu, natomiast token pozycji określa miejsce zdarzenia w bieżącym takcie. Porównanie pomiędzy zapisem nutowym a jego reprezentacją w formie tokenów można zaobserwować na ilustracjach \ref*{fig:remi_notes} i \ref*{fig:remi_tokens}. Tokeny \texttt{Bar} oznaczają początek taktu, \texttt{Pos} pozycję nuty w danym takcie, \texttt{Pitch} wysokość nuty, \texttt{Vel} jej głośność, a \texttt{Dur} czas jej trwania. Wiele algorytmów tokenizacji jest zaimplementowanych w bibliotece MidiTok dla języka Python \cite{miditok2021}.
 
 \begin{figure}
     \begin{center}
@@ -451,19 +451,22 @@ Istnieje kilka wariantów LSTM-ów np. dwukierunkowe LSTM, które pozwalają aby
 Można cos więcej opisać ale czy jest po co? Jak będzie brakowało stron a będzie czas to się dopisze \shrug Plus trzeba dodać cytowania
 \end{comment}
 
-\subsection{Attention}
-Mechanizm uwagi (\textit{ang. attention}) został zaproponowany w artykule ``\textit{Attention is all you needs}'' \cite{attention}. Algorytm działa na ustalonym oknie kontekstowym (\textit{ang. context window}) w którym przydziela każdemu słowu odpowiedzią wagę reprezentującą jak ważne jest to słowo w danym kontekście. Metoda ta ma imitować w jaki sposób człowiek skupia się na tekście w danym czasie. Mechanizm ten powstał aby zwalczyć problem występujący w rekurencyjnych sieciach neuronowych (\textit{RNN}) w których ``ważność'' słowa była tym mocniejsza im bliżej końca sekwencji się znajdował. Przez to modele ignorowały informacje zawarte np. na samym początku okna kontekstowego.
+\subsection{Algorytm uwagi (ang. \textit{attention})}
+\label{sec:attention}
+Mechanizm uwagi (\textit{ang. attention}) został zaproponowany w artykule ``Attention is All You Need'' \cite{attention}. Algorytm ten działa w ustalonym oknie kontekstowym (\textit{ang. context window}), w którym przydziela każdemu słowu wagę reprezentującą jego ważność w danym kontekście. Metoda ta imituje sposób, w jaki człowiek skupia się na różnych fragmentach tekstu w danym momencie. Mechanizm uwagi został opracowany, aby rozwiązać problem występujący w rekurencyjnych sieciach neuronowych (\textit{RNN}), gdzie "ważność" słowa była tym większa, im bliżej końca sekwencji się znajdowało. W rezultacie modele często ignorowały informacje znajdujące się na początku okna kontekstowego.
 
-W kontekście muzyki sytuacja z zanikającym kontekstem jest nawet bardziej widoczna niż w przypadku tradycyjnych problemów NLP, ponieważ to na samym początku zapisu nutowego znajdują się takie informacje jak metrum lub tonacja danego utworu przez zapisana przy pomocy krzyżyków lub bemoli. Z tego powodu model znajdując się w dalszych momentach sekwencji, jest w stanie ignorować jej najistotniejsze elementy.
+W kontekście muzyki problem zanikania kontekstu jest jeszcze bardziej widoczny niż w tradycyjnych problemach przetwarzania języka naturalnego (NLP), ponieważ na początku zapisu nutowego znajdują się kluczowe informacje, takie jak metrum czy tonacja utworu, zapisane za pomocą krzyżyków lub bemoli. Z tego powodu model, analizując dalsze części sekwencji, może ignorować te istotne elementy.
 
-Zależności pomiędzy słowami w mechanizmie uwagi można przedstawić jako graf pełny skierowany, gdzie wierzchołkami sa poszczególne słowa lub inne tokeny z okna czasowego. Krawędziami są wartości, które mówią o tym, jak istotne dla danego słowa są wszystkie inne. Jest to o zdecydowanie lepsze podejście niż w rekurencyjnych sieciach neuronowych lub LSTM-ach, gdzie poszczególne zależności dla danego słowa są przekazywane jedynie w wektorze, który kompresuje kontekst ze wszystkich innych poprzednich słów. Z tego powodu mechanizm uwagi pozwala na bardziej dynamiczną kontrolę i monitoring tego w jaki sposób zależności pomiędzy tokenami formują się podczas treningu.
+Zależności pomiędzy słowami w mechanizmie uwagi można przedstawić jako graf pełny skierowany, gdzie wierzchołkami są poszczególne słowa lub inne tokeny z okna czasowego, a krawędziami są wartości określające, jak istotne są dla danego słowa wszystkie inne. Jest to zdecydowanie lepsze podejście niż w rekurencyjnych sieciach neuronowych lub LSTM-ach, gdzie zależności dla danego słowa są przekazywane jedynie w wektorze, który kompresuje kontekst ze wszystkich poprzednich słów. Dzięki temu mechanizm uwagi pozwala na bardziej dynamiczną kontrolę i monitorowanie, jak zależności pomiędzy tokenami formują się podczas treningu.
 
-% \subsection{Algorytm uwagi (ang. \textit{attention})}
 % \subsection{Warianty mechanizmu uwagi}
 % \subsubsection{Self attention}
 % \subsubsection{Multi-headed attention}
 % \subsubsection{Flash attention}
+
 \subsection{Budowa transformera}
+Wraz z wprowadzeniem algorytmu uwagi pisanego w \ref*{sec:attention} w tym samym artykule został zaproponowana architektura modelu, która wykorzystywała \textit{multi-headed} algorytm uwagi. Cały model składa się z enkodera oraz dekodera.
+
 \begin{figure}[!ht]
     \begin{center}
         \includegraphics[width=0.7\linewidth]{img/transformer1}
@@ -471,10 +474,22 @@ Zależności pomiędzy słowami w mechanizmie uwagi można przedstawić jako gra
     \caption{Schemat transformera.}
     \label{fig:transformer1}
 \end{figure}
-\subsection{Modele transformerowe}
-\subsubsection{\textit{Classic} transformer}
+
+Zadaniem enkodera jest zapoznanie się z całym korpusem tekstu i przekazanie zebranych informacji do dekodera. Mechanizm samo-uwagi \textit{self-attention} jest centralnym elementem każdej warstwy enkodera. Pozwala on modelowi analizować relacje między różnymi tokenami w sekwencji niezależnie od ich odległości od siebie. Drugi komponent każdej warstwy enkodera to sieć neuronowa typu \textit{feed forward}, która składa się z dwóch w pełni połączonych warstw z funkcjami aktywacji \textit{ReLU}. Każdy z dwóch głównych komponentów jest otoczony mechanizmem dodania rezydualnego (poprawiającego wydajność treningu) i warstwą normalizacji. Dane przed wejściem są kodowane przy pomocy tabeli kodowań do wektorów oraz, aby zapewnić modelowi informacje na temat kolejności słów we fragmencie, jest dodawany wektor kodujący ich kolejności.
+
+Zadaniem Dekoder w architekturze transformerowej jest generowanie wyjścia na podstawie sekwencji wejściowej i dotychczas wygenerowanych tokenów wyjściowych. Podobnie jak w enkoderze, mechanizm samo-uwagi analizuje zależności między tokenami w sekwencji wyjściowej, jednak w dekoderze stosuje się maskowanie (\textit{ang. masking}), aby zablokować dostęp do przyszłych tokenów podczas generowania bieżącego tokena. Maskowanie uniemożliwia modelowi zobaczenie tokenów, które są generowane w późniejszych krokach. Maskę można zilustrować jako macierz trójkątną, co zostało pokazane na grafice \ref*{fig:masked_attention}. Drugi mechanizm uwagi umożliwia dekoderowi skupienie się na odpowiednich częściach sekwencji wejściowej (wyjścia enkodera) podczas generowania każdego tokena wyjściowego. Proces ten jest podobny do mechanizmu samo-uwagi, ale tutaj zapytania (\texttt{Q}) pochodzą z poprzedniej warstwy uwagi dekodera, a klucze (\texttt{K}) i wartości (\texttt{V}) pochodzą z wyjść enkodera. Następnie tak jak w poprzednim przypadku wystepuje warstwa \textit{feed forward} i warstwy normalizujące. W ostatnich warstwach znajduje się warstwa liniowa, której zadaniem jest wyprodukowanie wyjścia o rozmiarze ilości wszystkich słów lub tokenów, oraz warstwa \textit{softmax}, która przypisuje każdemu tokenowi prawdopodobieństwo bycia następnym słowem w sekwencji.
+
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/masked_Att.jpg}
+    \end{center}
+    \caption{Algorytm uwagi z maską.}\label{fig:masked_attention}
+\end{figure}
+
+% \subsection{Modele transformerowe}
+% \subsubsection{\textit{Classic} transformer}
 % \subsubsection{SeqGAN}
-\subsubsection{GPT-2}
+% \subsubsection{GPT-2}
 
 \section{Architektura \textit{state space}}
 \subsection{Mamba}
