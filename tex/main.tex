@@ -305,7 +305,7 @@ Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konk
 
 Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów V. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 instrumentów \cite{beethoven}.
 
-\subsubsection{Tokenizacja plików MIDI}\label{sec:REMI}
+\subsubsection*{Tokenizacja plików MIDI}\label{sec:REMI}
 Token jest odrębnym elementem, częścią sekwencji tokenów. W języku naturalnym tokenem może być znak, zaimek lub słowo. Zdanie może być następnie tokenizowane na sekwencję tokenów reprezentujących słowa i znaki interpunkcyjne. W przypadku muzyki tokeny mogą reprezentować wartości atrybutów nut (wysokość, wartość, czas trwania) lub zdarzenia czasowe. Token może przyjmować jedną z trzech form:
 \begin{itemize}
     \item nazwa tokenu - słowna reprezentacja \textit{eventu} MIDI np. \textit{Pitch\_50}
@@ -459,12 +459,16 @@ W kontekście muzyki problem zanikania kontekstu jest jeszcze bardziej widoczny 
 
 Zależności pomiędzy słowami w mechanizmie uwagi można przedstawić jako graf pełny skierowany, gdzie wierzchołkami są poszczególne słowa lub inne tokeny z okna czasowego, a krawędziami są wartości określające, jak istotne są dla danego słowa wszystkie inne. Jest to zdecydowanie lepsze podejście niż w rekurencyjnych sieciach neuronowych lub LSTM-ach, gdzie zależności dla danego słowa są przekazywane jedynie w wektorze, który kompresuje kontekst ze wszystkich poprzednich słów. Dzięki temu mechanizm uwagi pozwala na bardziej dynamiczną kontrolę i monitorowanie, jak zależności pomiędzy tokenami formują się podczas treningu.
 
+\begin{comment}
+Tutaj trzeba napisac więcej na temat attention + jakiś obrazek jak to działa i opisać czym są K V i Q
+\end{comment}
+
 % \subsection{Warianty mechanizmu uwagi}
 % \subsubsection{Self attention}
 % \subsubsection{Multi-headed attention}
 % \subsubsection{Flash attention}
 
-\subsection{Budowa transformera}
+\subsection{Transformer}
 Wraz z wprowadzeniem algorytmu uwagi pisanego w \ref*{sec:attention} w tym samym artykule został zaproponowana architektura modelu, która wykorzystywała \textit{multi-headed} algorytm uwagi. Cały model składa się z enkodera oraz dekodera.
 
 \begin{figure}[!ht]
@@ -475,8 +479,10 @@ Wraz z wprowadzeniem algorytmu uwagi pisanego w \ref*{sec:attention} w tym samym
     \label{fig:transformer1}
 \end{figure}
 
+\subsubsection*{Enkoder}
 Zadaniem enkodera jest zapoznanie się z całym korpusem tekstu i przekazanie zebranych informacji do dekodera. Mechanizm samo-uwagi \textit{self-attention} jest centralnym elementem każdej warstwy enkodera. Pozwala on modelowi analizować relacje między różnymi tokenami w sekwencji niezależnie od ich odległości od siebie. Drugi komponent każdej warstwy enkodera to sieć neuronowa typu \textit{feed forward}, która składa się z dwóch w pełni połączonych warstw z funkcjami aktywacji \textit{ReLU}. Każdy z dwóch głównych komponentów jest otoczony mechanizmem dodania rezydualnego (poprawiającego wydajność treningu) i warstwą normalizacji. Dane przed wejściem są kodowane przy pomocy tabeli kodowań do wektorów oraz, aby zapewnić modelowi informacje na temat kolejności słów we fragmencie, jest dodawany wektor kodujący ich kolejności.
 
+\subsubsection*{Dekoder}
 Zadaniem Dekoder w architekturze transformerowej jest generowanie wyjścia na podstawie sekwencji wejściowej i dotychczas wygenerowanych tokenów wyjściowych. Podobnie jak w enkoderze, mechanizm samo-uwagi analizuje zależności między tokenami w sekwencji wyjściowej, jednak w dekoderze stosuje się maskowanie (\textit{ang. masking}), aby zablokować dostęp do przyszłych tokenów podczas generowania bieżącego tokena. Maskowanie uniemożliwia modelowi zobaczenie tokenów, które są generowane w późniejszych krokach. Maskę można zilustrować jako macierz trójkątną, co zostało pokazane na grafice \ref*{fig:masked_attention}. Drugi mechanizm uwagi umożliwia dekoderowi skupienie się na odpowiednich częściach sekwencji wejściowej (wyjścia enkodera) podczas generowania każdego tokena wyjściowego. Proces ten jest podobny do mechanizmu samo-uwagi, ale tutaj zapytania (\texttt{Q}) pochodzą z poprzedniej warstwy uwagi dekodera, a klucze (\texttt{K}) i wartości (\texttt{V}) pochodzą z wyjść enkodera. Następnie tak jak w poprzednim przypadku wystepuje warstwa \textit{feed forward} i warstwy normalizujące. W ostatnich warstwach znajduje się warstwa liniowa, której zadaniem jest wyprodukowanie wyjścia o rozmiarze ilości wszystkich słów lub tokenów, oraz warstwa \textit{softmax}, która przypisuje każdemu tokenowi prawdopodobieństwo bycia następnym słowem w sekwencji.
 
 \begin{figure}[ht!]
@@ -486,15 +492,34 @@ Zadaniem Dekoder w architekturze transformerowej jest generowanie wyjścia na po
     \caption{Algorytm uwagi z maską.}\label{fig:masked_attention}
 \end{figure}
 
+Istnieją modele transformerowe nie korzystające z całej architektury. Przykładem \textit{encoder only transformer} jest model BERT \cite{bert}, który jest typowo wykorzystywany do zadań np. klasyfikacji. W przypadku takiego zadania, nie potrzeba omawianej wcześniej maski, ponieważ model powinien analizować kontekst całego fragmentu w ``obie strony''. Wystarczy dołożyć jako ostatnią warstwę warstwę liniową o odpowiednim rozmiarze, oraz zastosować odpowiednią funkcję aktywacji, aby przerobić enkoder na model klasyfikacyjny.
+Analogicznie, jeśli celem zadania jest wyłącznie generacja tekstu lub muzyki, enkoder nie jest wymagany. W takim problemie należy usunąć drugą warstwę uwagi (bez maski), ponieważ wektory kluczy i wartości pochodzące z enkodera będą nieznane. Generacja będzie odbywała się jedynie na podstawie podanej sekwencji lub tokenu \texttt{BOS} (\textit{begin of sequence}), co da modelowi największą wolność twórczą. Rozwiązania \textit{decoder only} są obebnie bardzo popularne i są używane przez modele takie jak GPT od OpenAI. Ciekawą obserwacją jest fakt, że dekoder pozbawiony drugiej warstwy uwagi, staje się w zasadzie enkoderem z dodaną maską w pierwszej warstwie. Jest to często wykorzystywana ``sztuczka'', którą można wykorzystać w wielu bibliotekach implementujących gotowe części składowe modeli.
+
+Trening transformera jest możliwy do bardzo dobrego zrównoleglenia. Wynika to z faktu, że mechanizm uwagi jest w stanie niezaleznie liczyć wartości pomiędzy słowami. Przykładowo w zadaniu ``\textit{Ala ma kota.}'' wartości pomiędzy \textit{ma} i \textit{kota} można policzyć nie znając wartości pomiędzy \textit{Ala} i \textit{ma}. Niestety podczas generacji kolejnych tokenów na podstawie istniejącej sekwencji należy policzyć ponownie wartości uwagi, przez co dla sekwencji o długości $n$ należy wykonać $n^2$ operacji. Jest to niestety problematyczne jeśli chcemy rozważać bardzo długie sekwencje. Omawiany wcześniej model RNN, podczas predykcji, nie ma problemów ze złożonością, ponieważ cała informacja na temat wcześniejszej sekwencji jest skompresowana w stanie ukrytym. W takim przypadku okno kontekstu jest teoretycznie nieskończone.
+
 % \subsection{Modele transformerowe}
 % \subsubsection{\textit{Classic} transformer}
 % \subsubsection{SeqGAN}
-% \subsubsection{GPT-2}
+\subsubsection*{GPT-2}\label{sec:gpt2}
+\cite{gpt2}
 
 \section{Architektura \textit{state space}}
 \subsection{Mamba}
-\subsection{Tutaj się rozdrobnić trzeba}
-\begin{figure}
+
+Modele przestrzeni stanów (\textit{State Space Models} - SSM) to matematyczne modele dynamicznych systemów, które są szeroko stosowane w inżynierii, ekonomii, biologii i wielu innych dziedzinach. Modele te są szczególnie przydatne w analizie i prognozowaniu czasowych szeregów danych.
+% \begin{table}[ht!]
+%     \centering
+%     \begin{tabular}{|l|c|c|}
+%         \hline
+%         \textbf{Architektura}       & \textbf{Transformer} & \textbf{Mamba} \\ \hline
+%         \textbf{Szybkość predykcji} & $O(n)$               & $O(1)$         \\ \hline
+%         \textbf{Szybkość treningu}  & $O(n^2)$             & $O(n)$         \\ \hline
+%     \end{tabular}
+%     \caption{Porównanie transformera i mamby.}
+%     \label{tab:comparison}
+% \end{table}
+
+\begin{figure}[ht!]
     \begin{center}
         \includegraphics[width=0.9\linewidth]{img/mamba1.png}
     \end{center}
@@ -502,18 +527,13 @@ Zadaniem Dekoder w architekturze transformerowej jest generowanie wyjścia na po
     \label{fig:mamba1}
 \end{figure}
 
-\begin{comment}
-Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
-\end{comment}
-
-Aktualny stan wiedzy, na dany temat, na podstawie dostępnej literatury naukowej oraz specjalistycznej.
 \chapter{Propozycja rozwiązania}
 \chapter{Przeprowadzenie eksperymentów}
 \begin{comment}
 Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
 \end{comment}
 \section{Opis \textit{pipeline-u}}
-Tutaj zamierzam opisać w jaki sposób modele zostały stworzone, jakie bilbioteki zostały użyte, jaki sprzęto został użyty podczas treningu
+Tutaj zamierzam opisać w jaki sposób modele zostały stworzone, jakie biblioteki zostały użyte, jaki sprzętu został użyty podczas treningu
 \section{Porównanie architektur użytych modeli}
 \section{Prezentacja otrzymanych wyników}
 \section{Porównanie wyników}
@@ -524,6 +544,44 @@ W przypadku muzyki, istnieje możliwość aby zweryfikować poprawność wygener
 W mojej pracy prawdopodobnie zostanie zastosowane podejście MOS dla dość niewielkiej grupy ludzi, jednak jeśli triale oprogramowania pozwola, spróbuję przynajmniej sprawdzić czy taka analiza pozwala na jakieś sensowne obliczenie metryki
 \end{comment}
 Brak obiektywnych metryk, którymi można się posłużyć podczas ewaluacji modelu jest dodatkowym problemem w momencie \textit{fine-tunigu} modelu. Ciężko jest wybrać odpowiednie rozwiązanie architektoniczne lub odpowiednie hiperparametry, kiedy jedyną miarą jakości wygenerowanych danych jest subiektywna opinia programisty lub grupy osób wybranych jako wyrocznia.
+
+\section{ChatMusician}
+\begin{figure}[ht!]
+    \begin{minted}[escapeinside=++]{text}
++\textcolor{red}{PROMPT:}+ I have some music in ABC notation that I generated. Could
+you analyze it and tell me if it sounds natural? Specifically, I would like 
+your feedback on the overall musicality, the sense of harmony, and whether 
+the melody and chord progressions are coherent and pleasing. Here is the 
+ABC notation of the music:
+X:1
+L:1/8
+M:3/4
+K:C
+D/2d/2d Ad fa | a/g/e/f/ g/f/e/d/ ^cA | d2 dA df | ag/f/ e^c A2 | 
+D2 d^c de | f2 ef/g/ a/g/f/e/ | d2 df e^c |1 d2 D4 :|2 d2 D2 fg |:
+a2 g2 f2 | ed ^cd e/f/g | a2 g2 f2 | ed ^cd e/f g | a2 g2 f2 | 
+ed ^cd ef/g/ | a2 g2 fe |1 d2 de fg :|2 d2 D4 ||
++\textcolor{red}{ANSWER:}+ Overall Musicality: 1. The piece has a pleasant and flowing 
+rhythm with a steady tempo. It features a mix of different instruments and
+voices, creating an interesting texture. The melodies are catchy and 
+memorable, making the piece enjoyable to listen to.
+2. Sense of Harmony: The harmonies in this piece are well-crafted and 
+create a rich and full sound. The use of various chords and progressions 
+adds depth and complexity to the music. The harmonic choices are 
+appropriate for the style and genre of the piece.
+3. Melody and Chord Progressions: The melody and chord progressions in 
+this piece are coherent and pleasing. They follow a logical progression 
+and fit together well. The melodic lines are well-written and expressive, 
+adding to the emotional impact of the piece. The chord progressions 
+provide a solid foundation for the melodies and add interest and variety 
+to the composition.
+In conclusion, this piece of music has a strong sense of musicality, 
+harmony, and coherence. The melodies and chord progressions are 
+well-constructed and contribute to the overall appeal of the piece. 
+It is a successful example of its genre and style.
+    \end{minted}
+\end{figure}
+
 \chapter{Zakończenie}
 \begin{comment}
 Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
