@@ -545,7 +545,12 @@ W mojej pracy prawdopodobnie zostanie zastosowane podejście MOS dla dość niew
 \end{comment}
 Brak obiektywnych metryk, którymi można się posłużyć podczas ewaluacji modelu jest dodatkowym problemem w momencie \textit{fine-tunigu} modelu. Ciężko jest wybrać odpowiednie rozwiązanie architektoniczne lub odpowiednie hiperparametry, kiedy jedyną miarą jakości wygenerowanych danych jest subiektywna opinia programisty lub grupy osób wybranych jako wyrocznia.
 
-\section{ChatMusician}
+\section{Testowanie melodii innymi LLM-ami}
+\subsection{ChatMusician}
+\textit{ChatMusician} to otwarty model językowy, który integruje zdolności muzyczne. Model ten został zaprojektowany na bazie modelu LLaMA2 z 7 miliardów parametrów, jest trenowany i dostrajany z wykorzystaniem notacji muzycznej ABC, traktując muzykę jako drugi język. Dzięki temu ChatMusician jest w stanie rozumieć i generować muzykę za pomocą tekstowego tokenizatora, bez konieczności stosowania zewnętrznych struktur neuronowych czy tokenizatorów stworzonych specjalnie dla notacji muzycznej. \textit{ChatMusician} może komponować dobrze zorganizowane, pełnometrażowe utwory muzyczne na podstawie tekstu, akordów, melodii, motywów i form muzycznych, przewyższając wyniki modelu \textit{GPT-4}. Model ten osiąga lepsze wyniki niż \textit{LLaMA2} i \textit{GPT-3.5} w zadaniach związanych z rozumieniem teorii muzyki, co potwierdzono w benchmarku \textit{MusicTheoryBench}, zaprojektowanym do oceny zdolności modeli do rozumienia i rozumowania muzycznego. Model został udostepniony dla użytku publicznego na platformie \textit{HuggingFace}.
+
+Model jest potencjalnym rozwiązaniem problemu z oceną wygenerowanej muzyki. Będąc wytrenowanym na prawdziwych fragmentach muzycznych z całego świata i wielu kultur oraz tekstu zawierającego teorię muzyki, powinien w dość obiektywny sposób oceniać fragmenty melodii. Zapytanie o wcześniej wygenerowany fragment przedstawiono na \ref*{code:chat_prompt_1}.
+
 \begin{figure}[ht!]
     \begin{minted}[escapeinside=++]{text}
 +\textcolor{red}{PROMPT:}+ I have some music in ABC notation that I generated. Could
@@ -580,7 +585,49 @@ harmony, and coherence. The melodies and chord progressions are
 well-constructed and contribute to the overall appeal of the piece. 
 It is a successful example of its genre and style.
     \end{minted}
+    \caption{Pytanie i odpowiedź modelu ChatMusician.}\label{code:chat_prompt1}
 \end{figure}
+
+Model dość przychylnie spojrzał na ten wygenerowany fragment, jednak jego odpowiedzi są dość ogólnikowe. Nie podejmuje on analizy konkretach fragmentów i dodatkowo udziela informacji o użytych wielu instrumentach, co nie występuje w przedstawionej mu notacji. W kontekście harmonii używa słów takich jak \textit{well-crafted}, \textit{coherent}, \textit{pleasing}. Słowa te nie są ``naukowe'' przez co ciężko zinterpretować odpowiedź modelu.
+
+Aby upewnić się nie jest to jest domyślne zachowanie należy poprosić model o ocenę fragmentu, który został specjalnie przygotowany, aby nie brzmiał dobrze dla ludzkiego ucha. Odpowiedź modelu przedstawiono we fragmencie \ref*{code:chat_prompt2}.
+
+\begin{figure}[ht!]
+    \begin{minted}[escapeinside=++]{text}
++\textcolor{red}{PROMPT:}+ I have some music in ABC notation that I generated. Could
+you analyze it and tell me if it sounds natural? Specifically, I would like 
+your feedback on the overall musicality, the sense of harmony, and whether 
+the melody and chord progressions are coherent and pleasing. Here is the 
+ABC notation of the music:
+X:1
+M:4/4
+L:1/8
+K:C
+C2 e2 ^g2 _A2 | B3 {g}D1 f2 ^c2 |
+G2 e1/2 ^g2 _A2 | B3 |
+C2 e2 ^g2 [_A2C] | B3 D22 |
+C2 _e2 ^g2 __A2 | =B3 D1 f2 ^c2 ||
++\textcolor{red}{ANSWER:}+ Overall Musicality: The piece has a pleasant and flowing
+quality to it, with a mix of different rhythms and tempos. The use of 
+dynamics and articulations adds depth and interest to the composition. 
+2. Sense of Harmony: The harmonies used in this piece are mostly consonant 
+and create a sense of stability and balance. There are occasional 
+dissonances that add tension and color to the music. 3. Melody and Chord 
+Progressions: The melodies in this piece are well-crafted and follow a 
+logical progression. They are easy to sing or play and have a clear 
+sense of direction. The chord progressions are also coherent and support 
+the melodies effectively. In conclusion, this piece has a good overall 
+musicality, sense of harmony, and coherence between its melody and 
+chord progressions. It is an enjoyable and engaging composition.
+    \end{minted}
+    \caption{Odpowiedź modelu na fałszywy fragment.}\label{code:chat_prompt2}
+\end{figure}
+
+Jak się okazało model również ten fragment opisał bardzo przychylnie, jednak dla żadnego człowieka ta muzyka nie byłaby przyjemna. Niestety model \textit{ChatMusician} nie jest dobrym ``nauczycielem'' i nie jest w stanie poprawnie ocenić czy dany fragment jest poprawny muzycznie.
+
+\subsection{GPT-4}
+% estimates 1.76 trillion parameters
+Aby przetestować
 
 \chapter{Zakończenie}
 \begin{comment}
