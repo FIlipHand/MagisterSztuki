@@ -122,7 +122,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  % Konfiguracja rysunków TikZ
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usetikzlibrary{shapes.geometric,arrows.meta} 
+\usetikzlibrary{shapes.geometric,arrows.meta,arrows} 
 \tikzstyle{every picture}+=[remember picture]
 \tikzstyle{na} = [baseline=-.5ex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -507,6 +507,67 @@ Trening transformera jest możliwy do bardzo dobrego zrównoleglenia. Wynika to 
 \subsection{Mamba}
 
 Modele przestrzeni stanów (\textit{State Space Models} - SSM) to matematyczne modele dynamicznych systemów, które są szeroko stosowane w inżynierii, ekonomii, biologii i wielu innych dziedzinach. Modele te są szczególnie przydatne w analizie i prognozowaniu czasowych szeregów danych.
+
+Typowo, dla każdej jednostki czasu $t$ model:
+\begin{enumerate}
+    \item mapuje sekwencje wejściową $x(t)$
+    \item do reprezentacji ukrytej $h(t)$
+    \item i przewiduje sekwencję wynikową $y(t)$
+\end{enumerate}
+
+Modele SSM zakładają, że każdy system dynamiczny może zostać opisany w momencie czasu $t$ używając dwóch równań.
+\begin{equation}
+    \text{równanie stanu: }h'(t) = Ah(t) + Bx(t)
+    \label{equ:rownanie_stanu}
+\end{equation}
+\begin{equation}
+    \text{równanie wynikowe: }y'(t) = Ch(t) + Dx(t)
+    \label{equ:rownanie_wynikowe}
+\end{equation}
+
+Celem jest poznanie reprezentacji stanu $h(t)$  w taki sposób aby przejść z sekwencji wejściowej do sekwencji wynikowej.
+
+Równanie stanu \ref*{equ:rownanie_stanu} opisuje w jaki sposób zmienia się stan w zależności od tego, jak dane wejściowe mają na niego wpływ. Wykonywane jest to przez macierze $A$ oraz $B$. Celem równania \ref*{equ:rownanie_wynikowe} jest opisanie jak obecny stan ukryty wpływa na sekwencje wynikowym oraz jak sekwencja wejściowa wpływa na wynik. Te informacje są zapisywane odpowiednia w macierzy $C$ oraz $D$. Schematyczne przedstawienie działania modelu zostało przedstawione na grafice \ref*{fig:ssm_scheme}.
+
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/SSM_scheme.png}
+    \end{center}
+    \caption{Schemat modelu przestrzeni stanów.}\label{fig:ssm_scheme}
+\end{figure}
+
+W związku z tym, że macierz $D$ przypomina połączenia rezydualne lub połączenia typu \textit{skip-connection} w głebokich sieciach neuronowych, często pomija się je w zapisie modelu co upraszcza zapis \cite{res_net}.
+
+Modele tego typu działaja domyślnie w domenie danych ciągłych. Tekst lub muzyka są przykładami danych dyskretnych, przez co model musi zostać pod nie dostosowany. Aby dokonać dyskretyzacji modelu wykorzystuje się metodę eksploratora (lub interpolatora) rzędy zerowego (\textit{ang. zero-order hold}). Metoda ta polega na podtrzymywaniu każdego otrzymanego sygnału, dopóki nie zostanie zapisany kolejny. Czas trwania poprzedniego sygnału jest dodatkowym parametrem nazywanym krokiem. W związku z tym, że model na wyjściu zwraca sygnał ciągły, aby zamienić go na dyskretny, należy \textit{samplować} go, z odpowiednią długością kroku. Po dyskretyzacji modelu można nazwać go modelem \textit{sequence to sequence}. Aby lepiej zobrazować dokonane zmiany należy spojrzeć na równania \ref*{equ:rownanie_stanu_seq} oraz \ref*{equ:rownanie_wynikowe_seq}.
+
+\begin{equation}
+    \text{równanie stanu: }h_k = Ah_{k-1} + Bx_k
+    \label{equ:rownanie_stanu_seq}
+\end{equation}
+\begin{equation}
+    \text{równanie wynikowe: }y_k = Ch_k
+    \label{equ:rownanie_wynikowe_seq}
+\end{equation}
+
+Model operuje teraz na sekwencjach a nie na sygnałach. Notacja została zmieniona z $t$ na $k$ aby lepiej zobrazować, że obecnie model pracuje na dyskretnych znacznikach czasu. Dodatkowo w zapisie równania usunięto macierz $D$.
+
+Patrząc na zapis obu równań od razu można zaobserwować ich podobieństwo do rekurencyjnych sieci neuronowych. Każdy stan ukryty $h$ zależy w głównej mierze od stanu z porzadnego kroku czasowego. \textit{SSM-y} mogą również być reprezentowane w postaci konwolucji. W związku z tym, że tekst lub muzyka są sekwencjami jednowymiarowymi w przeciwieństwie do typowego zastosowania sieci konwolucyjnych czyli obrazów, które są dwu lub trzy wymiarowe należy zastosować kernel o wymiarze 1. Tego rodzaju interpretacja modelu jest o tyle wygodna, że pozwala zrównoleglić trening modelu a co za tym idzie zmniejszyć jego czas \cite{ssm_notacja}. Kiedy model jest już wytrenowany i gotowy do wykonywania generacji, można bez problemu przejść na interpretacje rekurencyjną.
+
+Macierz $A$ modelu jest jego jednym z najistotniejszych elementów. To od niej zależy, czy model zapamięta cały kontekst wypowiedzi czy tylko kilka ostatnich tokenów. Jest to szczególnie ważne w przypadku predykcji, ponieważ model bazuje wyłącznie na podstawie ostatniego stanu ukrytego. Aby zapewnić dobrą kompresję kontekstu stosuje się macierz HiPPO \cite{hippo}. Zadaniem \textit{\textbf{Hi}gh-order \textbf{P}olynomial \textbf{P}rojection \textbf{O}perators} jest jak najlepsze skompresowanie wejścia do wektora cech. Konstrukcje macierzy pokazano na równaniu \ref*{equ:hippo_matrix}. W tym przypadku zakładamy, że macierz jest kwadratowa.
+
+\begin{equation}
+    A_{nk} =
+    \begin{cases}
+        (2n + 1)^{1/2} (2k + 1)^{1/2} & \text{wartości poniżej przekątnej} \\
+        n + 1                         & \text{wartości na przekątnej}      \\
+        0                             & \text{wartości powyżej przekątnej}
+    \end{cases}
+    \label{equ:hippo_matrix}
+\end{equation}
+
+Zbudowanie macierzy w taki sposób prowadzi do zdecydowanie lepszych wyników niż zainicjalizowanie jej losowo. wielomian Lagrange'a
+
+
 % \begin{table}[ht!]
 %     \centering
 %     \begin{tabular}{|l|c|c|}
