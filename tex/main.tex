@@ -538,6 +538,7 @@ Równanie stanu \ref*{equ:rownanie_stanu} opisuje w jaki sposób zmienia się st
 
 W związku z tym, że macierz $D$ przypomina połączenia rezydualne lub połączenia typu \textit{skip-connection} w głebokich sieciach neuronowych, często pomija się je w zapisie modelu co upraszcza zapis \cite{res_net}.
 
+\subsubsection*{Dyskretyzacja modelu}
 Modele tego typu działaja domyślnie w domenie danych ciągłych. Tekst lub muzyka są przykładami danych dyskretnych, przez co model musi zostać pod nie dostosowany. Aby dokonać dyskretyzacji modelu wykorzystuje się metodę eksploratora (lub interpolatora) rzędy zerowego (\textit{ang. zero-order hold}). Metoda ta polega na podtrzymywaniu każdego otrzymanego sygnału, dopóki nie zostanie zapisany kolejny. Czas trwania poprzedniego sygnału jest dodatkowym parametrem nazywanym krokiem. W związku z tym, że model na wyjściu zwraca sygnał ciągły, aby zamienić go na dyskretny, należy \textit{samplować} go, z odpowiednią długością kroku. Po dyskretyzacji modelu można nazwać go modelem \textit{sequence to sequence}. Aby lepiej zobrazować dokonane zmiany należy spojrzeć na równania \ref*{equ:rownanie_stanu_seq} oraz \ref*{equ:rownanie_wynikowe_seq}.
 
 \begin{equation}
@@ -551,34 +552,33 @@ Modele tego typu działaja domyślnie w domenie danych ciągłych. Tekst lub muz
 
 Model operuje teraz na sekwencjach a nie na sygnałach. Notacja została zmieniona z $t$ na $k$ aby lepiej zobrazować, że obecnie model pracuje na dyskretnych znacznikach czasu. Dodatkowo w zapisie równania usunięto macierz $D$.
 
+\subsubsection*{Reprezentacja konwolucyjna}
 Patrząc na zapis obu równań od razu można zaobserwować ich podobieństwo do rekurencyjnych sieci neuronowych. Każdy stan ukryty $h$ zależy w głównej mierze od stanu z porzadnego kroku czasowego. \textit{SSM-y} mogą również być reprezentowane w postaci konwolucji. W związku z tym, że tekst lub muzyka są sekwencjami jednowymiarowymi w przeciwieństwie do typowego zastosowania sieci konwolucyjnych czyli obrazów, które są dwu lub trzy wymiarowe należy zastosować kernel o wymiarze 1. Tego rodzaju interpretacja modelu jest o tyle wygodna, że pozwala zrównoleglić trening modelu a co za tym idzie zmniejszyć jego czas \cite{ssm_notacja}. Kiedy model jest już wytrenowany i gotowy do wykonywania generacji, można bez problemu przejść na interpretacje rekurencyjną.
 
+\subsubsection*{Macierz HiPPO}
 Macierz $A$ modelu jest jego jednym z najistotniejszych elementów. To od niej zależy, czy model zapamięta cały kontekst wypowiedzi czy tylko kilka ostatnich tokenów. Jest to szczególnie ważne w przypadku predykcji, ponieważ model bazuje wyłącznie na podstawie ostatniego stanu ukrytego. Aby zapewnić dobrą kompresję kontekstu stosuje się macierz HiPPO \cite{hippo}. Zadaniem \textit{\textbf{Hi}gh-order \textbf{P}olynomial \textbf{P}rojection \textbf{O}perators} jest jak najlepsze skompresowanie wejścia do wektora cech. Konstrukcje macierzy pokazano na równaniu \ref*{equ:hippo_matrix}. W tym przypadku zakładamy, że macierz jest kwadratowa.
 
 \begin{equation}
-    A_{nk} =
+    A_{nk} = -
     \begin{cases}
-        (2n + 1)^{1/2} (2k + 1)^{1/2} & \text{wartości poniżej przekątnej} \\
-        n + 1                         & \text{wartości na przekątnej}      \\
-        0                             & \text{wartości powyżej przekątnej}
+        (2n + 1)^{1/2} (2k + 1)^{1/2} & \text{dla} n > k \\
+        n + 1                         & \text{dla} n = k \\
+        0                             & \text{dla} n < k
     \end{cases}
     \label{equ:hippo_matrix}
 \end{equation}
 
-Zbudowanie macierzy w taki sposób prowadzi do zdecydowanie lepszych wyników niż zainicjalizowanie jej losowo. wielomian Lagrange'a
+Zbudowanie macierzy w taki sposób prowadzi do zdecydowanie lepszych wyników niż zainicjalizowanie jej losowo. Macierz HiPPO reprodukuje sekwencje w taki sposób, że dane które są bliżej końca sekwencji są reprodukowane lepiej, niż te na początku. Ideą stojącą za używaniem takiego rozwiązania jest chęć zachowania jak największej liczby informacji w stanie ukrytym. Użycie współczynników wielomianów Lagrange'a pozwala aby macierz pomagała zapamiętywać długie zależności pomiędzy tokenami \cite{lagrange}.
 
+\subsubsection*{Modele 4S}
+Po dodanie omawianych usprawnień (dyskretyzacja, macierz HiPPO) do tradycyjnego modelu SSM nowo otrzymany model dostał nazwę \textit{Structured State Space for Sequences (4S)}. Tego rodzaju modele pozwalają na śledzenie długich zależności w sekwencji dzięki macierzy HiPPO, a możliwość ich reprezentacji w postaci rekurencyjnej oraz konwolucyjnej rozwiązuje problemy między innymi złożoności obliczeniowej treningu i infrencji modelu.
 
-% \begin{table}[ht!]
-%     \centering
-%     \begin{tabular}{|l|c|c|}
-%         \hline
-%         \textbf{Architektura}       & \textbf{Transformer} & \textbf{Mamba} \\ \hline
-%         \textbf{Szybkość predykcji} & $O(n)$               & $O(1)$         \\ \hline
-%         \textbf{Szybkość treningu}  & $O(n^2)$             & $O(n)$         \\ \hline
-%     \end{tabular}
-%     \caption{Porównanie transformera i mamby.}
-%     \label{tab:comparison}
-% \end{table}
+\subsection{Mamba}
+Mamba \cite{mamba} jest architekturą modelu, która bazuje na modelach 4S, jednak wprowadza dodatkowe usprawnienia takie jak:
+\begin{enumerate}
+    \item algorytm selektywnego skanowania (\textit{selective scan}) pozwala skutecznie skupiać się na istotnych danych wejściowych i ignorować te nieistotne. Zdolność ta umożliwia lepszą obsługę zależności dalekiego zasięgu i filtrowanie szumów, co stanowi znaczną poprawę w stosunku do standardowych transformatorów, które traktują wszystkie dane wejściowe jako tak samo ważne
+    \item algorytm, \textit{hardware-aware}, który pozwala uniknąć konieczności wykonywania rozległych operacji wejścia/wyjścia pomiędzy różnymi poziomami hierarchii pamięci GPU, co prowadzi do znacznej poprawy szybkości. W szczególności, skaluje się ona liniowo wraz z długością sekwencji
+\end{enumerate}
 
 \begin{figure}[ht!]
     \begin{center}
@@ -587,6 +587,11 @@ Zbudowanie macierzy w taki sposób prowadzi do zdecydowanie lepszych wyników ni
     \caption{Schemat modelu Mamba.}
     \label{fig:mamba1}
 \end{figure}
+
+Porównując grafiki \ref*{fig:mamba1} oraz \ref*{fig:ssm_scheme} można zobaczyć wiele podobieństw. Główne elementy pojawiają się w obu modelach, jednak w przypadku Mamby jest jasno zaznaczony jest mechanizm selekcji, a kolorami jest zaznaczona sekcja pamięci GPU na której są zaalokowane konkretne części modelu.
+
+W przypadku zadań syntetycznych, takich jak kopiowanie, Mamba nie tylko z łatwością rozwiązuje te zadania, ale może również ekstrapolować rozwiązania na bardzo długie sekwencje (ponad milion tokenów), gdzie ich długość znacząco przewyższa tą, na której model został wytrenowany. Mamba osiąga wydajność jakości transformatora w zadaniach modelowania języka. Zapewnia również pięciokrotnie szybszy czas generowania w porównaniu do transformatorów o podobnej wielkości i dorównuje wydajnością transformatorom dwukrotnie większym w testach porównawczych takich jak LAMBDA, Pile lub PIQA.
+
 
 \chapter{Propozycja rozwiązania}
 \chapter{Przeprowadzenie eksperymentów}
@@ -605,6 +610,9 @@ W przypadku muzyki, istnieje możliwość aby zweryfikować poprawność wygener
 W mojej pracy prawdopodobnie zostanie zastosowane podejście MOS dla dość niewielkiej grupy ludzi, jednak jeśli triale oprogramowania pozwola, spróbuję przynajmniej sprawdzić czy taka analiza pozwala na jakieś sensowne obliczenie metryki
 \end{comment}
 Brak obiektywnych metryk, którymi można się posłużyć podczas ewaluacji modelu jest dodatkowym problemem w momencie \textit{fine-tunigu} modelu. Ciężko jest wybrać odpowiednie rozwiązanie architektoniczne lub odpowiednie hiperparametry, kiedy jedyną miarą jakości wygenerowanych danych jest subiektywna opinia programisty lub grupy osób wybranych jako wyrocznia.
+
+\section{Muzyczny test Turinga}
+\cite{music_turing_test}
 
 \section{Testowanie melodii innymi LLM-ami}
 \subsection{ChatMusician}
