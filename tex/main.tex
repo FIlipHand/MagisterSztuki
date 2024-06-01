@@ -102,6 +102,7 @@
 \usepackage{csquotes}                         % Polskie cudzysłowy — rekomendowany jeżeli używasz 'biblatex'
 \usepackage{tocloft}
 \usepackage{lipsum}
+\usepackage{musicography}
 
 % NAJWAŻNIEJSZE POLECENIE
 \newcommand{\shrug}[1][]{%
@@ -595,14 +596,40 @@ W przypadku zadań syntetycznych, takich jak kopiowanie, Mamba nie tylko z łatw
 
 \chapter{Propozycja rozwiązania}
 \chapter{Przeprowadzenie eksperymentów}
-\begin{comment}
-Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
-\end{comment}
-\section{Opis \textit{pipeline-u}}
-Tutaj zamierzam opisać w jaki sposób modele zostały stworzone, jakie biblioteki zostały użyte, jaki sprzętu został użyty podczas treningu
-\section{Porównanie architektur użytych modeli}
+
 \section{Prezentacja otrzymanych wyników}
-\section{Porównanie wyników}
+Przedstawienie muzyki w pracy stanowi wyzwanie w porównaniu na przykład do wizualnych form sztuki, takich jak obrazy. Muzyka jest medium audytywnym, które oddziałuje na słuch i emocje poprzez dźwięki i rytm, co sprawia, że jej pełne doświadczenie jest trudne do przekazania za pomocą samego tekstu. Opisy muzyczne, notacja i partytury mogą dostarczyć informacji o strukturze i elementach utworu, ale nie oddają one w pełni jego brzmienia i atmosfery. W przeciwieństwie do obrazów, które można bezpośrednio zobaczyć i ocenić na papierze, muzyka wymaga aktywnego odtwarzania, by w pełni ją zrozumieć i docenić. W pracy zostaną przedstawione generacje w dwojaki sposób. W zależności od tego, czy model był wytrenowany na plikach MIDI lub notacji ABC, będzie przedstawiony wynik modelu w formie tekstowej lub \textit{piano roll}. Dodatkowo do każdego z tych przykładów zostanie dodana wygenerowana partytura, jednak należy pamiętać, że w związku z ograniczeniami opisanymi we wcześniejszych częściach pracy, reprezentacja plików MIDI na pięciolinii potrafi nie być idealna.
+
+Na grafice \ref*{code:music_gen1} przedstawiono wynik modelu [DO OPISANIA JAKIEGO MODELU]. Część oznaczoną kolorem niebieskim należy traktowac jako sekwencje wejściową dla modelu, na której podstawie model generuje kolejne tokeny. Dodatkowo należy zwrócić uwagę na podane kody kontrolne w linijce 2, 3 i 4. Reprezentacje otrzymanej muzyki zapisanej na pięciolinii przedstawia grafika \ref*{fig:music_gen1}.
+
+Zależy zwrócić uwagę, że model został poproszony o wygenerowanie melodii w tonacji C-dur (\texttt{K:C}), jednak jak można zaobserwować na obu reprezentacjach, model zaczął dodawać do dźwięków \texttt{c} krzyzyki (\texttt{\string^c} w notacji ABC). Prawdopodobnie wzięło się to z faktu, że podane jako początek sekwencji dźwięki \texttt{d}, nie są typowym rozpoczęciem melodii w tonacji C-dur. Model oczekiwał podania toniki (pierwszego stopnia skali) ponieważ takie fragmenty są najbardziej popularne i dominowały zbiór uczący.
+
+\begin{figure}
+    \begin{minted}[escapeinside=++]{text}
++\textcolor{blue}{X:1}+
++\textcolor{blue}{S:2}+
++\textcolor{blue}{B:9}+
++\textcolor{blue}{E:4}+
++\textcolor{blue}{L:1/8}+
++\textcolor{blue}{M:3/4}+
++\textcolor{blue}{K:C}+
++\textcolor{blue}{D/2d/2d}+ Ad fa | a/g/e/f/ g/f/e/d/ ^cA | d2 dA df |
+ag/f/ e^c A2 | D2 d^c de | f2 ef/g/ a/g/f/e/ | d2 df e^c |1 d2 D4 :|
+2 d2 D2 fg |: a2 g2 f2 | ed ^cd e/f/g | a2 g2 f2 | ed ^cd e/f g |
+a2 g2 f2 | ed ^cd ef/g/ | a2 g2 fe |1 d2 de fg :|2 d2 D4 ||
+    \end{minted}
+    \caption{Wynik modelu.}\label{code:music_gen1}
+\end{figure}
+
+
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/abc_gen_nice1.pdf}
+    \end{center}
+    \caption{Wygenerowana melodia.}\label{fig:music_gen1}
+\end{figure}
+
+\section{Sposoby oceny wyników}
 Celem porównania otrzymanych wyników z dowolnych modeli, jest ocena jakości ich pracy. W kontekście modeli dyskryminujących (ang. \textit{discriminative model}), na przykład klasyfikatorów bądź modeli regresyjnych, ocena ich jakości jest dość prosta, ponieważ istnieje predefiniowana, prawdziwa wartość w zbiorze testowym, którą model próbuje przewidzieć. W takim przypadku ewaluacja jakości modelu to porównanie prawdziwych danych, z tymi przewidzianymi przez model. Porównanie odbywa się przez policzenie metryk np. dla modelu klasyfikującego celności, precyzji, \textit{F1-score} lub dla modelu regresyjnego MSE lub $R^2$. W przypadku modeli generacyjnych celem treningu jest jak najlepsza aproksymacja rozkładu prawdopodobieństwa danych $P(X_{data})$ lub w przypadku danych oznaczonych łączny rozkład $P(X, Y)$. W przypadku dużej wymiarowości danych, obliczenie obiektywnych metryk takich jak \textit{log-likelihood} lub dywergencja Kullbacka-Leiblera (\textit{KLD}) często jest nieobliczalne. Dla człowieka weryfikacja wyników modeli generacyjnych takich jak \textit{text-to-speech} lub \textit{text-to-image} jest trywialnym zadaniem, jednak nie jest to oczywiste zadanie algorytmiczne. Często odwołuje się do subiektywnych metryk takich jak \textit{MOS ang. mean opinion score}, które oblicza się jako średnią opinię np. w skali od 1-5 braną z zazwyczaj niewielkiej grupy ludzi. Niestety metryka ta często nie jest wiarygodna ze względu na jej subiektywności niewielką próbę badawczą. Aby wyeliminować te wady serwisy takie jak \textit{HuggingFace} udostępniają narzędzia dla członków społeczności, które pozwalają na ranking modeli, z nadzieją że zgodnie z prawem wielkich liczb, przy wystarczającej liczbie odpowiedzi, uda się otrzymać w miarę obiektywną ocenę. Przykładowym narzędziem tego rodzaju jest \textit{The TTS Arena}\cite{tts_arena}, która pozwala na ranking modeli \textit{text-to-speech}.
 
 W przypadku muzyki, istnieje możliwość aby zweryfikować poprawność wygenerowanych sekwencji odwołując się do teorii oraz harmonii muzyki. Istnieje kilka narzędzi takich jak \textit{Chordify}, \textit{Hooktheory} lub \textit{Sibelius}, które pozwalają na analizę harmoniczną utworów, dzieki czemu autorzy mogą w prosty sposób analizować i dobierać progresję danej melodii. Niestety większość takich narzędzi jest płatna i nie pozwala na zautomatyzowaną analizę wielu plików. Dodatkowym problemem jest w analizie harmonicznej, szczególnie prowadzonej przez algorytmy, jest rozróżnienie harmonii wertykalnej oraz horyzontalnej. Rozróżnienie to zostało wytłumaczone przez Jacoba Colliera, kilkukrotnego laureata nagród \textit{Grammy}, którego zdaniem akord, który nawet zagrany sam brzmi niepoprawnie, w odpowiednim kontekście i przez odpowiednią progresję w kolejnych fragmentach muzyki, może mieć nadany sens, przez co cała sekwencja nabiera muzycznego piękna\cite{collier_wrongnote}.
@@ -611,11 +638,8 @@ W mojej pracy prawdopodobnie zostanie zastosowane podejście MOS dla dość niew
 \end{comment}
 Brak obiektywnych metryk, którymi można się posłużyć podczas ewaluacji modelu jest dodatkowym problemem w momencie \textit{fine-tunigu} modelu. Ciężko jest wybrać odpowiednie rozwiązanie architektoniczne lub odpowiednie hiperparametry, kiedy jedyną miarą jakości wygenerowanych danych jest subiektywna opinia programisty lub grupy osób wybranych jako wyrocznia.
 
-\section{Muzyczny test Turinga}
-\cite{music_turing_test}
-
-\section{Testowanie melodii innymi LLM-ami}
-\subsection{ChatMusician}
+\subsection{Testowanie melodii innymi LLM-ami}
+\subsubsection*{ChatMusician}
 \textit{ChatMusician} to otwarty model językowy, który integruje zdolności muzyczne. Model ten został zaprojektowany na bazie modelu LLaMA2 z 7 miliardów parametrów, jest trenowany i dostrajany z wykorzystaniem notacji muzycznej ABC, traktując muzykę jako drugi język. Dzięki temu ChatMusician jest w stanie rozumieć i generować muzykę za pomocą tekstowego tokenizatora, bez konieczności stosowania zewnętrznych struktur neuronowych czy tokenizatorów stworzonych specjalnie dla notacji muzycznej. \textit{ChatMusician} może komponować dobrze zorganizowane, pełnometrażowe utwory muzyczne na podstawie tekstu, akordów, melodii, motywów i form muzycznych, przewyższając wyniki modelu \textit{GPT-4}. Model ten osiąga lepsze wyniki niż \textit{LLaMA2} i \textit{GPT-3.5} w zadaniach związanych z rozumieniem teorii muzyki, co potwierdzono w benchmarku \textit{MusicTheoryBench}, zaprojektowanym do oceny zdolności modeli do rozumienia i rozumowania muzycznego. Model został udostepniony dla użytku publicznego na platformie \textit{HuggingFace}.
 
 Model jest potencjalnym rozwiązaniem problemu z oceną wygenerowanej muzyki. Będąc wytrenowanym na prawdziwych fragmentach muzycznych z całego świata i wielu kultur oraz tekstu zawierającego teorię muzyki, powinien w dość obiektywny sposób oceniać fragmenty melodii. Zapytanie o wcześniej wygenerowany fragment przedstawiono na \ref*{code:chat_prompt_1}.
@@ -659,7 +683,7 @@ It is a successful example of its genre and style.
 
 Model dość przychylnie spojrzał na ten wygenerowany fragment, jednak jego odpowiedzi są dość ogólnikowe. Nie podejmuje on analizy konkretach fragmentów i dodatkowo udziela informacji o użytych wielu instrumentach, co nie występuje w przedstawionej mu notacji. W kontekście harmonii używa słów takich jak \textit{well-crafted}, \textit{coherent}, \textit{pleasing}. Słowa te nie są ``naukowe'' przez co ciężko zinterpretować odpowiedź modelu.
 
-Aby upewnić się nie jest to jest domyślne zachowanie należy poprosić model o ocenę fragmentu, który został specjalnie przygotowany, aby nie brzmiał dobrze dla ludzkiego ucha. Odpowiedź modelu przedstawiono we fragmencie \ref*{code:chat_prompt2}.
+Aby upewnić się nie jest to jest domyślne zachowanie należy poprosić model o ocenę fragmentu, który został specjalnie przygotowany, aby nie brzmiał dobrze dla ludzkiego ucha. Zapis tego fragmentu został zapisany na grafice \ref*{fig:gen_bad}. Dodatkowo, pomimo tego że zapis jest poprawny w notacji ABC, niektóre takty zawierają więcej dźwięków niż jest to przewidziane w metrum. Odpowiedź modelu przedstawiono we fragmencie \ref*{code:chat_prompt2}.
 
 \begin{figure}[ht!]
     \begin{minted}[escapeinside=++]{text}
@@ -691,17 +715,24 @@ chord progressions. It is an enjoyable and engaging composition.
     \end{minted}
     \caption{Odpowiedź modelu na fałszywy fragment.}\label{code:chat_prompt2}
 \end{figure}
+\begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/abc_gen_notnice1.pdf}
+    \end{center}
+    \caption{Specjalnie stworzony ``brzydki'' fragment muzyki.}\label{fig:gen_bad}
+\end{figure}
 
 Jak się okazało model również ten fragment opisał bardzo przychylnie, jednak dla żadnego człowieka ta muzyka nie byłaby przyjemna. Niestety model \textit{ChatMusician} nie jest dobrym ``nauczycielem'' i nie jest w stanie poprawnie ocenić czy dany fragment jest poprawny muzycznie.
 
-\subsection{GPT-4}
+\subsubsection*{GPT-4}
 % estimates 1.76 trillion parameters
 Aby przetestować
 
+
+\subsection{Muzyczny test Turinga}
+\cite{music_turing_test}
+
 \chapter{Zakończenie}
-\begin{comment}
-Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
-\end{comment}
 \begin{enumerate}
     \item Podsumowanie.
     \item Możliwości dalszego rozwoju.
@@ -709,349 +740,349 @@ Tytuł oraz strukturę rozdziału należy ustalić z opiekunem pracy.
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\appendix % Dodatek
-\chapter{Typowe elementy składowe pracy dyplomowej z informatyki}
-\section{Tabele}
-\begin{comment}
-\begin{itemize}
-    \item Każda tabela powinna być opisana w treści pracy.
-    \item Podpis ma być przed tabelą.
-\end{itemize}
-\end{comment}
-W tabeli \ref{tab:result} przedstawiono wyniki pomiarów.
-\begin{table}[!h]
-    \caption{Pomiary zużycia energii elektrycznej\label{tab:result}.}
-    \centering
-    \begin{tabular}{|l||r@{,}l|}
-        \hline
-        \textbf{L.p.} & \multicolumn{2}{|c|}{\textbf{Wartość}}          \\
-        \hline
-        \hline
-        \cline{2-3}
-        %\textbf{L.p.} & \multicolumn{1}{r@{\,\vline\,}}{Całkowita} & Ułamkowa \\
-        \hline
-        1             & 12345                                  & 6789   \\
-        \cline{2-3}
-                      & 45                                     & 89     \\
-        \hline
-        2             & 45                                     & 678901 \\
-        \hline
-    \end{tabular}
-\end{table}
+% \appendix % Dodatek
+% \chapter{Typowe elementy składowe pracy dyplomowej z informatyki}
+% \section{Tabele}
+% \begin{comment}
+% \begin{itemize}
+%     \item Każda tabela powinna być opisana w treści pracy.
+%     \item Podpis ma być przed tabelą.
+% \end{itemize}
+% \end{comment}
+% W tabeli \ref{tab:result} przedstawiono wyniki pomiarów.
+% \begin{table}[!h]
+%     \caption{Pomiary zużycia energii elektrycznej\label{tab:result}.}
+%     \centering
+%     \begin{tabular}{|l||r@{,}l|}
+%         \hline
+%         \textbf{L.p.} & \multicolumn{2}{|c|}{\textbf{Wartość}}          \\
+%         \hline
+%         \hline
+%         \cline{2-3}
+%         %\textbf{L.p.} & \multicolumn{1}{r@{\,\vline\,}}{Całkowita} & Ułamkowa \\
+%         \hline
+%         1             & 12345                                  & 6789   \\
+%         \cline{2-3}
+%                       & 45                                     & 89     \\
+%         \hline
+%         2             & 45                                     & 678901 \\
+%         \hline
+%     \end{tabular}
+% \end{table}
 
-Jeżeli tabela zawiera dużą liczbę wierszy i może nie zmieścić się na stronie \pauza patrz tabela \ref{tab:longtable} \pauza skorzystaj z pakietu \emph{longtable} \cite{longtable}.
-\begin{longtable}{|p{14ex}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|}
-    \caption{Tabela, która zawiera dużą liczbę wierszy\label{tab:longtable}.}
-    \endfirsthead
-    \hline
-              & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline
-    \endhead
-    \endfoot
-    \hline\hline
-              & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 1 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 2 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 3 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 4 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 5 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 6 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 7 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 8 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    Student 9 &   &   &   &   &   &   &   &   & \\
-    \cline{2-9}
-              &   &   &   &   &   &   &   &   & \\
-    \hline\hline
-    % Student 10 &   &   &   &   &   &   &   &   & \\
-    % \cline{2-9}
-    %            &   &   &   &   &   &   &   &   & \\
-    % \hline\hline
-    % Student 11 &   &   &   &   &   &   &   &   & \\
-    % \cline{2-9}
-    %            &   &   &   &   &   &   &   &   & \\
-    % \hline\hline
-    % Student 12 &   &   &   &   &   &   &   &   & \\
-    % \cline{2-9}
-    %            &   &   &   &   &   &   &   &   & \\
-    % \hline\hline
-    % Student 13 &   &   &   &   &   &   &   &   & \\
-    % \cline{2-9}
-    %            &   &   &   &   &   &   &   &   & \\
-    % \hline\hline
-\end{longtable}
+% Jeżeli tabela zawiera dużą liczbę wierszy i może nie zmieścić się na stronie \pauza patrz tabela \ref{tab:longtable} \pauza skorzystaj z pakietu \emph{longtable} \cite{longtable}.
+% \begin{longtable}{|p{14ex}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|}
+%     \caption{Tabela, która zawiera dużą liczbę wierszy\label{tab:longtable}.}
+%     \endfirsthead
+%     \hline
+%               & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline
+%     \endhead
+%     \endfoot
+%     \hline\hline
+%               & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 1 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 2 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 3 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 4 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 5 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 6 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 7 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 8 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     Student 9 &   &   &   &   &   &   &   &   & \\
+%     \cline{2-9}
+%               &   &   &   &   &   &   &   &   & \\
+%     \hline\hline
+%     % Student 10 &   &   &   &   &   &   &   &   & \\
+%     % \cline{2-9}
+%     %            &   &   &   &   &   &   &   &   & \\
+%     % \hline\hline
+%     % Student 11 &   &   &   &   &   &   &   &   & \\
+%     % \cline{2-9}
+%     %            &   &   &   &   &   &   &   &   & \\
+%     % \hline\hline
+%     % Student 12 &   &   &   &   &   &   &   &   & \\
+%     % \cline{2-9}
+%     %            &   &   &   &   &   &   &   &   & \\
+%     % \hline\hline
+%     % Student 13 &   &   &   &   &   &   &   &   & \\
+%     % \cline{2-9}
+%     %            &   &   &   &   &   &   &   &   & \\
+%     % \hline\hline
+% \end{longtable}
 
-Tabele, w których występuje długi tekst, a co za tym idzie może się on nie zmieścić \pauza musi zostać zawinięty, z pomocą przychodzi środowisko 'tabularx' \cite{tabularx} \pauza  patrz tabela \ref{tab:tabularx}.
-\begin{table}[!ht]
-    \caption{Tabela zawierająca długi tekst\label{tab:tabularx}.}
-    \centering
-    \begin{tabularx}{300pt}{|c|X|c|X|}
-        \hline
-        \multicolumn{2}{|c|}{Wpis wielokolumnowy!} &
-        TRZY                                       &
-        CZTERY                                       \\
-        \hline
-        jeden                                      &
-        \raggedright\arraybackslash Szerokość tej kolumny zależy od
-        szerokości tabeli.                         &
-        trzy                                       &
-        \raggedright\arraybackslash Kolumna czwarta będzie zachowywać się w taki sam sposób jak
-        druga kolumna o tej samej szerokości.        \\
-        \hline
-    \end{tabularx}
-\end{table}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Rysunki}
-\begin{comment}
-\begin{itemize}
-    \item Rysunki powinny być przerysowane samodzielnie albo używane tylko te,
-          których twórcy zezwolili na ich rozpowszechnianie oraz kopiowanie, czyli
-          np. rysunki objęte licencją Creative Commons.
-    \item Każdy rysunek powinien być opisany w treści pracy.
-\end{itemize}
-\end{comment}
-\subsection{Wewnętrzne}
-Klasa \emph{agh-wi}, automatycznie, dołącza pakiet \emph{TikZ} \cite{tikz} \pauza dostarcza on komend pozwalających na tworzenie grafik. Przykładowe grafiki pokazano na rysunku \ref{fig:tikz1} oraz \ref{fig:tikz2}.
-%%%%%%%%%%%%%%%%%
-\begin{figure}[!h]
-    \begin{center}
-        \tikz \draw[thick,rounded corners=8pt]
-        (0,0) -- (0,2) -- (1,3.25) -- (2,2) -- (2,0) -- (0,2) -- (2,2) -- (0,0) -- (2,0);
-    \end{center}
-    \caption{Prosty rysunek \emph{TikZ}\label{fig:tikz1}.}
-\end{figure}
-%%%%%%%%%%%%%%%%%
-\begin{figure}[!ht]
-    \begin{center}
-        \begin{tikzpicture}
-            \draw[step=.5cm,gray,very thin] (-1.4,-1.4) grid (1.4,1.4);
-            \draw (-1.5,0) -- (1.5,0);
-            \draw (0,-1.5) -- (0,1.5);
-            \draw (0,0) circle [radius=1cm];
-        \end{tikzpicture}
-    \end{center}
-    \caption{Bardziej złożony rysunek \emph{TikZ}\label{fig:tikz2}.}
-\end{figure}
-%%%%%%%%%%%%%%%%%
+% Tabele, w których występuje długi tekst, a co za tym idzie może się on nie zmieścić \pauza musi zostać zawinięty, z pomocą przychodzi środowisko 'tabularx' \cite{tabularx} \pauza  patrz tabela \ref{tab:tabularx}.
+% \begin{table}[!ht]
+%     \caption{Tabela zawierająca długi tekst\label{tab:tabularx}.}
+%     \centering
+%     \begin{tabularx}{300pt}{|c|X|c|X|}
+%         \hline
+%         \multicolumn{2}{|c|}{Wpis wielokolumnowy!} &
+%         TRZY                                       &
+%         CZTERY                                       \\
+%         \hline
+%         jeden                                      &
+%         \raggedright\arraybackslash Szerokość tej kolumny zależy od
+%         szerokości tabeli.                         &
+%         trzy                                       &
+%         \raggedright\arraybackslash Kolumna czwarta będzie zachowywać się w taki sam sposób jak
+%         druga kolumna o tej samej szerokości.        \\
+%         \hline
+%     \end{tabularx}
+% \end{table}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Rysunki}
+% \begin{comment}
+% \begin{itemize}
+%     \item Rysunki powinny być przerysowane samodzielnie albo używane tylko te,
+%           których twórcy zezwolili na ich rozpowszechnianie oraz kopiowanie, czyli
+%           np. rysunki objęte licencją Creative Commons.
+%     \item Każdy rysunek powinien być opisany w treści pracy.
+% \end{itemize}
+% \end{comment}
+% \subsection{Wewnętrzne}
+% Klasa \emph{agh-wi}, automatycznie, dołącza pakiet \emph{TikZ} \cite{tikz} \pauza dostarcza on komend pozwalających na tworzenie grafik. Przykładowe grafiki pokazano na rysunku \ref{fig:tikz1} oraz \ref{fig:tikz2}.
+% %%%%%%%%%%%%%%%%%
+% \begin{figure}[!h]
+%     \begin{center}
+%         \tikz \draw[thick,rounded corners=8pt]
+%         (0,0) -- (0,2) -- (1,3.25) -- (2,2) -- (2,0) -- (0,2) -- (2,2) -- (0,0) -- (2,0);
+%     \end{center}
+%     \caption{Prosty rysunek \emph{TikZ}\label{fig:tikz1}.}
+% \end{figure}
+% %%%%%%%%%%%%%%%%%
+% \begin{figure}[!ht]
+%     \begin{center}
+%         \begin{tikzpicture}
+%             \draw[step=.5cm,gray,very thin] (-1.4,-1.4) grid (1.4,1.4);
+%             \draw (-1.5,0) -- (1.5,0);
+%             \draw (0,-1.5) -- (0,1.5);
+%             \draw (0,0) circle [radius=1cm];
+%         \end{tikzpicture}
+%     \end{center}
+%     \caption{Bardziej złożony rysunek \emph{TikZ}\label{fig:tikz2}.}
+% \end{figure}
+% %%%%%%%%%%%%%%%%%
 
-Oprócz rysunków eksponowanych możliwe jest tworzenie grafik będących  \tikz{\fill[orange] (0ex,0ex) circle (1ex);  \fill[red] (1ex,1ex) circle (1ex);} częścią \tikz{\draw (0pt,0pt) -- (20pt,6pt);} zdania.
+% Oprócz rysunków eksponowanych możliwe jest tworzenie grafik będących  \tikz{\fill[orange] (0ex,0ex) circle (1ex);  \fill[red] (1ex,1ex) circle (1ex);} częścią \tikz{\draw (0pt,0pt) -- (20pt,6pt);} zdania.
 
-\emph{TikZ} pozwala również na kreślenie po powierzchni strony, np. możemy narysować strzałki pomiędzy elementami strony.
-\begin{shaded}
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Zmodyfikowana wersja przykładu ze strony  https://texample.net/tikz/examples/global-nodes/
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    Ułamek \pauza patrz wzór \ref{eqn:tikz} \pauza składa się z:
-    \begin{itemize}
-        \item Licznika \tikz[na] \node (n1) {};
-    \end{itemize}
-    %%%%%%%%%%%%%%%%%
-    \begin{equation}
-        a =  \frac{\tikz[baseline] \node[fill=blue!20,rectangle] (t1){$x+y$};}{\tikz[baseline] \node[fill=red!20, ellipse] (t2){$y-z$}; }
-        \label{eqn:tikz}
-    \end{equation}
-    %%%%%%%%%%%%%%%%%
-    \begin{itemize}
-        \item Mianownika \tikz\node[na] (n2) {};
-    \end{itemize}
-    %%%%%%%%%%%%%%%%%
-    \begin{tikzpicture}[overlay]
-        \path  (n1) edge [->,bend left] (t1);
-        \path  (n2) edge [->,bend right] (t2);
-    \end{tikzpicture}
-\end{shaded}
-\subsection{Zewnętrzne}
-Oczywiście możliwe jest również dołączanie rysunków zewnętrznych \pauza
-pakiet \emph{graphicx} \cite{graphicx} pozwala na wstawianie grafik zapisanych w  plikach: '.png', '.jpg' oraz '.pdf'. Rysunek \ref{fig:logo} wstawiono przy użyciu tego pakietu.
-\begin{figure}[!ht]
-    \begin{center}
-        \IfFileExists{img/logo_podstawowe.png}{
-            \includegraphics[width=0.7\linewidth]{img/logo_podstawowe}
-        }
-        {Nie znaleziono pliku 'img/logo\_podstawowe.png' \pauza pobierz go ze strony \url{https://www.informatyka.agh.edu.pl/media/uploads/Logo WI/PNG/logo_podstawowe.png}}
-    \end{center}
-    \caption{Logo Wydziału Informatyki.}
-    \label{fig:logo}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Kody źródłowe}
-Najpopularniejszymi pakietami, które umożliwiają składanie kodów źródłowych programów, są:
-\begin{description}
-    \item[listings \cite{listings}] \pauza kod źródłowy jest formatowany bezpośrednio przez \LaTeX{}\dywiz{}a \pauza nie jest używany żaden, zewnętrzny, formater kodu.
-        \begin{lstlisting}[language=C++, float=ht, label=lst:code1, caption={Przykładowy kod źródłowy sformatowany za pomocą pakietu 'listings'.}]
-/* Pierwszy program w C++ */
+% \emph{TikZ} pozwala również na kreślenie po powierzchni strony, np. możemy narysować strzałki pomiędzy elementami strony.
+% \begin{shaded}
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     % Zmodyfikowana wersja przykładu ze strony  https://texample.net/tikz/examples/global-nodes/
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     Ułamek \pauza patrz wzór \ref{eqn:tikz} \pauza składa się z:
+%     \begin{itemize}
+%         \item Licznika \tikz[na] \node (n1) {};
+%     \end{itemize}
+%     %%%%%%%%%%%%%%%%%
+%     \begin{equation}
+%         a =  \frac{\tikz[baseline] \node[fill=blue!20,rectangle] (t1){$x+y$};}{\tikz[baseline] \node[fill=red!20, ellipse] (t2){$y-z$}; }
+%         \label{eqn:tikz}
+%     \end{equation}
+%     %%%%%%%%%%%%%%%%%
+%     \begin{itemize}
+%         \item Mianownika \tikz\node[na] (n2) {};
+%     \end{itemize}
+%     %%%%%%%%%%%%%%%%%
+%     \begin{tikzpicture}[overlay]
+%         \path  (n1) edge [->,bend left] (t1);
+%         \path  (n2) edge [->,bend right] (t2);
+%     \end{tikzpicture}
+% \end{shaded}
+% \subsection{Zewnętrzne}
+% Oczywiście możliwe jest również dołączanie rysunków zewnętrznych \pauza
+% pakiet \emph{graphicx} \cite{graphicx} pozwala na wstawianie grafik zapisanych w  plikach: '.png', '.jpg' oraz '.pdf'. Rysunek \ref{fig:logo} wstawiono przy użyciu tego pakietu.
+% \begin{figure}[!ht]
+%     \begin{center}
+%         \IfFileExists{img/logo_podstawowe.png}{
+%             \includegraphics[width=0.7\linewidth]{img/logo_podstawowe}
+%         }
+%         {Nie znaleziono pliku 'img/logo\_podstawowe.png' \pauza pobierz go ze strony \url{https://www.informatyka.agh.edu.pl/media/uploads/Logo WI/PNG/logo_podstawowe.png}}
+%     \end{center}
+%     \caption{Logo Wydziału Informatyki.}
+%     \label{fig:logo}
+% \end{figure}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Kody źródłowe}
+% Najpopularniejszymi pakietami, które umożliwiają składanie kodów źródłowych programów, są:
+% \begin{description}
+%     \item[listings \cite{listings}] \pauza kod źródłowy jest formatowany bezpośrednio przez \LaTeX{}\dywiz{}a \pauza nie jest używany żaden, zewnętrzny, formater kodu.
+%         \begin{lstlisting}[language=C++, float=ht, label=lst:code1, caption={Przykładowy kod źródłowy sformatowany za pomocą pakietu 'listings'.}]
+% /* Pierwszy program w C++ */
 
-#include <iostream>
+% #include <iostream>
 
-int main() {
-std::cout << "Hello World!";
-return 0;
-}
-\end{lstlisting}
-    \item[minted \cite{minted}] \pauza formatuje kod źródłowy przy użyciu biblioteki języka Python  o nazwie \emph{Pygments} \cite{pygments}.
-        \begin{listing}[!ht]
-            \caption{Przykładowy listing sformatowany za pomocą pakietu 'minted'.\label{lst:code2}}
-            \begin{minted}{c++}
-/* Pierwszy program w C++ */
+% int main() {
+% std::cout << "Hello World!";
+% return 0;
+% }
+% \end{lstlisting}
+%     \item[minted \cite{minted}] \pauza formatuje kod źródłowy przy użyciu biblioteki języka Python  o nazwie \emph{Pygments} \cite{pygments}.
+%         \begin{listing}[!ht]
+%             \caption{Przykładowy listing sformatowany za pomocą pakietu 'minted'.\label{lst:code2}}
+%             \begin{minted}{c++}
+% /* Pierwszy program w C++ */
 
-#include <iostream>
+% #include <iostream>
 
-int main() {
-std::cout << "Hello World!";
-return 0;
-}
-\end{minted}
-        \end{listing}
-\end{description}
+% int main() {
+% std::cout << "Hello World!";
+% return 0;
+% }
+% \end{minted}
+%         \end{listing}
+% \end{description}
 
-\begin{comment}
-\begin{itemize}
-    \item Podpis ma być przed kodem źródłowym.
-    \item \alert{Proszę używać tylko jednego z tych pakietów}; w przeciwnym razie otrzymasz taki efekt, jak w przykładowej pracy \pauza obydwa listingi mają ten sam numer.
-\end{itemize}
-\end{comment}
+% \begin{comment}
+% \begin{itemize}
+%     \item Podpis ma być przed kodem źródłowym.
+%     \item \alert{Proszę używać tylko jednego z tych pakietów}; w przeciwnym razie otrzymasz taki efekt, jak w przykładowej pracy \pauza obydwa listingi mają ten sam numer.
+% \end{itemize}
+% \end{comment}
 
-Kod źródłowy w C++ sformatowany przy użyciu pakietu \emph{listings}, pokazano na listingu \ref{lst:code1}; sformatowany przy użyciu pakietu \emph{minted}, pokazano na listingu \ref{lst:code2}.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Algorytmy}
-Pakiet \emph{algorithm2e} \cite{algorithm2e} to jeden z kilku, które pozwalają zapisywać algorytmy w formie pseudokodu \pauza patrz
-algorytm \ref{alg:algo_disjdecomp}.
-\begin{comment}
-Podpis ma być przed algorytmem.
-\end{comment}
-\begin{algorithm}[!htb]
-    \caption{Disjoint decomposition.}\label{alg:algo_disjdecomp}
-    %%%%%%%%%%%%%%%%%%%%%%%%%%     
-    \SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
-    \SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
-    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-    \Input{A bitmap $Im$ of size $w\times l$}
-    \Output{A partition of the bitmap}
-    \BlankLine
-    \emph{special treatment of the first line}\;
-    \For{$i\leftarrow 2$ \KwTo $l$}{
-        \emph{special treatment of the first element of line $i$}\;
-        \For{$j\leftarrow 2$ \KwTo $w$}{\label{forins}
-            \Left$\leftarrow$ \FindCompress{$Im[i,j-1]$}\;
-            \Up$\leftarrow$ \FindCompress{$Im[i-1,]$}\;
-            \This$\leftarrow$ \FindCompress{$Im[i,j]$}\;
-            \If(\tcp*[h]{O(\Left,\This)==1}){\Left compatible with \This}{\label{lt}
-                \lIf{\Left $<$ \This}{\Union{\Left,\This}}
-                \lElse{\Union{\This,\Left}}
-            }
-            \If(\tcp*[f]{O(\Up,\This)==1}){\Up compatible with \This}{\label{ut}
-                \lIf{\Up $<$ \This}{\Union{\Up,\This}}
-                \tcp{\This is put under \Up to keep tree as flat as possible}\label{cmt}
-                \lElse{\Union{\This,\Up}}\tcp*[h]{\This linked to \Up}\label{lelse}
-            }
-        }
-        \lForEach{element $e$ of the line $i$}{\FindCompress{p}}
-    }
-\end{algorithm}\DecMargin{1em}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Wzory}
-\LaTeX{} bardzo dobrze sprawdza się w przypadku prac dyplomowych zawierających wzory matematyczne\footnote{ W przypadku złożonych wzorów warto zastosować pakiet \emph{amsmath} \cite{amsmath}.}.
-\subsection{Przykłady}
-Wzór $E = mc^{2}$\nomenclature{$c$}{Prędkość światła w próżni} jest częścią zdania.
+% Kod źródłowy w C++ sformatowany przy użyciu pakietu \emph{listings}, pokazano na listingu \ref{lst:code1}; sformatowany przy użyciu pakietu \emph{minted}, pokazano na listingu \ref{lst:code2}.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Algorytmy}
+% Pakiet \emph{algorithm2e} \cite{algorithm2e} to jeden z kilku, które pozwalają zapisywać algorytmy w formie pseudokodu \pauza patrz
+% algorytm \ref{alg:algo_disjdecomp}.
+% \begin{comment}
+% Podpis ma być przed algorytmem.
+% \end{comment}
+% \begin{algorithm}[!htb]
+%     \caption{Disjoint decomposition.}\label{alg:algo_disjdecomp}
+%     %%%%%%%%%%%%%%%%%%%%%%%%%%     
+%     \SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
+%     \SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
+%     \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+%     \Input{A bitmap $Im$ of size $w\times l$}
+%     \Output{A partition of the bitmap}
+%     \BlankLine
+%     \emph{special treatment of the first line}\;
+%     \For{$i\leftarrow 2$ \KwTo $l$}{
+%         \emph{special treatment of the first element of line $i$}\;
+%         \For{$j\leftarrow 2$ \KwTo $w$}{\label{forins}
+%             \Left$\leftarrow$ \FindCompress{$Im[i,j-1]$}\;
+%             \Up$\leftarrow$ \FindCompress{$Im[i-1,]$}\;
+%             \This$\leftarrow$ \FindCompress{$Im[i,j]$}\;
+%             \If(\tcp*[h]{O(\Left,\This)==1}){\Left compatible with \This}{\label{lt}
+%                 \lIf{\Left $<$ \This}{\Union{\Left,\This}}
+%                 \lElse{\Union{\This,\Left}}
+%             }
+%             \If(\tcp*[f]{O(\Up,\This)==1}){\Up compatible with \This}{\label{ut}
+%                 \lIf{\Up $<$ \This}{\Union{\Up,\This}}
+%                 \tcp{\This is put under \Up to keep tree as flat as possible}\label{cmt}
+%                 \lElse{\Union{\This,\Up}}\tcp*[h]{\This linked to \Up}\label{lelse}
+%             }
+%         }
+%         \lForEach{element $e$ of the line $i$}{\FindCompress{p}}
+%     }
+% \end{algorithm}\DecMargin{1em}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Wzory}
+% \LaTeX{} bardzo dobrze sprawdza się w przypadku prac dyplomowych zawierających wzory matematyczne\footnote{ W przypadku złożonych wzorów warto zastosować pakiet \emph{amsmath} \cite{amsmath}.}.
+% \subsection{Przykłady}
+% Wzór $E = mc^{2}$\nomenclature{$c$}{Prędkość światła w próżni} jest częścią zdania.
 
-\begin{equation}
-    \left|\sum_{i=1}^n a_ib_i\right|
-    \le
-    \left(\sum_{i=1}^n a_i^2\right)^{1/2}
-    \left(\sum_{i=1}^n b_i^2\right)^{1/2}
-\end{equation}
+% \begin{equation}
+%     \left|\sum_{i=1}^n a_ib_i\right|
+%     \le
+%     \left(\sum_{i=1}^n a_i^2\right)^{1/2}
+%     \left(\sum_{i=1}^n b_i^2\right)^{1/2}
+% \end{equation}
 
-% Do wstawienia poniższych wzorów użyto środowisk (otoczeń) zdefiniowanych w pakiecie 'amsmath'
-Wartości zmiennej opisano wzorem \ref{eq:r1}.
-\begin{equation}
-    \label{eq:r1}
-    x=\begin{cases}
-        y           & \text{dla } y > 0    \\
-        \frac{z}{y} & \text{dla } y \leq 0
-    \end{cases}
-\end{equation}
+% % Do wstawienia poniższych wzorów użyto środowisk (otoczeń) zdefiniowanych w pakiecie 'amsmath'
+% Wartości zmiennej opisano wzorem \ref{eq:r1}.
+% \begin{equation}
+%     \label{eq:r1}
+%     x=\begin{cases}
+%         y           & \text{dla } y > 0    \\
+%         \frac{z}{y} & \text{dla } y \leq 0
+%     \end{cases}
+% \end{equation}
 
-Wzór \ref{eq:r2} to wzór wielowierszowy.
-\begin{align}
-    \label{eq:r2}
-    2x^2 + 3(x-1)(x-2) & =2x^2 + 3(x^2-3x+2)             \\
-                       & = 2x^2 + 3x^2 - 9x + 6\nonumber \\
-                       & = 5x^2 - 9x + 6\nonumber
-\end{align}
-\begin{comment}
-Należy używać tylko dwóch rodzajów wzorów:
-\begin{enumerate}
-    \item \enquote{W linii}.
-    \item Eksponowane, numerowane.
-\end{enumerate}
-\end{comment}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Twierdzenia i podobne struktury}
-Twierdzenie nr \ref{tw} opublikował, w roku 1691, francuski matematyk Michel Rolle.
-\begin{theorem}[Rolle'a]
-    \label{tw}
-    Jeśli dana funkcja f: $\mathbb R \to \mathbb R$ jest:
-    \begin{enumerate}
-        \item ciągła w przedziale $[a,b]$
-        \item jest różniczkowalna w przedziale $(a,b)$
-        \item na końcach przedziału $[a,b]$ przyjmuje równe wartości: $f(a) = f(b)$,
-    \end{enumerate}
-    to w przedziale $(a,b)$ istnieje co najmniej jeden punkt c taki, że $f'(c) = 0$.
-\end{theorem}
+% Wzór \ref{eq:r2} to wzór wielowierszowy.
+% \begin{align}
+%     \label{eq:r2}
+%     2x^2 + 3(x-1)(x-2) & =2x^2 + 3(x^2-3x+2)             \\
+%                        & = 2x^2 + 3x^2 - 9x + 6\nonumber \\
+%                        & = 5x^2 - 9x + 6\nonumber
+% \end{align}
+% \begin{comment}
+% Należy używać tylko dwóch rodzajów wzorów:
+% \begin{enumerate}
+%     \item \enquote{W linii}.
+%     \item Eksponowane, numerowane.
+% \end{enumerate}
+% \end{comment}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Twierdzenia i podobne struktury}
+% Twierdzenie nr \ref{tw} opublikował, w roku 1691, francuski matematyk Michel Rolle.
+% \begin{theorem}[Rolle'a]
+%     \label{tw}
+%     Jeśli dana funkcja f: $\mathbb R \to \mathbb R$ jest:
+%     \begin{enumerate}
+%         \item ciągła w przedziale $[a,b]$
+%         \item jest różniczkowalna w przedziale $(a,b)$
+%         \item na końcach przedziału $[a,b]$ przyjmuje równe wartości: $f(a) = f(b)$,
+%     \end{enumerate}
+%     to w przedziale $(a,b)$ istnieje co najmniej jeden punkt c taki, że $f'(c) = 0$.
+% \end{theorem}
 
-Teraz coś z informatyki \ldots
-\begin{definition}
-    Bit to najmniejsza jednostka informacji w komputerze.
-\end{definition}
-\begin{definition}
-    Bajtem nazywamy ciąg ośmiu bitów.
-\end{definition}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\backmatter % Część końcowa
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Uwagi Autora}
-\begin{itemize}
-    \item Aktualna wersja klasy jest dostępna pod adresem \url{https://github.com/polaksta/LaTeX/tree/master/agh-wi}\footnote{W przypadku Overleaf-a jest ona pod adresem  \url{https://www.overleaf.com/read/fnvcvqjyrbyw\#5ac622}}.
-    \item Skoro Twoja praca dyplomowa powstała w \LaTeX{}u, to zachęcam Cię również do przygotowania prezentacji (na obronę pracy magisterskiej) w tym języku. Najpopularniejszą klasą do tworzenia tego typu dokumentów jest \emph{beamer} \cite{beamer}.
-    \item Pod adresem \url{https://github.com/polaksta/LaTeX/tree/master/beamerthemeAGH}\footnote{W przypadku Overleaf-a jest on pod adresem  \url{https://www.overleaf.com/read/fkjdthnbrfhj\#9c6184}} możesz znaleźć, stworzony przeze mnie,  nasz uczelniany szablon dla prezentacji \LaTeX{} Beamer.
-    \item Treść wszystkich rozdziałów tej, przykładowej, pracy dyplomowej znajduje się w jednym pliku \pauza \textbf{nie jest to polecane rozwiązanie}. W przypadku pisania własnej pracy warto umieścić zawartość każdego z rozdziałów w osobnych plikach, a następnie dołączać je do dokumentu głównego \pauza patrz opis na stronie \url{https://www.dickimaw-books.com/latex/thesis/html/include.html}.
-    \item Jeżeli pewne elementy mają być wyróżniane w \alert{jednakowy} \alert{sposób}, to proponuję nie używać bezpośredniego stylowania, tzn.
-          \mint{tex}{\colorbox{red!50}{jednakowy} \colorbox{red!50}{sposób}} ale zdefiniować własną komendę stylującą, np. \verb+\alert+,
-          \mint{tex}{\newcommand{\alert}[1]{\colorbox{red!50}{#1}}}
-          a następnie użyć jej w dokumencie.
-          \mint{tex}{\alert{jednakowy} \alert{sposób}}
+% Teraz coś z informatyki \ldots
+% \begin{definition}
+%     Bit to najmniejsza jednostka informacji w komputerze.
+% \end{definition}
+% \begin{definition}
+%     Bajtem nazywamy ciąg ośmiu bitów.
+% \end{definition}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \backmatter % Część końcowa
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \chapter{Uwagi Autora}
+% \begin{itemize}
+%     \item Aktualna wersja klasy jest dostępna pod adresem \url{https://github.com/polaksta/LaTeX/tree/master/agh-wi}\footnote{W przypadku Overleaf-a jest ona pod adresem  \url{https://www.overleaf.com/read/fnvcvqjyrbyw\#5ac622}}.
+%     \item Skoro Twoja praca dyplomowa powstała w \LaTeX{}u, to zachęcam Cię również do przygotowania prezentacji (na obronę pracy magisterskiej) w tym języku. Najpopularniejszą klasą do tworzenia tego typu dokumentów jest \emph{beamer} \cite{beamer}.
+%     \item Pod adresem \url{https://github.com/polaksta/LaTeX/tree/master/beamerthemeAGH}\footnote{W przypadku Overleaf-a jest on pod adresem  \url{https://www.overleaf.com/read/fkjdthnbrfhj\#9c6184}} możesz znaleźć, stworzony przeze mnie,  nasz uczelniany szablon dla prezentacji \LaTeX{} Beamer.
+%     \item Treść wszystkich rozdziałów tej, przykładowej, pracy dyplomowej znajduje się w jednym pliku \pauza \textbf{nie jest to polecane rozwiązanie}. W przypadku pisania własnej pracy warto umieścić zawartość każdego z rozdziałów w osobnych plikach, a następnie dołączać je do dokumentu głównego \pauza patrz opis na stronie \url{https://www.dickimaw-books.com/latex/thesis/html/include.html}.
+%     \item Jeżeli pewne elementy mają być wyróżniane w \alert{jednakowy} \alert{sposób}, to proponuję nie używać bezpośredniego stylowania, tzn.
+%           \mint{tex}{\colorbox{red!50}{jednakowy} \colorbox{red!50}{sposób}} ale zdefiniować własną komendę stylującą, np. \verb+\alert+,
+%           \mint{tex}{\newcommand{\alert}[1]{\colorbox{red!50}{#1}}}
+%           a następnie użyć jej w dokumencie.
+%           \mint{tex}{\alert{jednakowy} \alert{sposób}}
 
-          Dzięki temu, jeżeli będziesz chciał / chciała zmienić sposób stylowania tych elementów, np. niebieskie tło zamiast czerwonego, to wystarczy zmodyfikować, tylko, definicję komendy, zamiast zastępować, w tekście pracy dyplomowej, wybrane (niekoniecznie wszystkie!) wystąpienia tekstu \texttt{red}, tekstem \texttt{blue}.
-\end{itemize}
-Stanisław Polak
+%           Dzięki temu, jeżeli będziesz chciał / chciała zmienić sposób stylowania tych elementów, np. niebieskie tło zamiast czerwonego, to wystarczy zmodyfikować, tylko, definicję komendy, zamiast zastępować, w tekście pracy dyplomowej, wybrane (niekoniecznie wszystkie!) wystąpienia tekstu \texttt{red}, tekstem \texttt{blue}.
+% \end{itemize}
+% Stanisław Polak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
