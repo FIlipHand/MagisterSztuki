@@ -689,6 +689,13 @@ Model dość przychylnie spojrzał na ten wygenerowany fragment, jednak jego odp
 Aby upewnić się czy udzielania wyłącznie pozytywnych informacji nie jest domyślnym zachowaniem modelu należy poprosić model o ocenę fragmentu, który został specjalnie przygotowany, aby nie brzmiał dobrze dla ludzkiego ucha. Zapis tego fragmentu został zapisany na grafice \ref*{fig:gen_bad}. Dodatkowo, pomimo tego że zapis jest poprawny w notacji ABC, niektóre takty zawierają więcej lub mniej dźwięków niż jest to przewidziane w metrum \musFig{4 4}. Odpowiedź modelu przedstawiono we fragmencie \ref*{code:chat_prompt2}.
 
 \begin{figure}[ht!]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{./img/abc_gen_notnice1.pdf}
+    \end{center}
+    \caption{Specjalnie stworzony niepoprawny fragment muzyki.}\label{fig:gen_bad}
+\end{figure}
+
+\begin{figure}[ht!]
     \begin{minted}[escapeinside=++]{text}
 +\textcolor{red}{ANSWER:}+ Overall Musicality: The piece has a pleasant and flowing
 quality to it, with a mix of different rhythms and tempos. The use of 
@@ -704,13 +711,6 @@ musicality, sense of harmony, and coherence between its melody and
 chord progressions. It is an enjoyable and engaging composition.
     \end{minted}
     \caption{Odpowiedź modelu na fałszywy fragment.}\label{code:chat_prompt2}
-\end{figure}
-
-\begin{figure}[ht!]
-    \begin{center}
-        \includegraphics[width=0.9\linewidth]{./img/abc_gen_notnice1.pdf}
-    \end{center}
-    \caption{Specjalnie stworzony ``brzydki'' fragment muzyki.}\label{fig:gen_bad}
 \end{figure}
 
 Obie opinie są bardzo do siebie podobne. Okazuje się, że model nie jest w stanie dobrze rozpoznawać to, czy muzyka jest rzeczywiście przyjemna dla ucha czy nie. Nie wychwycił problemów z rytmem, które nie jest jednakowe dla każdego taktu oraz nie wyraził żadnej konstruktywnej krytyki. Niestety model \textit{ChatMusician} nie jest dobrym rozwiązania jeśli chodzi o ocenianie muzyki.
@@ -801,9 +801,17 @@ The melody uses a variety of intervals and note values, which gives it a sense o
 The melody and chord progressions can be coherent and pleasing if the chromaticism and accidentals are used intentionally to create tension and resolution. It may sound natural in a modern or experimental context but could be challenging in a more traditional tonal framework. To improve musicality, ensure that the chromatic notes resolve in a way that feels intentional, and consider adding harmonic support to clarify the underlying chord progressions.
 \end{minted}
 
+W przypadku tego fragmentu muzycznego model w dość niepewny sposób udziela odpowiedzi. Często używa takich wyrażeń jak ``struktura \textbf{może} być przyjemna'', ``\dots \textbf{może} wpływać na dynamikę'', ``\textbf{niespodziewany zwrot} muzyki''. Sugeruje to że model rozumie dość nienaturalną strukturę przekazanej mu melodii. Dokonuje również analizy konkretnych taktów, gdzie gość krytycznie wypowiada się na ich temat. Oferuje również konstruktywną krytykę, zauważając, że częste stosowanie akcydensów i fraz chromatycznych może wywoływać poczucie dezorientacji i nierozwiązanego napięcia. Gwałtowne zatrzymania i złożone interwały są doceniane za ich potencjał dodawania zainteresowania, ale są również podkreślane jako punkty, które mogłyby skorzystać z wyraźniejszego harmonicznego rozwiązania. Ogólnie rzecz ujmując modelowi udało się zwrócić uwagę na szczególne fragmenty w melodii i poddać je krytycznej analizie, która nie była wyłacznie przychylna.
+
+Okazało się, że model \textit{GPT-4}, pomimo tego że nie był specjalnie wyszkolony do tego celu, lepiej przeanalizował muzykę, wykazując zdolność do precyzyjnej identyfikacji i oceny harmonicznych struktur w utworach. Fragment, który był specjalnie przygotowany jako niepoprawny harmonicznie, został skrytykowany za brak spójności i niezgodność z klasycznymi zasadami harmonii. Natomiast model \textit{ChatMusician}, który również przeanalizował te same fragmenty, przedstawił bardzo podobną ocenę dla obu, zarówno poprawnego, jak i niepoprawnego harmonicznie, co wskazywało na jego ogólną analizę, nieodróżniającą istotnych niuansów harmonicznych.
+
+Istnieje technika nazwana \textit{RLHF} (\textit{reinforcement learning with human feedback}), która jest wykorzystywane w trenowaniu lub \textit{fin-tuningu} modeli sztucznej inteligencji \cite{rl_training}. Polega ona na zbieraniu danych od ludzi na temat działania modelu i wykorzystaniu tych danych do poprawy jego wydajności. W praktyce wygląda to tak, że model generuje odpowiedzi na różne zapytania, a ludzie oceniają te odpowiedzi pod kątem ich poprawności, użyteczności, spójności czy innych kryteriów jakościowych. Na podstawie tych ocen model jest wzmacniany, aby generować coraz lepsze odpowiedzi w przyszłości. Przedstawione wyniki analizy modelu \textit{GPT-4} mogą być brane pod uwagę jako dobra opinia na temat tego, czy dany wygenerowany fragment jest poprawny czy nie. Tym sposobem istnieje szansa na rozwój tego rodzaju sposobu dotrenowywania modeli generacyjnych. Problemem jest obecnie koszt używania modelu od OpenAI, który posiada dzienne limity, które co prawda można zwiększyć za określoną sumę. Niestety nie jest to obecnie dobrze skalujące się rozwiązanie szczególnie dla użytku niekomercyjnego. Mimo wszytko jest to możliwy sposób \textit{fine-tuningu} modeli generatywnych muzyki, pod warunkiem odpowiedniej inżynierii \textit{promtu} modelu nauczyciela.
 
 \subsection{Muzyczny test Turinga}
-\cite{music_turing_test}
+Test Turinga dla muzyki, analogicznie do klasycznego Testu Turinga, jest próbą oceny, czy maszyna może wykazać się poziomem inteligencji muzycznej, który jest nieodróżnialny od ludzkiego. Pomysł ten pojawił się po raz pierwszy w 1988 roku w \textit{Computer Music Journal} jako forma identyfikacji inteligencji maszynowej w muzyce \cite{music_turing_test}. Test ten polega na tym, że maszyna i człowiek uczestniczą w sesji improwizacyjnej (\textit{jam session}), a zadaniem oceniającego jest rozpoznanie, który z uczestników jest maszyną. Maszyna musi być w stanie wykryć rytm, rozpoznać, co gra człowiek, i odpowiedzieć na to w czasie rzeczywistym, tworząc improwizowane ``solówki'', która swoją strukturą będzie niejako ``odpowiedzią'' na to, co zagrał człowiek.
+
+Oryginalny Test Turinga, zaproponowany przez Alana Turinga w 1950 roku, polegał na tym, że sędzia prowadził rozmowę z dwoma podmiotami, jednym ludzkim i jednym maszynowym, bez wiedzy, który jest który \cite{turing_test}. Jeśli sędzia nie mógłby odróżnić maszyny od człowieka na podstawie odpowiedzi, maszyna przechodziła test, wykazując inteligencję na poziomie ludzkim. Test Turinga dla muzyki rozszerza tę koncepcję na kontekst muzyczny, gdzie zamiast rozmowy mamy interaktywną improwizację muzyczną. Kluczowym elementem jest tutaj nie tylko wynik, ale również proces tworzenia muzyki w czasie rzeczywistym, który musi być na tyle ludzki, aby oceniający nie mógł odróżnić maszyny od człowieka. Obecnie każdy model, który generuje muzykę, skupia się na wyniku, a nie na procesie. Sztuczna inteligencja musiałaby być w stanie reagować na zmiany w muzyce w czasie rzeczywistym, co wymaga nie tylko analizy dźwięku, ale również interpretacji wizualnych sygnałów i dopasowania do tempa i stylu gry człowieka. Jest to znacznie bardziej skomplikowane niż generowanie statycznych utworów muzycznych. Czynniki te sprawiają, że chociaż modele generacyjne są w stanie generowac muzykę, przejście muzycznego Testu Turinga, który wymaga głębokiej interakcji i ludzkiego zrozumienia procesu twórczego, pozostaje wyzwaniem trudnym do osiągnięcia.
+
 
 \chapter{Zakończenie}
 \begin{enumerate}
