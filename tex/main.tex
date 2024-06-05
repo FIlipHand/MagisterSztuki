@@ -102,6 +102,7 @@
 \usepackage{csquotes}                         % Polskie cudzysłowy — rekomendowany jeżeli używasz 'biblatex'
 \usepackage{tocloft}
 \usepackage{lipsum}
+\usepackage{float}
 \usepackage{musicography}
 
 % NAJWAŻNIEJSZE POLECENIE
@@ -170,11 +171,7 @@
 \begin{flushright}
     \em
     \begin{minipage}{0.75\textwidth}
-        Tutaj możesz umieścić treść podziękowań.
-        Tutaj możesz umieścić treść podziękowań.
-        Tutaj możesz umieścić treść podziękowań.
-        Tutaj możesz umieścić treść podziękowań.
-        Tutaj możesz umieścić treść podziękowań.
+        We gratefully acknowledge Polish high-performance computing infrastructure PLGrid (HPC Center: ACK Cyfronet AGH) for providing computer facilities and support within computational grant no. PLG/2022/015801
     \end{minipage}
 \end{flushright}
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +179,7 @@
     Duże modele językowe (ang. \textit{Large Language Models} \textbf{LLM}) charakteryzują się zdolnością do generacji języka oraz innych zadań w przetwarzania języka naturalnego, takich jak na przykład klasyfikacja. Zdolność tą nabierają podczas czasochłonnego oraz intensywnego obliczeniowego treningu metodami samo odraz pół-nadzorowanego, podczas którego uczą się one relacji z wielkiej ilości dokumentów tekstowych. LLMy mogą zostać wykorzystane do generacji tekstu, formy generatywnej sztucznej inteligencji, poprzez pobieranie tekstu wejściowego i wielokrotne przewidywanie kolejnego tokenu lub słowa w tekście. Strukturę muzyki można porównać struktury tekstu pisanego, gdzie każda nuta odpowiada literze lub słowu, akordy zdaniom a dłuższe i sekwencję paragrafom. Poniższa praca, zamierza zbadać możliwości generacyjne LLMów wytrenowanych na muzycznych zbiorach danych.
 \end{abstractPL}
 \begin{abstractEN}
-    Abstract in English \cite{attention} \ldots
+    Abstract in English \ldots
 \end{abstractEN}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,39 +202,42 @@
 \mainmatter % Część główna
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Wstęp}
-Muzyka od zawsze stanowiła istotny element ludzkiego życia, inspirując, emocjonując i łącząc ludzi na różnych poziomach. Tradycyjnie proces tworzenia muzyki był zarezerwowany dla utalentowanych muzyków i kompozytorów, którzy posiadali wyjątkowy dar tworzenia dźwięków i melodii. Jednakże, w erze cyfrowej i rozwoju sztucznej inteligencji, pojawiają się nowe możliwości w dziedzinie generacji muzyki. Modelowanie generatywne, będące obszarem sztucznej inteligencji, pozwala na tworzenie nowych danych, w tym również muzyki, na podstawie wzorców i reguł wykrytych w zbiorze treningowym. Dynamiczny rozwój dziedziny przetwarzania języka naturalnego (\textit{NLP}) ukazuje skuteczność tego podejścia w problemach generacji danych sekwencyjnych, do których należy właśnie tekst oraz muzyka.
+Muzyka od zawsze stanowiła istotny element ludzkiego życia, inspirując, emocjonując i łącząc ludzi na różnych poziomach. Tradycyjnie proces tworzenia muzyki był zarezerwowany dla utalentowanych muzyków i kompozytorów, którzy posiadali wyjątkowy dar jej tworzenia. Jednakże, w erze cyfrowej i rozwoju sztucznej inteligencji, pojawiają się nowe możliwości w dziedzinie generacji muzyki. Modelowanie generatywne, będące obszarem sztucznej inteligencji, pozwala na tworzenie nowych danych, w tym również muzyki, na podstawie wzorców i reguł wykrytych w zbiorze treningowym. Dynamiczny rozwój dziedziny przetwarzania języka naturalnego (\textit{NLP}) ukazuje skuteczność tego podejścia w problemach generacji danych sekwencyjnych, do których należy właśnie tekst oraz muzyka.
 \section{Motywacja}
-Przez ostatnie lata widzimy szybki rozwój dużych modeli językowych (\textit{LLM}), które w szczególnie dobry sposób radzą sobie z rozumieniem tekstu w wielu językach. Modele te uczone są na wielkich korpusach danych, przez co są w stanie nauczyć się słownictwa oraz zasad gramatyki, a nastepnie ma podstawie \textit{promptu} udzielonego przez użytkownika wygenerować odpowiednią odpowiedź. Modele te znalazły zastosowanie w maszynowej translacji tekstu, analizie sentymentu, odpowiadaniu na pytania użytkownika czy nawet generacji kodu na podstawie poleceń oraz kontekstu nawet dużych projektów. Muzyka swoją strukturą jest bardzo podobna do tekstu. Każda nuta, tak jak słowo, nie tylko jest zależna od tych, które występują przed nią, ale również od szerszego kontekstu utworu jak również i tonacji w której dany utwór został napisany. Wykonując to porównanie, można łatwo zauważyć, dlaczego modele analizujące tekst oraz języki pisany są potencjalnie dobrymi kandydatami do próby analizy i generacji muzyki.
+Przez ostatnie lata widzimy szybki rozwój dużych modeli językowych (\textit{LLM}), które w szczególnie dobry sposób radzą sobie z rozumieniem tekstu w wielu językach. Modele te uczone są na wielkich korpusach danych, przez co są w stanie nauczyć się słownictwa oraz zasad gramatyki, a nastepnie ma podstawie \textit{promptu} udzielonego przez użytkownika wygenerować odpowiednią odpowiedź. Modele te znalazły zastosowanie w maszynowej translacji tekstu, analizie sentymentu, odpowiadaniu na pytania użytkownika czy generacji kodu na podstawie poleceń oraz kontekstu nawet dużych projektów. Muzyka swoją strukturą jest bardzo podobna do tekstu. Każda nuta, tak jak słowo, nie tylko jest zależna od tych, które występują przed nią, ale również od szerszego kontekstu utworu jak również i tonacji w której dany utwór został napisany. Wykonując to porównanie, można łatwo zauważyć, dlaczego modele analizujące tekst oraz języki pisany są potencjalnie dobrymi kandydatami do próby analizy i generacji muzyki. Obecnie w celach generacyjnych stosuje się modele o bardzo dużej ilości parametrach, przez co nie są one często dostępne dla przeciętnego użytkownika który nie posiada dedykowanego sprzętu. Dodatkowym utrudnieniem jest typowa architektura oparta o transformer, który jest bardzo dobrym wyborem w tego rodzaju zadaniach, jednak generacja danych przy jego pomocy jest wolna. Obecnie pojawiają się nowe modele do zadań \textit{NLP}, które jeszcze nie zostały dobrze zbadane w zadaniach muzycznych a rozwiązują problemy modeli transformerowych.
 \section{Cel pracy}
-Celem pracy jest przyjrzenie się dużym modelom językowym oraz ich zastosowaniu w celu generacji muzyki. Zawierać będzie opis modeli, które obecnie są wykorzystywane w architekturach \textit{LLM}-ów oraz analizę odpowiadającą na pytanie dlaczego dane rozwiązanie sprawdza się w przedstawionym w pracy problemie. Nastepnie zostanie przedstawiony problem analizy oraz generacji muzyki oraz jej możliwe cyfrowe reprezentacje. Zostaną również przedstawione dostępne zbiory danych, na podstawie których modele mogą zostać trenowane. Praca przedstawi wyniki użytych metod w celu ustalenia, który model i która reprezentacja muzyki najlepiej nadaje się do problemu przedstawionego w pracy.
+Celem pracy jest zbadanie architektur modeli dużych modeli językowych i zastosowania samych modeli w problemie generacji muzyki. Zostanie podjęta analiza możliwych do użycia zbiorów danych i sposobów w jaki muzyka jest w nich zapisana oraz jakie są wady i zalety każdego z nich. W tym celu zostanie wytrenowane kilka modeli o rożnych architekturach i liczbie parametrów na różnego typu danych. Praca poruszy problem weryfikacji wygenerowanych melodii i przedstawi jedno z potencjalnych rozwiązań.
 
 \section{Zarys pracy dyplomowej}
 \begin{comment}
-Tutaj napiszę dopiero jak będzie więcej treści bo chyba troszkę bez sensu na razie pisać o strukturze jak jej jeszcze nie ma \shrug
+Zostanie napisane na końcu jak żeby nie powtarzać się ileś razy
 \end{comment}
 \chapter{Opis aktualnego stanu wiedzy}
 \section{Podobieństwa pomiędzy muzyką a tekstem}
-Struktura tekstu i muzyki wykazuje wiele podobieństw, co pozwala na ich analizę za pomocą podobnych narzędzi i metod. Muzyka tak jak i tekst składa się z sekwencji znaków następujących w pewnej sekwencji. W obu przypadkach pojawiają się pewne schematy, czym w przypadku muzyki jest pewna progresja akordów lub powtarzający się fragment, a w tekście pewne związki frazeologiczne, powtarzające się wyrażenia lub ściśle określone reguły ortograficzne i składniowe. Te reguły w kontekście muzycznym są odpowiednikiem harmonii oraz strukturze i poprawności zapisu muzycznego. Sam sposób generacji sekwencji rozumianych przez komputer z muzyki zostanie poruszony w rozdziale \ref*{sec:muzyka_cyfrowa}.
+Tekst i muzyka wykazują fundamentalne podobieństwo strukturalne, polegając na wzorcach i sekwencjach w celu przekazywania i wywoływania emocji. Oba wykorzystują hierarchiczną organizację: zdania tworzą akapity, podczas gdy frazy tworzą melodie i harmonie. Podobnie jak tekst jest zbudowany zgodnie z prawami składni i gramatyki, muzyka przestrzega zasad rytmu i harmonii. Duże modele językowe \textit{(LLM)} wykazały w ostatnich latach niezwykłe możliwości w zadaniach przetwarzania języka naturalnego i całkowicie zrewolucjonizowały to pole \cite{adiwardana2020humanlike, end_of_nlp}. Ich sukces doprowadził do dużego napływu badań w tym kierunku. \textit{LLM-y}, będące biegłe w rozpoznawaniu i generowaniu sekwencji tekstowych, można dostosować do generowania muzyki poprzez uczenie ich w analogiczny sposób struktur w kompozycji muzycznej. Trenując na obszernych zbiorach danych partytur muzycznych, LLM mogą przewidywać i tworzyć spójne sekwencje nut, akordów i rytmów, tworząc w ten sposób oryginalne utwory muzyczne, które zachowują integralność stylistyczną i strukturalną.
 
-Generacja muzyki w zasadzie nie różni się od generacji tekstu. Oba modele działają autoregresyjnie. Model autoregresyjny (\textit{AR}) jest modelem, który modeleuje pewne zjawisko sekwencyjne, a nastepnie iteracyjne na podstawie poprzednich sekwencji, przewiduje kolejny element, dokłada go do przewidzianej sekwencji, i ponownie ``przepuszcza'' ją przez model z dodatkowym elementem. Wyjściem modelu podczas jego pojedynczego kroku jest rozkład prawdopodobieństwa nad możliwymi tokenami zazwyczaj obliczanego z pomocą funkcji \textit{softmax}.
+Przyczynowe modelowanie języka \textit{Causal Language Modeling (CLM)}, znane również jako autoregresyjne modelowanie języka, jest techniką wykorzystywaną w przetwarzaniu języka naturalnego do przewidywania następnego słowa w sekwencji na podstawie poprzednich słów. Model generuje tekst krok po kroku, gdzie przewidywanie bieżącego słowa jest uwarunkowane wcześniej wygenerowanymi słowami. Oznacza to, że model wykorzystuje własne wcześniejsze przewidywania jako dane wejściowe do przewidywania następnego słowa. Na każdym etapie model generuje rozkład prawdopodobieństwa w słowniku, wskazując prawdopodobieństwo, że każde słowo będzie następnym słowem w sekwencji. Typowo w tego rodzaju modelach wystepuje pojęcia okna kontekstowego, czyli ilości słów, które model bierze pod uwagę w celu generacji kolejnego.
+\begin{comment}
+Tutaj można podać jakiś prosty przykład w zdaniu Ala ma kota $\rightarrow$ Ala ma kota i $\rightarrow$ Ala ma kora i psa $\rightarrow$ Ala ma kota i psa imieniem \dots
 
-\begin{equation}
-    \begin{matrix}
-        \text{sekwencja wejściowa: } x_1, x_2, x_3, \text{gdzie} x_i \in X \\
-        P_{t1}(X) = \text{Model}(x_1, x_2, x_3)                            \\
-        x_4 \sim P_{t_1}(X)                                                \\
-        P_{t2}(X) = \text{Model}(x_1, x_2, x_3, x_4)                       \\
-        x_5 \sim P_{t_2}(X)                                                \\
-        \dots
-    \end{matrix}
+Poniższe równanie trochę próbuje to pokazać nie jestem pewien czy zostanie
+\end{comment}
+
+\begin{align*}
+     & \text{sekwencja wejściowa: } x_1, x_2, x_3, \text{gdzie } x_i \in X \\
+     & P_{t1}(X) = \text{Model}(x_1, x_2, x_3)                             \\
+     & x_4 \sim P_{t_1}(X)                                                 \\
+     & P_{t2}(X) = \text{Model}(x_1, x_2, x_3, x_4)                        \\
+     & x_5 \sim P_{t_2}(X)                                                 \\
+     & \dots
     % \caption{Algorytm generacji autoregresyjnej}.
     \label{equ:ar_model}
-\end{equation}
+\end{align*}
 
 Przykładowe podejście do autoregresyjnej generacji sekwencji pokazano w równaniu \ref*{equ:ar_model}. Algorytm jest agnostyczny w stosunku do typu danych, więc w $X$ mogą być zarówno wszystkie słowa, litery lub elementy notacji muzycznej.
 
 \section{Cyfrowa reprezentacja muzyki}\label{sec:muzyka_cyfrowa}
-W kulturze zachodniej nuty zapisuje się na pięcioliniach ułożonych jedna pod drugą. Jeśli muzyka jest wielogłosowa typowo pięciolinie są okalane przy pomocy nawiasów klamrowych. Na pięciolinia umieszczone są takie elementy jak nuty, pauzy oznaczenia dynamiki, tempa i inne znaki dotyczące oznaczenia w jaki sposób należy wykonać dany utwór. Najpierw muzykę zapisywano na papierze, jednak po pojawieniu się komputerów zapis nutowy jak i samo nagranie odtworzenia mogło zostać zapisane na dysku. Nuty typowo są zapisywane jako obrazy lub pliki PDF, jednak dane zapisane w taki sposób nie nadają się do edycji lub przetwarzania przez algorytmy komputerowe. Jednym z pierwszych ustandaryzowanych formatów był \textit{MusicXML}, który przy pomocy zwykłych tagów XML opisywał notację muzyczną.
+W kulturze zachodniej nuty zapisuje się na pięcioliniach ułożonych jedna pod drugą. Jeśli muzyka jest wielogłosowa to typowo dwie lub więcej pięciolin jest okalane przy pomocy nawiasów klamrowych. Na pięcioliniach umieszczone są takie elementy jak nuty, pauzy oznaczenia dynamiki, tempa i inne znaki dotyczące zapisu w jaki sposób należy wykonać dany utwór. Najpierw muzykę zapisywano na papierze, jednak po pojawieniu się komputerów, zapis nutowy jak i samo nagranie odtworzenia mogło zostać zapisane na dysku. Nuty typowo są zapisywane jako obrazy lub pliki PDF, jednak dane zapisane w taki sposób nie nadają się do edycji lub przetwarzania przez algorytmy komputerowe. Jednym z pierwszych ustandaryzowanych formatów był \textit{MusicXML}, który przy pomocy zwykłych tagów XML opisywał notację muzyczną.
 
 Przykładowy zapis muzyki zapisano na obrazku \ref*{fig:jsb_sheet}. Przedstawiony fragment składa się z czterech głosów grających na raz oraz z czterech taktów.
 
@@ -248,7 +248,7 @@ Przykładowy zapis muzyki zapisano na obrazku \ref*{fig:jsb_sheet}. Przedstawion
     \caption{Fragment chorału J.S. Bacha}\label{fig:jsb_sheet}
 \end{figure}
 \subsection{WAV i MP3}
-WAV (ang. \textit{Waveform audio format}) jest binarnym zapisem plików, który jest znany z tego, że jest w stanie zapisywać dźwięk nie używając żadnego algorytmu kompresji. W związku z tym rozmiary tych plików są bardzo duże, co sprawia, że ich przechowywanie ich wymaga znacznego miejsca na dysku co może być problematyczne, kiedy zbiór danych jest bardzo duży. Plik WAV jest najrzetelniejszą cyfrową reprezentacją dźwięku analogowego. Tak duży rozmiar danych zawdzięcza się temu, że dźwięk jest zapisywany z częstotliwością 44.1 kHz, czyli 44100 sampli na sekundę. Format został stworzony w roku 1991 roku, jest jednym z najbardziej rozpowszechnionym formatów i jest obsługiwany przez praktycznie każde oprogramowanie edycji dźwięku. W celu wizualizacji dokonano syntezacji?? utworu przedstawionego w postaci nutowej na obrazku \ref*{fig:jsb_sheet} w związku z czym powstała fala dźwiękowa przedstawiona na grafice \ref*{fig:jsb_wav}.
+WAV (ang. Waveform Audio Format) to format plików binarnych, znany z możliwości zapisywania dźwięku bez użycia jakiegokolwiek algorytmu kompresji. Dzięki temu pliki WAV charakteryzują się najwyższą jakością dźwięku, jednak ich rozmiary są bardzo duże, co może być problematyczne przy przechowywaniu dużych zbiorów danych. Przechowywanie takich plików wymaga znacznej ilości miejsca na dysku. Plik WAV jest najwierniejszą cyfrową reprezentacją dźwięku analogowego. Jego duży rozmiar wynika z faktu, że dźwięk jest zapisywany z częstotliwością 44,1 kHz, czyli 44100 próbek na sekundę. Format ten został stworzony w 1991 roku i od tego czasu stał się jednym z najbardziej rozpowszechnionych formatów audio, obsługiwanym przez praktycznie każde oprogramowanie do edycji dźwięku. W celu wizualizacji dokonano elektronicznego odtworzenia utworu przedstawionego w postaci nutowej na obrazku \ref*{fig:jsb_sheet}, co zaowocowało powstaniem fali dźwiękowej, przedstawionej na grafice \ref*{fig:jsb_wav}.
 
 \begin{figure}
     \begin{center}
@@ -257,11 +257,9 @@ WAV (ang. \textit{Waveform audio format}) jest binarnym zapisem plików, który 
     \caption{Plik \texttt{.wav} otworzony w programie Audacity.}\label{fig:jsb_wav}
 \end{figure}
 
-Często nie jest potrzebne przechowywanie bezstratne dźwięku, ponieważ i tak większość informacji, można zachować przy użyciu mniejszej ilości danych. Jednym z najpopularniejszych standardów kodowania stratnego jest MP3. Kompresja zmniejsza dokładność kodowania jak i również ``ucina" częstotliwości, które nie są słyszalne dla człowieka. Stratne kodowanie próbuje zachować równowagę pomiędzy jakością dźwięku a rozmiarem pliku. W kontekście uczenie maszynowego, zmniejszona ilość sampli przy zachowaniu większości informacji jest zjawiskiem pożądanym, ponieważ udaje nam się przynajmniej częściowo rozwiązać problem związany z ``przekleństwem wymiarowości".
+Często nie jest konieczne przechowywanie dźwięku w formacie bezstratnym, ponieważ większość informacji można zachować przy użyciu mniejszej ilości danych. Jednym z najpopularniejszych standardów kodowania stratnego jest format MP3. Kompresja zmniejsza dokładność kodowania i usuwa częstotliwości, które nie są słyszalne dla człowieka. Stratne kodowanie stara się znaleźć równowagę między jakością dźwięku a rozmiarem pliku. W kontekście uczenia maszynowego zmniejszona ilość sampli przy zachowaniu większości informacji jest zjawiskiem pożądanym. Dzięki temu przynajmniej częściowo rozwiązujemy problem związany z „przekleństwem wymiarowości”, czyli trudnością w przetwarzaniu danych o bardzo wysokiej liczbie cech (wymiarów). Stratne kodowanie pozwala na efektywniejsze zarządzanie danymi, co może być kluczowe w procesach analitycznych i modelowaniu.
 \subsection{MIDI (ang. \textit{Musical Instrument Digital Interface})}
-MIDI jest standardem, który opisuje protokół komunikacji, interfejs cyfrowy oraz złącze pozwalające połączyć ze sobą elektroniczne instrumenty, komputery oraz inne muzyczne peryferia. Pojedynczy kabel MIDI jest w stanie przekazać informacje na temat szesnastu na raz nadających kanałów z czego każdy może pochodzić z innego instrumentu. Każda interakcja z instrumentem, czyli przykładowo naciśnięty klawisz, szarpnięta struna, jest zapisana jako ``\textit{event}'', który zachowuje wartości takie jak konkretny znacznik czasu, wysokość dźwięku czy jego głośność. Dane pochodzące z urządzeń są zapisywane w specjalnym pliku, głównie o rozszerzeniu \textit{.mid} lub \textit{.midi}. Plik pozwala na przechowanie, rozpowszechnianie jak i również edycje dźwięków. W związku z tym, że w pliku nie jest przechowywany zapis konkretnej fali dźwiękowej zapisanej przez mikrofon, pozwala to na późniejszą zmianę np. instrumentu, który będzie odtwarzał zapisane dźwięki.
-
-Typowym przedstawieniem zapisanych danych jest tak zwany \textit{piano roll}, który można porównać do dwuwymiarowego układy współrzędnych, gdzie wspołrzedna horyzontalna opisuje czas, a horyzontalna konkretne dźwięki pokazane jako klawisze pianina. Przykładowe porównanie zapisu MIDI z zapisem nutowym przedstawiono na grafice \ref*{fig:jsb_pianoroll} oraz \ref*{fig:jsb_sheet}.
+MIDI (ang. Musical Instrument Digital Interface) to standard opisujący protokół komunikacji, interfejs cyfrowy oraz złącze, które umożliwiają połączenie elektronicznych instrumentów, komputerów oraz innych urządzeń muzycznych. Pojedynczy kabel MIDI może przesyłać informacje dla szesnastu kanałów jednocześnie, z których każdy może reprezentować inny instrument. Każda interakcja z instrumentem, taka jak naciśnięcie klawisza czy szarpnięcie struny, jest zapisywana jako ``zdarzenie'' \textit{(event)}, które zawiera takie dane jak znacznik czasu, wysokość dźwięku oraz jego głośność. Dane z urządzeń MIDI są zapisywane w specjalnych plikach z rozszerzeniem \texttt{.mid} lub \texttt{.midi}. Umożliwiają one przechowywanie, rozpowszechnianie oraz edytowanie dźwięków w specjalnie stworzonym do tego oprogramowaniu. Ponieważ plik MIDI nie przechowuje rzeczywistej fali dźwiękowej nagranej przez mikrofon, możliwa jest np. późniejsza zmiana instrumentu, który będzie odtwarzał zapisane dźwięki. Typowym sposobem przedstawienia danych MIDI jest tak zwany \textit{piano roll}, który można porównać do dwuwymiarowego układu współrzędnych. Na takim wykresie oś pozioma reprezentuje czas, a oś pionowa konkretne dźwięki, pokazane jako klawisze pianina. Przykładowe porównanie zapisu MIDI z zapisem nutowym przedstawiono na grafikach \ref*{fig:jsb_pianoroll} oraz \ref*{fig:jsb_sheet}.
 
 \begin{figure}[ht!]
     \begin{center}
@@ -273,7 +271,7 @@ Typowym przedstawieniem zapisanych danych jest tak zwany \textit{piano roll}, kt
 Warto zaobserwować, że zapis pliku w formacie MIDI umożliwia zdecydowanie większą ekspresje, ponieważ jest to zapis odtworzenia przez artystę pewnego utworu. Ten sposób nie ogranicza muzyki sztywno do konkretnego rytmu zdefiniowanego przez autora.
 
 \subsection{Notacja ABC}
-Notacja ABC jest systemem zapisywania nut w postaci czystego tekstu znakami ASCII. Notacja pojawiła sie w latach 70 XX wieku w celu zapisu i nauki tradycyjnych irlandzkich melodii, a nastepnie w kolejnej dekadzie została rozwinięta przez Chrisa Walshawa, który zapisywał w niej tradycyjne melodie zanim nauczył się standardowego zachodniego zapisu nutowego. Zapis ten posłużył do stworzonego przez niego programu \textit{abc2mtex}, który na podstawie notacji ABC generował komendy pozwalające zapis partytur w postaci \textit{MusicTex}. Obecnie używanym standardem jest wersja z roku 2011.
+Notacja ABC to system zapisywania nut w formie tekstowej przy użyciu znaków ASCII. Notacja ta pojawiła się w latach 70. XX wieku w celu zapisu i nauki tradycyjnych irlandzkich melodii. W kolejnej dekadzie system ten został rozwinięty przez Chrisa Walshawa, który używał go do zapisywania tradycyjnych melodii, zanim opanował standardowy zachodni zapis nutowy. Walshaw stworzył program \textit{abc2mtex}, który na podstawie notacji ABC generował komendy umożliwiające zapis partytur w formacie \textit{MusicTex}. Obecnie używanym standardem notacji ABC jest wersja z 2011 roku.
 
 \begin{figure}[ht!]
     \begin{minted}{text}
@@ -302,19 +300,21 @@ D,8G,,4D,,4|D,4A,4E,4F,4|C,2D,2E,4E,,4A,,4|F,4^A,4A,2^G,2A,4|
     \caption{Zapis wielu głosów w notacji ABC.}\label{fig:abc_polyphony}
 \end{figure}
 
-Jak widać notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami oraz rytmem w tym formacie możemy zapisac również dodatkowe informacje na temat utworu. Każda linijka zaczynająca się się od znaku A-Z a następnie dwukropkiem jest tak zwanym ``polem informacyjnym". W tych polach zapisywac można takie informacje jak tytuł utworu lub metrum oraz wiele innych informacji między innymi dotyczące z jakiego zbioru muzycznego pochodzi dany utwór. Wiele z tych informacji powinna być usunięta w procesie preprocessingu danych, tak aby model dostał tylko te informacje, które rzeczywiście pomogą w nauce struktury muzyki. Do takich pól należy przede wszystkim domyślna długość nuty (\texttt{L:}), metrum (\texttt{M:}) oraz tonacja (\texttt{K:}) w jakiej utwór został napisany. Każda z tych informacji jest możliwa do ``odgadnięcia'' przez model, jednak podając modelowi te informację wyraźnie, mamy większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość podania ich jako początkowa sekwencja na podstawie której model dalej będzie próbował kończyć melodię, przez co mamy kontrolę np. nad tym w jakiej tonacji i w jakim metrum zostanie wygenerowany nasz utwór.
+Jak widać, notacja ABC w dość zwięzły sposób zapisuje partyturę. Poza konkretnymi nutami i rytmem, w tym formacie można zapisać również dodatkowe informacje na temat utworu. W każda linijce zaczynająca się od znaku A-Z, a następnie dwukropka, znajduje się tak zwane ``pole informacyjne''. W tych polach można zapisywać takie informacje jak tytuł utworu, metrum oraz wiele innych danych, w tym z jakiego zbioru muzycznego pochodzi utwór. Wiele z tych informacji powinna zostać usunięta w procesie preprocessingu danych, aby nie zagłuszały najistotniejszych pól. Do takich należą przede wszystkim: domyślna długość nuty (\texttt{L:}), metrum (\texttt{M:}) oraz tonacja (\texttt{K:}), w jakiej utwór został napisany. Chociaż model jest w stanie ``odgadnąć'' te informacje, ich wyraźne podanie daje większą kontrolę nad procesem treningu. Dodatkową zaletą podawania tych informacji podczas treningu jest możliwość użycia ich jako początkowej sekwencji, na podstawie której model będzie dalej generował melodię. Dzięki temu mamy kontrolę nad takimi aspektami jak tonacja i metrum utworu, co pozwala na bardziej precyzyjne kierowanie procesem generowania muzyki.
 
-Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów V. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 instrumentów \cite{beethoven}.
+Notacja ABC wpiera również melodie polifoniczne przy pomocy tagów \texttt{V}. Ich ilość nie jest ograniczona w związku z czym można w tym zapisie jest możliwe ujęcie nawet muzyki orkiestrowej. Dość skrajnym przykładem jest zapis drugiej części VII symfonii Ludwiga van Beethovena, która składa się aż z 19 partii instrumentów \cite{beethoven}.
 
 \subsubsection*{Tokenizacja plików MIDI}\label{sec:REMI}
-Token jest odrębnym elementem, częścią sekwencji tokenów. W języku naturalnym tokenem może być znak, zaimek lub słowo. Zdanie może być następnie tokenizowane na sekwencję tokenów reprezentujących słowa i znaki interpunkcyjne. W przypadku muzyki tokeny mogą reprezentować wartości atrybutów nut (wysokość, wartość, czas trwania) lub zdarzenia czasowe. Token może przyjmować jedną z trzech form:
+Tokenizacja danych jest procesem przekształcania tekstu na mniejsze jednostki, zwane tokenami, które mogą być słowami, frazami lub nawet pojedynczymi znakami. W kontekście modeli językowych, tokenizacja jest niezbędna, ponieważ modele te operują na liczbach, a nie bezpośrednio na surowym tekście. Tokenizacja umożliwia rozbicie tekstu na części, które mogą być łatwo przetwarzane przez algorytmy komputerowe. Dzięki temu modele mogą analizować i generować tekst w sposób bardziej efektywny i precyzyjny. Używa się jej również do standardyzacji danych wejściowych, co pozwala na lepsze zrozumienie kontekstu i struktury języka przez model, a także na zmniejszenie złożoności obliczeniowej. Tokenizacja jest kluczowym krokiem, który umożliwia modelom językowym skuteczne przetwarzanie i interpretowanie dużych zbiorów danych tekstowych.
+
+W przypadku muzyki tokeny mogą reprezentować wartości atrybutów nut (wysokość, wartość, czas trwania) lub zdarzenia czasowe. Token może przyjmować jedną z trzech form:
 \begin{itemize}
     \item nazwa tokenu - słowna reprezentacja \textit{eventu} MIDI np. \textit{Pitch\_50}
     \item id - unikalna wartość liczbowa przypisana konkretnemu zdarzeniu
     \item bajt - unikalny bajt, który został przydzielony podczas treningu tokenizera
 \end{itemize}
 
-Słownictwo jest zapisywane w postaci \textit{look up table} łączącej nazwę tokenu z odpowiadającym jej id lub bajtem. Trening tokenizera polega na obliczeniu kodowania gramatykowego np. \textit{byte pair encoding} do postaci tabelarycznej w celu wykorzystania ich w dalszym modelowaniu.
+Nowe słownictwo jest zapisywane w postaci \textit{look up table} łączącej nazwę tokenu z odpowiadającym jej id lub bajtem. Trening tokenizera polega na obliczeniu kodowania gramatykowego np. \textit{byte pair encoding} do postaci tabelarycznej w celu wykorzystania ich w dalszym modelowaniu.
 
 Poza tokenami, które tokenizer tworzy na podstawie pliku MIDI dodaje on również dodatkowe takie jak:
 \begin{itemize}
@@ -323,16 +323,16 @@ Poza tokenami, które tokenizer tworzy na podstawie pliku MIDI dodaje on równie
     \item \texttt{EOS} (\textit{end of section}) - token oznaczający koniec sekwencji
 \end{itemize}
 
-Istnieje wiele algorytmów tokenizacji MIDI, jednak aby przedstawić mechanizm działania, przyjrzymy się popularnemu algorytmowi REMI. REvamped MIDI (REMI) reprezentuje zdarzenia jako sekwencje tokenów wysokości tonu, dynamiki (głośności), długości trwania oraz czasu poprzez tokeny taktu i pozycji. Token taktu oznacza początek nowego taktu, natomiast token pozycji określa miejsce zdarzenia w bieżącym takcie. Porównanie pomiędzy zapisem nutowym a jego reprezentacją w formie tokenów można zaobserwować na ilustracjach \ref*{fig:remi_notes} i \ref*{fig:remi_tokens}. Tokeny \texttt{Bar} oznaczają początek taktu, \texttt{Pos} pozycję nuty w danym takcie, \texttt{Pitch} wysokość nuty, \texttt{Vel} jej głośność, a \texttt{Dur} czas jej trwania. Wiele algorytmów tokenizacji jest zaimplementowanych w bibliotece MidiTok dla języka Python \cite{miditok2021}.
+Istnieje wiele algorytmów tokenizacji MIDI, jednak aby przedstawić mechanizm działania, dokonano analizy popularnego algorytmu \textit{REMI}. \textit{REvamped MIDI (REMI)} reprezentuje zdarzenia jako sekwencje tokenów wysokości tonu, dynamiki (głośności), długości trwania oraz czasu poprzez tokeny taktu i pozycji. Token taktu oznacza początek nowego taktu, natomiast token pozycji określa miejsce zdarzenia w bieżącym takcie. Porównanie pomiędzy zapisem nutowym a jego reprezentacją w formie tokenów można zaobserwować na ilustracjach \ref*{fig:remi_notes} i \ref*{fig:remi_tokens}. Tokeny \texttt{Bar} oznaczają początek taktu, \texttt{Pos} pozycję nuty w danym takcie, \texttt{Pitch} wysokość nuty, \texttt{Vel} jej głośność, a \texttt{Dur} czas jej trwania. Wiele algorytmów tokenizacji jest zaimplementowanych w bibliotece MidiTok dla języka Python \cite{miditok2021}.
 
-\begin{figure}
+\begin{figure}[ht!]
     \begin{center}
         \includegraphics[width=0.9\linewidth]{./img/tokenizer_notes.pdf}
     \end{center}
     \caption{Prosta sekwencja muzyczna}\label{fig:remi_notes}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht!]
     \begin{center}
         \includegraphics[width=0.9\linewidth]{./img/remi.png}
     \end{center}
@@ -355,11 +355,13 @@ W tabeli \ref*{tab:music_diff} zostało przedstawione porównanie zapisu całego
     \caption{Porównanie różnych zapisów muzyki}\label{tab:music_diff}
 \end{table}
 
-Jak widać zapis w postaci fali dźwiękowej zajmuje najwięcej miejsca na dysku, jak i również długość sekwencji, która zapisuje cały utwór jest najdłuższa. W celu uzyskania sekwencji z pliku MIDI został użyty tokenizer REMI o którym jest mowa w rozdziale \ref*{sec:REMI}. Przy uzyciu innego tokenizera niż REMI, liczba powstałych tokenów może lekko różnić się od tej w tabeli. Różnica w rozmiarze na dysku oraz długością sekwencji pomiędzy zapisem MIDI oraz ABC nie jest widoczna, jenak oba te formaty są zdecydowanie lepszymi rozwiązaniami w przypadku generacji notacji muzycznej (dziwne zdanie do poprawy raczej). Warto zwrócić uwagę, że gdyby w oryginalnym utworze pojawiły się powtórzenia danych sekwencji melodii notacja ABC byłaby jeszcze bardziej oszczędna w obu przypadkach od plików MIDI.  Powodem tego jest fakt, że notacja ABC zapisuje bezpośrednio w postaci tekstowej zapis nutowy, czyli znak powtórzenia zostanie zapisany jako \texttt{:|} oraz \texttt{|:}, a w pliku MIDI cała powtarzana sekwencja musi zostać ponownie odtworzona przez artystę.
+Jak widać zapis w postaci fali dźwiękowej zajmuje najwięcej miejsca na dysku, jak i również długość sekwencji, która zapisuje cały utwór jest najdłuższa. W celu uzyskania sekwencji z pliku MIDI został użyty tokenizer REMI o którym jest mowa w rozdziale \ref*{sec:REMI}. Przy użyciu innego tokenizera niż REMI, liczba powstałych tokenów może lekko różnić się od tej w tabeli. Różnica w rozmiarze na dysku oraz długością sekwencji pomiędzy zapisem MIDI oraz ABC nie jest duża. Warto zwrócić uwagę, że gdyby w oryginalnym utworze pojawiły się powtórzenia danych sekwencji melodii notacja ABC byłaby jeszcze bardziej oszczędna od plików MIDI. Powodem tego jest fakt, że notacja ABC zapisuje bezpośrednio w postaci tekstowej zapis nutowy, czyli znak powtórzenia zostanie zapisany jako \texttt{:|} oraz \texttt{|:}, a w pliku MIDI cała powtarzana sekwencja musi zostać ponownie odegrana przez artystę.
 
-Do głównej zalety plików MIDI należy ich wszechstronność. Nie są one ograniczone do kodowania sztywno określonego rytmu tak jak w notacji muzycznej. Dodatkowo jest bardzo łatwo przy użyciu narzędzi komputerowych zamienić dowolny zapis nutowy (MusicXML, ABC) na plik MIDI. Niestety w drugą stronę nie jest już tak łatwo, właśnie w związku z nie konkretnym rytmem, który może zostać zakodowany w MIDI. Istnieją narzędzia takie jak np. MuseScore, które jest w stanie wygenerować partyturę z pliku MIDI, jednak nie jest ono w każdym przypadku jednakowo skuteczne.
+Do głównych zalet plików MIDI należy ich wszechstronność. Nie są one ograniczone do sztywno określonego rytmu, jak w innych notacjach muzycznych. Dodatkowo, przy użyciu narzędzi komputerowych, bardzo łatwo można zamienić dowolny zapis nutowy (np. MusicXML, ABC) na plik MIDI. Niestety, w drugą stronę, czyli konwersja pliku MIDI na zapis nutowy, jest znacznie trudniejsza, głównie z powodu nieokreślonego rytmu, który może być zakodowany w pliku MIDI. Istnieją narzędzia, takie jak MuseScore, które potrafią wygenerować partyturę z pliku MIDI, jednak skuteczność tych narzędzi nie zawsze jest wysoka, zwłaszcza w przypadku bardziej skomplikowanych utworów, gdzie rytm i artykulacja mogą być trudne do dokładnego odwzorowania. Mimo tych wyzwań, pliki MIDI pozostają niezwykle użyteczne w zastosowaniach muzycznych, od tworzenia i edytowania muzyki po jej analizę i odtwarzanie.
 
-Plik w postaci fali dźwiękowej nie jest idealnym sposobem zapisu muzyki, jednak jest to często jedyne rozwiązanie aby zebrać dużą ilość danych. Szczegolnie jeśli mamy do czynienia z muzyką nowoczesną zazwyczaj twórcy nie udostępniają plików MIDI lub zapisu nutowego na podstawie którego powstała dana piosenka. Z tego powodu zostaje albo praca z plikami \texttt{mp3} lub czasochłonna translacja muzyki na jej zapis w innym formacie. Dodatkowo zaletą plików z dzwiekiem w zapisie cyfrowym jest dostęp do potencjalnie istniejącego zapisu odśpiewanego tekstu. Co prawda przykładowo zapis w notacji ABC pozwala na przekazanie tekstu w tagu \texttt{W:}, jednak jest to tylko jego zapis a nie faktyczne odśpiewanie. Z tego powodu pliki \texttt{wav} nadają się np. do próby replikacji czyjegoś głosu.
+Plik w postaci fali dźwiękowej nie jest idealnym sposobem zapisu muzyki, jednak często jest to jedyne rozwiązanie, aby zebrać dużą ilość danych. Szczególnie w przypadku muzyki nowoczesnej twórcy zazwyczaj nie udostępniają plików MIDI ani zapisu nutowego, na podstawie którego powstała dana piosenka. Z tego powodu praca z plikami MP3 lub czasochłonna translacja muzyki na inny format jest często konieczna.
+
+Dodatkową zaletą plików z dźwiękiem w zapisie cyfrowym jest dostęp do potencjalnie istniejącego zapisu odśpiewanego tekstu. Chociaż notacja ABC pozwala na zapis tekstu w tagu \texttt{W:}, jest to jedynie zapis słowny, a nie faktyczne odśpiewanie. W związku z tym pliki WAV są bardziej odpowiednie do próby replikacji czyjegoś głosu, ponieważ zawierają rzeczywisty zapis audio, który można analizować i przetwarzać.
 
 Główną zaletą plików ABC jest ich tekstowa reprezentacja notacji muzycznej. Z tego powodu nie wymagaja one wiedzy na temat struktury, budowy oraz standardów plików np. MIDI aby zacząć z nimi pracować. Ponieważ notacja ABC jest tekstowa, można ją łatwo integrować z narzędziami do przetwarzania tekstu. Zwięzłość zapisu jest również przyczyną dla której model uczenia maszynowego może być mniejszy w związku z krótszą ilością tokenów w sekwencji, na podstawie której model się uczy. Zapis w postaci tekstu pozwala na bardzo proste dodanie pewnych dodatkowych danych, które można policzyć w etapie \textit{preprocessingu} danych. Podejście takie zostało zaproponowane w modelu \textit{Tunesformer}\cite{tunesformer}, który wziął przykład z artykułu CTRL \cite{keskarCTRL2019}, w którym autorzy dodawali do korpusu treningowego takie tagi jak \textit{Books}, \textit{Horror}, \textit{Relationships}, \textit{Legal}. Tagi te były podawana na początku \textit{promptu} podawanego dla modelu, przez co model "wiedział" w jakim stylu powinien udzielić odpowiedzi. W przypadku muzyki w zapisie ABC zostały wprowadzone nowe \textit{control codes}:
 \begin{itemize}
@@ -497,8 +499,6 @@ Trening transformera jest możliwy do bardzo dobrego zrównoleglenia. Wynika to 
 % \subsection{Modele transformerowe}
 % \subsubsection{\textit{Classic} transformer}
 % \subsubsection{SeqGAN}
-\subsubsection*{GPT-2}\label{sec:gpt2}
-\cite{gpt2}
 
 \section{Architektura \textit{state space}}
 \subsection{Mamba}
@@ -590,7 +590,7 @@ Porównując grafiki \ref*{fig:mamba1} oraz \ref*{fig:ssm_scheme} można zobaczy
 W przypadku zadań syntetycznych, takich jak kopiowanie, Mamba nie tylko z łatwością rozwiązuje te zadania, ale może również ekstrapolować rozwiązania na bardzo długie sekwencje (ponad milion tokenów), gdzie ich długość znacząco przewyższa tą, na której model został wytrenowany. Mamba osiąga wydajność jakości transformatora w zadaniach modelowania języka. Zapewnia również pięciokrotnie szybszy czas generowania w porównaniu do transformatorów o podobnej wielkości i dorównuje wydajnością transformatorom dwukrotnie większym w testach porównawczych takich jak LAMBDA, Pile lub PIQA.
 
 \chapter{Przeprowadzenie eksperymentów}
-W celu oceny skuteczności modeli generowania muzyki, przeprowadzono szereg eksperymentów, w których porównano modele transformerowe oraz model Mamba. Eksperymenty te były przeprowadzone na plikach muzycznych w formatach MIDI i ABC, a modele były trenowane w dwóch wariantach wielkościowych: z około 65 milionami parametrów oraz z 5 milionami parametrów. Celem tych badań było zrozumienie, jak różne podejścia i rozmiary modeli wpływają na jakość generowanej muzyki.
+W celu oceny skuteczności modeli generowania muzyki, przeprowadzono szereg eksperymentów, w których porównano modele transformerowe oraz model Mamba. Eksperymenty te były przeprowadzone na plikach muzycznych w formatach MIDI i ABC, a modele były trenowane w dwóch wariantach wielkościowych: z około 60 milionami parametrów oraz z 6 milionami parametrów. Celem tych badań było zrozumienie, jak różne podejścia i rozmiary modeli wpływają na jakość generowanej muzyki.
 
 \section{Przygotowanie danych}
 Pliki w formacie ABC, dzięki swojej tekstowej naturze, nie wymagały skomplikowanego przetwarzania wstępnego. Format ABC zapisuje nuty i inne informacje muzyczne w postaci tekstu, co idealnie pasuje do modeli przystosowanych do pracy z sekwencjami tekstowymi.
@@ -606,9 +606,93 @@ Aby jeszcze bardziej zredukować złożoność i objętość danych, zastosowano
     \item Powtarzanie procesu: Kroki 2 i 3 są powtarzane, aż do osiągnięcia zdefiniowanego rozmiaru słownika \textit{(vocab size)}.
 \end{enumerate}
 
-Aby zilustrować działanie algorytmu \textit{Byte Pair Encoding}, można rozważyć prostą sekwencję tekstową \texttt{abcabcab}, na której zostanie przeprowadzony ten algorytm. Na początku należy zliczyć ilość par oraz zidentyfikować te najczęściej powtarzające się. W tym przypadku jest to para \texttt{ab}. Zostanie ona zamienione na nowy token np. \texttt{X}. Nowa sekwencja \texttt{XcXcX} zostaje poddana ponownej analizie z czego w tym przypadku wynika, że najczęstszą parą jest \texttt{Xc}. Zostanie ona zamieniona na nowy token \texttt{Y} z czego powstanie sekwencja \texttt{YYX}. W przypadku tekstu, tokenami na podstawie których obliczane są pary są kolejny bajty tekstu. W kontekście ztokenizowanego zbioru danych MIDI pary będą obliczane na podstawie tokenów takich jak: \texttt{Pitch\_C3}, \texttt{Velocity\_70}, \texttt{Duration\_1.0}. Jeśli tego rodzaju sekwencja będzie występowała wystarczająco często, to przy użyciu BPE zostanie ona zastąpiona jednym tokenem. Rzadko występujące tokeny nie będą reprezentowane w postaci zakodowanej jednak ich
+Aby zilustrować działanie algorytmu \textit{Byte Pair Encoding}, można rozważyć prostą sekwencję tekstową \texttt{abcabcab}, na której zostanie przeprowadzony ten algorytm. Na początku należy zliczyć ilość par oraz zidentyfikować te najczęściej powtarzające się. W tym przypadku jest to para \texttt{ab}. Zostanie ona zamienione na nowy token np. \texttt{X}. Nowa sekwencja \texttt{XcXcX} zostaje poddana ponownej analizie z czego w tym przypadku wynika, że najczęstszą parą jest \texttt{Xc}. Zostanie ona zamieniona na nowy token \texttt{Y} z czego powstanie sekwencja \texttt{YYX}. W przypadku tekstu, tokenami na podstawie których obliczane są pary są kolejny bajty tekstu. W kontekście ztokenizowanego zbioru danych MIDI pary będą obliczane na podstawie tokenów takich jak: \texttt{Pitch\_C3}, \texttt{Velocity\_70}, \texttt{Duration\_1.0}. Jeśli tego rodzaju sekwencja będzie występowała wystarczająco często, to przy użyciu BPE zostanie ona zastąpiona jednym tokenem.
 
 W przeprowadzonych eksperymentach ustawiono rozmiar słownika na 20,000, co zapewniło odpowiednią równowagę między kompresją a zachowaniem istotnych informacji muzycznych.
+
+\section{Trening modeli}
+HuggingFace to wiodąca firma w dziedzinie przetwarzania języka naturalnego \textit{(NLP)} i uczenia maszynowego, znana z opracowywania narzędzi i bibliotek ułatwiających tworzenie, wdrażanie i udostępnianie modeli uczenia maszynowego. Jednym z jej flagowych produktów jest biblioteka Transformers, bardzo popularna biblioteka typu \textit{open-source}, która zapewnia łatwy dostęp do szerokiej gamy wstępnie wytrenowanych modeli dla różnych zadań NLP, takich jak klasyfikacja tekstu, tłumaczenie, podsumowywanie i odpowiadanie na pytania. Biblioteka obsługuje modele takie jak BERT, GPT, T5 i wiele innych, oferując zarówno podstawową architekturę, jak i wstępnie wytrenowane wagi, co znacznie skraca czas i zasoby obliczeniowe potrzebne do dostrajania modeli. HuggingFace udostępnia wysokopoziomowe API pozwalające na tworzenie oraz trening modeli przy pomocy klas takich jak \texttt{Trainer}, \texttt{AutoModelForCausalLM} czy \texttt{ModelConfig}.
+
+Jako reprezentant modelu transformerowego został wybrany model \textit{GPT-2} \cite{gpt2}. Model został stworzony przez OpenAI i jest to obecnie ich największy model udostepniony jako \textit{open source}. Jest oparty o architekturę \textit{decoder-only}.
+
+Trening modeli typu \textit{Causal Language Model (CausalLM)} jest trenowany w celu przewidywania następnego tokena w sekwencji, biorąc pod uwagę poprzednie tokeny. Podczas szkolenia tokeny wejściowe są wprowadzane do modelu, a model przewiduje rozkład prawdopodobieństwa następnego tokena. Funkcja straty (\textit{loss}) jest obliczana na podstawie przewidywań modelu i rzeczywistych tokenów docelowych, które są tokenami wejściowymi przesuniętymi o jedną pozycję. Typowo używaną funkcja jest funkcja entropii krzyżowej \textit{cross-entropy loss}, która mierzy różnicę między dwoma rozkładami prawdopodobieństwa: prawdziwym rozkładem (rozkładem docelowym) a rozkładem przewidywanym przez model.
+
+W poniższych tabelach zostały pokazane konfiguracje modeli jak i liczba ich parametrów.
+
+\begin{table}[!htb]
+    \begin{minipage}{.5\linewidth}
+        \caption{GPT-2 $\sim$6M}
+        \centering
+        \begin{tabular}{||c c||}
+            \hline
+            Parametr          & wartość \\ [0.5ex]
+            \hline\hline
+            \texttt{n\_embed} & 512     \\
+            \hline
+            \texttt{n\_layer} & 6       \\
+            \hline
+            \texttt{n\_head}  & 4       \\
+            \hline
+            \texttt{n\_inner} & 2048    \\
+            \hline
+        \end{tabular}
+    \end{minipage}%
+    \begin{minipage}{.5\linewidth}
+        \centering
+        \caption{GPT-2 $\sim$60M}
+        \begin{tabular}{||c c||}
+            \hline
+            Parametr          & wartość \\ [0.5ex]
+            \hline\hline
+            \texttt{n\_embed} & 128     \\
+            \hline
+            \texttt{n\_layer} & 2       \\
+            \hline
+            \texttt{n\_head}  & 1       \\
+            \hline
+            \texttt{n\_inner} & 256     \\
+            \hline
+        \end{tabular}
+    \end{minipage}
+\end{table}
+
+\begin{table}[!htb]
+    \begin{minipage}{.49\linewidth}
+        \caption{Mamba $\sim$6M}
+        \centering
+        \begin{tabular}{||c c||}
+            \hline
+            Parametr                     & wartość \\ [0.5ex]
+            \hline\hline
+            \texttt{hidden\_size}        & 128     \\
+            \hline
+            \texttt{state\_size}         & 4       \\
+            \hline
+            \texttt{num\_hidden\_layers} & 8       \\
+            \hline
+        \end{tabular}
+    \end{minipage}
+    \begin{minipage}{.5\linewidth}
+        \centering
+        \caption{Mamba $\sim$60M}
+        \begin{tabular}{||c c||}
+            \hline
+            Parametr                     & wartość \\ [0.5ex]
+            \hline\hline
+            \texttt{hidden\_size}        & 512     \\
+            \hline
+            \texttt{state\_size}         & 8       \\
+            \hline
+            \texttt{num\_hidden\_layers} & 12      \\
+            \hline
+        \end{tabular}
+    \end{minipage}
+\end{table}
+
+\begin{comment}
+W tym miejscu będą wykresiki treningu modeli, i tego rodzaju rzeczy, czas treningu, ilość epok i tak dalej + opis czym są te parametry w tabelkach
+\end{comment}
+
 
 \section{Prezentacja otrzymanych wyników}
 Przedstawienie muzyki w pracy stanowi wyzwanie w porównaniu na przykład do wizualnych form sztuki, takich jak obrazy. Muzyka jest medium audytywnym, które oddziałuje na słuch i emocje poprzez dźwięki i rytm, co sprawia, że jej pełne doświadczenie jest trudne do przekazania za pomocą samego tekstu. Opisy muzyczne, notacja i partytury mogą dostarczyć informacji o strukturze i elementach utworu, ale nie oddają one w pełni jego brzmienia i atmosfery. W przeciwieństwie do obrazów, które można bezpośrednio zobaczyć i ocenić na papierze, muzyka wymaga aktywnego odtwarzania, by w pełni ją zrozumieć i docenić. W pracy zostaną przedstawione generacje w dwojaki sposób. W zależności od tego, czy model był wytrenowany na plikach MIDI lub notacji ABC, będzie przedstawiony wynik modelu w formie tekstowej lub \textit{piano roll}. Dodatkowo do każdego z tych przykładów zostanie dodana wygenerowana partytura, jednak należy pamiętać, że w związku z tym, że pliki MIDI są zapisem odegrania muzyki a nie samej jej notacji, reprezentacja plików MIDI na pięciolinii potrafi nie być idealna co jest spowodowane możliwymi nieregularnościami w rytmie.
