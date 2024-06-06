@@ -406,6 +406,11 @@ Zbiór danych IrishMAN (\textit{ang. Irish Massive ABC Notation}) \cite{irishman
     \caption{Przykład wielogłosowego fragmentu ze zbioru IrishMAN.}\label{fig:irish_midi}
 \end{figure}
 
+\section{Obecne próby generacji muzyki}
+Pierwsze próby generacji muzyki przy pomocy algorytmów można znaleźć już w roku 1994 \cite{GenJam}.\textit{GenJam} to model algorytmu genetycznego, który symuluje naukę improwizacji przez początkującego muzyka jazzowego. Na użycie sieci neuronowych oraz uczenia maszynowego jakie znamy dzisiaj należało poczekać do roku 2014. Organizacją, która podjęła się tego tematu jest jeszcze obecnie działająca Magenta \cite*{magenta}. Projekt ten skupia się na badaniu i rozwijaniu algorytmów, które mogą wspierać artystów w tworzeniu nowych dzieł poprzez generowanie muzyki, za pomocą technik uczenia maszynowego. Magenta stworzyła różne modele generatywne, które potrafią komponować nowe utwory muzyczne. Jednym z modeli jest \textit{MusicVAE}, który bazując na sieciach konwolucyjncyh był w stanie generować sekwencje muzyczne, oraz interpolować pomiędzy nimi \cite*{musicvae}. Innym modelem stworzonym przez tą organizację jest \textit{GanSynth} \cite*{engel2019gansynth}, który był w stanie generowac naturalnie brzmiąca muzykę przy pomocy modelu \textit{GAN (generative adversarial network)}. Przełomowym momentem w rozwoju modeli generacyjnych było wprowadzenie modeli transformera w roku 2017 \cite*{attention}. Doprowadziło to do istnego renesansu w kontekście generacyjnego tworzenia modeli. Rok później pojawił się model \textit{Music Transformer}, który implementował architekturę \textit{decoder-only} i był trenowany na zbiorze danych MAESTRO \cite*{huang2018music}. Był w stanie generować długie sekwencje muzyczne o długotrwałej strukturze. Mimo wszytko melodia generowana przez narzędzie była dość monotonna, jeśli istnieje niedostateczne dopasowanie do zbioru treningowego lub niewystarczające dane szkoleniowe. Może to ograniczyć przydatność narzędzia do złożonych zadań generowania muzyki i może wymagać dodatkowej optymalizacji lub szkolenia z większymi i bardziej zróżnicowanymi zestawami danych w celu poprawy jakości generowanej muzyki \cite*{zhu2023survey}. Bardzo podobnym modelem jest \textit{Museformer} \cite*{yu2022museformer}, który implementując inny rodzaj algorytmu \textit{attention} w dekoderze rozwiązuje problemy swojego poprzednika z rozmiarem sekwencji. Idea polega na tym, że nie trzeba skupiać się na całej sekwencji muzycznej z tym samym poziomem ważności. W artykule zostały wyróżnione dwa rodzaje algorytmu uwagi, czyli \textit{fine-grained attention} (drobnoziarnista) oraz \textit{coarse-grained attention} (gruboziarnista). Wynika to z obserwacji że dla generacji muzyki ważniejsze są bliskie sobie tokeny, niż te które znajdują się w większej odległości. Tym sposobem w zależności od tego na podstawie jakich tokenów dokonujemy obliczeń to używa się innego algorytmu.
+
+Obecnie najczęściej wykorzystywanymi modelami do generacji muzyki są modele \textit{text-to-music}. Modele te działają na zasadzie udzielenia zapytania do modelu, który na jego podstawie generuje odpowiedni fragment. Typowe zapytanie może brzmieć na przykład ``Slow tempo, bass-and-drums-led reggae song. Sustained electric guitar. High-pitched bongos with ringing tones. Vocals are relaxed with a laid-back feel, very expressive''.
+
 \section{Architekturze transformera}
 \subsection{Sieci RNN}
 Pierwszymi próbami użycia sieci neuronowych w przetwarzaniu sekwencji było użycie rekurencyjnych sieci neuronowych. Architektura ich była prosta i dodawała ona pętlę w taki sposób aby wartości mogły być przekazywane pomiędzy krokami. Rysunek \ref*{fig:rnn_scheme} przedstawia fragment sieci oraz rozwinięcie pętli.
@@ -693,6 +698,20 @@ W poniższych tabelach zostały pokazane konfiguracje modeli jak i liczba ich pa
 W tym miejscu będą wykresiki treningu modeli, i tego rodzaju rzeczy, czas treningu, ilość epok i tak dalej + opis czym są te parametry w tabelkach
 \end{comment}
 
+Parametry modelu GPT-2:
+\begin{itemize}
+    \item \texttt{n\_embed} - Dimensionality of the embeddings and hidden states.
+    \item \texttt{n\_layer} - Number of hidden layers in the Transformer encoder.
+    \item \texttt{n\_head} - Number of attention heads for each attention layer in the Transformer encoder.
+    \item \texttt{n\_inner} - Dimensionality of the inner feed-forward layers.
+\end{itemize}
+
+Parametry modeli Mamba:
+\begin{itemize}
+    \item \texttt{hidden\_size} - Dimensionality of the embeddings and hidden states.
+    \item \texttt{state\_size} -  Shape of the state space latents.
+    \item \texttt{num\_hidden\_layers} - Number of hidden layers in the model.
+\end{itemize}
 
 \section{Prezentacja otrzymanych wyników}
 Przedstawienie muzyki w pracy stanowi wyzwanie w porównaniu na przykład do wizualnych form sztuki, takich jak obrazy. Muzyka jest medium audytywnym, które oddziałuje na słuch i emocje poprzez dźwięki i rytm, co sprawia, że jej pełne doświadczenie jest trudne do przekazania za pomocą samego tekstu. Opisy muzyczne, notacja i partytury mogą dostarczyć informacji o strukturze i elementach utworu, ale nie oddają one w pełni jego brzmienia i atmosfery. W przeciwieństwie do obrazów, które można bezpośrednio zobaczyć i ocenić na papierze, muzyka wymaga aktywnego odtwarzania, by w pełni ją zrozumieć i docenić. W pracy zostaną przedstawione generacje w dwojaki sposób. W zależności od tego, czy model był wytrenowany na plikach MIDI lub notacji ABC, będzie przedstawiony wynik modelu w formie tekstowej lub \textit{piano roll}. Dodatkowo do każdego z tych przykładów zostanie dodana wygenerowana partytura, jednak należy pamiętać, że w związku z tym, że pliki MIDI są zapisem odegrania muzyki a nie samej jej notacji, reprezentacja plików MIDI na pięciolinii potrafi nie być idealna co jest spowodowane możliwymi nieregularnościami w rytmie.
