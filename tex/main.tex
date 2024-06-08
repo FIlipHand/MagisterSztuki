@@ -104,6 +104,7 @@
 \usepackage{lipsum}
 \usepackage{float}
 \usepackage{musicography}
+\usepackage{array}
 
 % NAJWAŻNIEJSZE POLECENIE
 \newcommand{\shrug}[1][]{%
@@ -124,7 +125,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  % Konfiguracja rysunków TikZ
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\usetikzlibrary{shapes.geometric,arrows.meta,arrows} 
+\usetikzlibrary{shapes.geometric,arrows.meta,arrows,matrix,fit, positioning} 
 \tikzstyle{every picture}+=[remember picture]
 \tikzstyle{na} = [baseline=-.5ex]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -499,7 +500,52 @@ Zadaniem Dekoder w architekturze transformerowej jest generowanie wyjścia na po
 
 \begin{figure}[ht!]
     \begin{center}
-        \includegraphics[width=0.9\linewidth]{./img/masked_Att.jpg}
+        % \includegraphics[width=0.9\linewidth]{./img/masked_Att.jpg}
+        \begin{tikzpicture}
+            % Define the first matrix
+            \matrix (m1) [matrix of nodes,
+                nodes in empty cells,
+                nodes={draw, minimum size=1cm, anchor=center},
+                column sep=-\pgflinewidth, row sep=-\pgflinewidth]{
+                0.13 & 0.18 & 0.16 & 0.15 & 0.18 \\
+                0.68 & 0.02 & 0.08 & 0.14 & 0.02 \\
+                0.06 & 0.25 & 0.14 & 0.11 & 0.23 \\
+                0.21 & 0.14 & 0.16 & 0.17 & 0.14 \\
+                0.27 & 0.11 & 0.16 & 0.18 & 0.12 \\
+            };
+
+            % Add labels to the first matrix
+            \foreach \i in {1,2,...,5} {
+                    \node [anchor=east] at (m1-\i-1.west) { \ifnum\i=1 Ala \else \ifnum\i=2 ma \else \ifnum\i=3 kota \else \ifnum\i=4 i \else
+                                        psa \fi \fi \fi \fi };
+                    \node [anchor=south] at (m1-1-\i.north) { \ifnum\i=1 Ala \else \ifnum\i=2 ma \else \ifnum\i=3 kota \else \ifnum\i=4 i \else
+                                        psa \fi \fi \fi \fi };
+                }
+
+            % Define the second matrix
+            \matrix (m2) [right=2cm of m1, matrix of nodes,
+                nodes in empty cells,
+                nodes={draw, minimum size=1cm, anchor=center},
+                column sep=-\pgflinewidth, row sep=-\pgflinewidth]{
+                0.68 &      &      &      &      \\
+                0.06 & 0.25 &      &      &      \\
+                0.21 & 0.14 & 0.16 &      &      \\
+                0.27 & 0.11 & 0.16 & 0.18 &      \\
+                0.02 & 0.31 & 0.11 & 0.07 & 0.27 \\
+            };
+
+            % Add labels to the second matrix
+            \foreach \i in {1,2,...,5} {
+                    \node [anchor=east] at (m2-\i-1.west) { \ifnum\i=1 Ala \else \ifnum\i=2 ma \else \ifnum\i=3 kota \else \ifnum\i=4 i \else
+                                        psa \fi \fi \fi \fi };
+                    \node [anchor=south] at (m2-1-\i.north) { \ifnum\i=1 Ala \else \ifnum\i=2 ma \else \ifnum\i=3 kota \else \ifnum\i=4 i \else
+                                        psa \fi \fi \fi \fi };
+                }
+
+            % Draw the arrow
+            \draw[->, thick, shorten >=30pt] (m1.east) -- (m2.west) ;
+
+        \end{tikzpicture}
     \end{center}
     \caption{Algorytm uwagi z maską.}\label{fig:masked_attention}
 \end{figure}
