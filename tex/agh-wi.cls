@@ -49,13 +49,14 @@
     \ifprint
         \hypersetup{hidelinks}
     \else
-        \hypersetup{
-            colorlinks=true,
-            linktocpage=true,
-            linkcolor=blue,
-            filecolor=magenta,
-            urlcolor=cyan
-        }
+        \hypersetup{hidelinks}
+        % \hypersetup{
+        %     colorlinks=true,
+        %     linktocpage=true,
+        %     linkcolor=blue,
+        %     filecolor=magenta,
+        %     urlcolor=cyan
+        % }
     \fi
 }{}
 \@ifpackageloaded{algorithm2e}{
