@@ -107,6 +107,18 @@
 \usepackage{array}
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
+\usepackage{filecontents}
+\begin{filecontents}{data.dat}
+    date  Mamba_60M  Mamba_6M  GPT2_60M  GPT2_6M
+    128   1.910      1.360     2.418     1.125
+    256   1.613      1.159     2.515     0.628
+    512   1.610      2.407     3.574     0.903
+    1024  1.638      4.518     3.565     0.885
+    2048  1.618      5.133     3.562     0.901
+    4096  1.614      5.144     3.717     0.904
+    8192  1.660      5.146     3.571     0.904
+    16384 1.776      5.234     3.556     0.906
+\end{filecontents}
 
 % NAJWAŻNIEJSZE POLECENIE
 \newcommand{\shrug}[1][]{%
@@ -168,22 +180,15 @@
 \maketitle % Dodaj stronę tytułową
 %%%%%%%%%%%%%%%%%%%%%%%
 % Jeżeli chcesz komuś podziękować, to możesz użyć poniższego kodu
-\cleardoublepage
-\thispagestyle{empty}
-\vspace*{\fill}
-\begin{flushright}
-    \em
-    \begin{minipage}{0.75\textwidth}
-        We gratefully acknowledge Polish high-performance computing infrastructure PLGrid (HPC Center: ACK Cyfronet AGH) for providing computer facilities and support within computational grant no. PLG/2022/015801
-    \end{minipage}
-\end{flushright}
+
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstractPL}
     % Duże modele językowe (ang. \textit{Large Language Models} \textbf{LLM}) charakteryzują się zdolnością do generacji języka oraz innych zadań w przetwarzania języka naturalnego, takich jak na przykład klasyfikacja. Zdolność tą nabierają podczas czasochłonnego oraz intensywnego obliczeniowego treningu metodami samo odraz pół-nadzorowanego, podczas którego uczą się one relacji z wielkiej ilości dokumentów tekstowych. LLMy mogą zostać wykorzystane do generacji tekstu, formy generatywnej sztucznej inteligencji, poprzez pobieranie tekstu wejściowego i wielokrotne przewidywanie kolejnego tokenu lub słowa w tekście. Strukturę muzyki można porównać struktury tekstu pisanego, gdzie każda nuta odpowiada literze lub słowu, akordy zdaniom a dłuższe i sekwencję paragrafom. Poniższa praca, zamierza zbadać możliwości generacyjne LLMów wytrenowanych na muzycznych zbiorach danych.
-    $\dots$
+    % $\dots$
+    Praca poświęcona jest eksploracji możliwości generacji muzyki przy pomocy dużych modeli językowych (LLM). Celem badania jest analiza architektur modeli językowych i ich zastosowanie w procesie tworzenia muzyki. Praca skupia się na podobieństwach strukturalnych między muzyką a tekstem, argumentując, że te dwie formy ekspresji dzielą wspólne cechy sekwencyjne, co pozwala na adaptację modeli językowych do generacji muzycznych kompozycji. W pracy przedstawiono również przegląd istniejących formatów cyfrowej reprezentacji muzyki oraz zbiory danych, które mogą być użyte do treningu modeli generatywnych. Przez przeprowadzenie serii eksperymentów, w których wykorzystano różnorodne architektury, takie jak transformery i modele przestrzeni stanów, przeanalizowano efektywność różnych podejść w kontekście generacji muzyki. Została podjęta próba oceny wygenerowanych fragmentów muzycznych przy pomocy dostępnych modeli LLM, które są dostępne komercyjnie lub zostały wytrenowane, aby rozumiec muzykę. Praca oferuje nowe perspektywy na temat potencjału LLM w dziedzinie sztucznej kreatywności muzycznej, otwierając drogę do dalszych badań w tej fascynującej przestrzeni interdyscyplinarnej.
 \end{abstractPL}
 \begin{abstractEN}
-    Abstract in English \ldots
+    The work is devoted to exploring the possibilities of music generation using large language models (LLMs). The aim of the study is to analyze the architectures of language models and their application in the process of music creation. The paper focuses on the structural similarities between music and text, arguing that these two forms of expression share common sequential features, which allows the adaptation of language models for the generation of musical compositions. The paper also provides an overview of existing formats for digital representation of music and datasets that can be used to train generative models. By conducting a series of experiments using a variety of architectures, such as transformers and state space models, the effectiveness of different approaches in the context of music generation was analyzed. An attempt was made to evaluate the generated musical fragments using commercially available LLM models or those trained to understand music. The work offers new perspectives on the potential of LLM in the field of artificial musical creativity, paving the way for further research in this fascinating interdisciplinary space.
 \end{abstractEN}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,9 +215,8 @@ Przez ostatnie lata widzimy szybki rozwój dużych modeli językowych (\textit{L
 Celem pracy jest zbadanie architektur modeli dużych modeli językowych i zastosowania samych modeli w problemie generacji muzyki. Zostanie podjęta analiza możliwych do użycia zbiorów danych i sposobów w jaki muzyka jest w nich zapisana oraz jakie są wady i zalety każdego z nich. W tym celu zostanie wytrenowane kilka modeli o rożnych architekturach i liczbie parametrów na różnego typu danych. Praca poruszy problem weryfikacji wygenerowanych melodii i przedstawi jedno z potencjalnych rozwiązań.
 
 \section{Zarys pracy dyplomowej}
-\begin{comment}
-Zostanie napisane na końcu jak żeby nie powtarzać się ileś razy
-\end{comment}
+Praca dyplomowa składa się z czterech głównych rozdziałów. W rozdziale pierwszym przedstawiono wstęp do tematu, motywację oraz cel pracy. Rozdział drugi zawiera szczegółowy opis aktualnego stanu wiedzy na temat generacji muzyki przy pomocy dużych modeli językowych. Omówiono w nim podobieństwa pomiędzy muzyką a tekstem, przegląd istniejących prób generacji muzyki, cyfrowe reprezentacje muzyki oraz różne zbiory danych używane w eksperymentach. Szczególną uwagę poświęcono architekturze transformera oraz modelom przestrzeni stanów, które stanowią podstawę dla omawianych modeli generatywnych. W rozdziale trzecim opisano metodologię przeprowadzenia eksperymentów, w tym przygotowanie danych, proces treningu modeli oraz zaprezentowano otrzymane wyniki. Przeanalizowano także różne sposoby oceny wygenerowanych melodii, w tym testowanie ich innymi dużymi modelami językowymi. Ostatni, czwarty rozdział zawiera podsumowanie wyników pracy, wnioski oraz sugestie dotyczące dalszych badań w dziedzinie generacji muzyki przy użyciu sztucznej inteligencji.
+
 \chapter{Opis aktualnego stanu wiedzy}
 \section{Podobieństwa pomiędzy muzyką a tekstem}
 Tekst i muzyka wykazują fundamentalne podobieństwo strukturalne, polegając na wzorcach i sekwencjach w celu przekazywania i wywoływania emocji. Oba wykorzystują hierarchiczną organizację: zdania tworzą akapity, podczas gdy nuty i akordy tworzą melodie i harmonie. Podobnie jak tekst jest zbudowany zgodnie z prawami składni i gramatyki, muzyka przestrzega zasad rytmu i harmonii. Duże modele językowe \textit{(LLM)} wykazały w ostatnich latach niezwykłe możliwości w zadaniach przetwarzania języka naturalnego \textit{{NLP}} i całkowicie zrewolucjonizowały to pole \cite{adiwardana2020humanlike, end_of_nlp}. Ich sukces doprowadził do dużego napływu badań w tym kierunku. \textit{LLM-y}, będące biegłe w rozpoznawaniu i generowaniu sekwencji tekstowych, można dostosować do generowania muzyki poprzez uczenie ich w analogiczny sposób struktur w kompozycji muzycznej. Trenując na obszernych zbiorach danych partytur muzycznych, LLM mogą przewidywać i tworzyć spójne sekwencje nut, akordów i rytmów, tworząc w ten sposób oryginalne utwory muzyczne, które zachowują integralność stylistyczną i strukturalną.
@@ -414,7 +418,7 @@ Zbiór danych IrishMAN (\textit{ang. Irish Massive ABC Notation}) \cite{irishman
 
 \section{Architektura transformera}
 \subsection{Sieci RNN}
-Pierwszymi próbami użycia sieci neuronowych w przetwarzaniu sekwencji było użycie rekurencyjnych sieci neuronowych. Architektura ich była prosta i dodawała ona pętlę w taki sposób aby wartości mogły być przekazywane pomiędzy krokami. Rysunek \ref*{fig:rnn_scheme} przedstawia fragment sieci oraz rozwinięcie pętli \cite{Understanding_lstm}.
+Pierwszymi próbami użycia sieci neuronowych w przetwarzaniu sekwencji było użycie rekurencyjnych sieci neuronowych. Architektura ich była prosta i dodawała ona pętlę w taki sposób aby wartości mogły być przekazywane pomiędzy krokami. Rysunek \ref*{fig:rnn_scheme} przedstawia fragment sieci oraz jej rozwinięcie \cite{Understanding_lstm}.
 \begin{figure}[ht!]
     \begin{center}
         \includegraphics[width=0.7\linewidth]{./img/rnn_scheme.png}
@@ -424,24 +428,26 @@ Pierwszymi próbami użycia sieci neuronowych w przetwarzaniu sekwencji było u�
 
 Prezentowane podejście jest dość proste, jednak niesie ze sobą pewne problemy.
 
-Pierwszym z nich jest brak selekcji, które informacje są rzeczywiście istotne w danym kontekście, a które nie. W zadaniu przewidywania kolejnego słowa np. dla zdania ``Kupiłem zegarek na \textit{rękę}'' nie jest wymagany żaden dodatkowy kontekst, a odległość pomiedzy ważnymi informacjami jest mała. Jednak dla zdania ``Rok temu ukończyłem kurs lotnika ... Teraz staram się o licencje \textit{pilota}'' wymagany jest szersze spojrzenie na całą strukturę wypowiedzi i ``przypomnienie'' informacji z początku zdania. W przypadku muzyki sytuacja ma się dokładnie tak samo. Przykładowo, aby rozwiązać akord dysonansowy, wymagana jest jedynie informacja na jego temat, tak aby dobrać odpowiedni akord konsonansowy lub akord dominantowy na tonikę, jednak jeśli w muzyce przewija się pewien temat, to wymagane jest zachowanie informacji w sieci, w jakich momentach się on pojawia, aby móc dodać go w odpowiednie miejsce. W teorii zwyczajna sieć rekurencyjna jest zdolna do zapamiętywania długich zależności, jednak w praktyce nie jest to bardzo rzadko osiągalne.
+Pierwszym z nich jest brak selekcji, które informacje są rzeczywiście istotne w danym kontekście, a które nie. W zadaniu przewidywania kolejnego słowa np. dla zdania ``Kupiłem zegarek na \textit{rękę}'' nie jest wymagany żaden dodatkowy kontekst, a odległość pomiedzy ważnymi informacjami jest mała, jednak w zdaniu ``Rok temu ukończyłem kurs lotnika ... Teraz staram się o licencje \textit{pilota}'' wymagany jest szersze spojrzenie na całą strukturę wypowiedzi i ``przypomnienie'' informacji z początku zdania. W przypadku muzyki sytuacja ma się dokładnie tak samo. Przykładowo, aby rozwiązać akord dysonansowy na konsonansowy lub dominantowy na tonikę, wymagana jest jedynie informacja na temat ich dzięków, tak aby dobrać odpowiedni nowy akord, jednak jeśli w muzyce przewija się pewien temat, to wymagane jest zachowanie informacji w sieci, w jakich momentach się on pojawia, aby móc dodać go w odpowiednie miejsce. W teorii zwyczajna sieć rekurencyjna jest zdolna do zapamiętywania długich zależności, jednak w praktyce nie jest to bardzo rzadko osiągalne.
 
-Dodatkowym problemem podczas treningu modeli jest problem zanikającego gradientu.
+Dodatkowym problemem podczas treningu modeli jest problem zanikającego gradientu. Równanie \ref*{equ:gradient} przedstawia równania potrzebne w celu policzenia konkretnego stanu ukrytego $H_i$.
+% $A$ reprezentuje konkretny węzeł modelu, $W$ macierzą wag w warstwie a $Z$
 
 \begin{equation}
-    \begin{matrix}
-        H_{i+1}=A(H_i, x_i)             \\
-        H_3=A(A(A(H_0, x_0), x_1), x_2) \\
-        \text{gdzie:}                   \\
-        A(H, x) := Wx+ZH                \\
-        H_N=W^Nx_0 + W^{N-1}x_1  + \dots
-    \end{matrix}
+    \begin{aligned}
+         & H_{i+1}=A(H_i, x_i)              \\
+         & H_3=A(A(A(H_0, x_0), x_1), x_2)  \\
+         & \text{gdzie:}                    \\
+         & A(H, x) := Wx+ZH                 \\
+         & H_N=W^Nx_0 + W^{N-1}x_1  + \dots \\
+    \end{aligned}
+    \label{equ:gradient}
 \end{equation}
 
 Jak widać z powyższego równania, kiedy $N$ będzie wystarczająco duże (a na pewno będzie ponieważ jest to długość okna kontekstowego) macierz wag $W$ będzie podnoszona do bardzo wysokiej potęgi przez co jej wartości poniżej $1$ będą zanikać do $0$, a te będące powyżej $1$ będą eksplodować w nieskończoność.
 
 \subsection{LSTM}
-Aby rozwiązać omawiane problemy sieci rekurencyjnych została zaproponowana architektura sieci nazwana \textit{Long Short Term Memory} \cite{lstm_og}. Ich budowa pozwala na długofalowe zapamiętywanie i przekazywanie informacji. Zazwyczaj są łączone między sobą co pozytywnie wpływa na działanie sieci.
+Aby rozwiązać omawiane problemy sieci rekurencyjnych została zaproponowana architektura sieci nazwana \textit{Long Short Term Memory} \cite{lstm_og}. Ich budowa pozwala na długofalowe zapamiętywanie i przekazywanie informacji. Warstwy LSTM są zazwyczaj łączone między sobą co pozytywnie wpływa na działanie sieci.
 
 \begin{figure}[ht!]
     \begin{center}
@@ -450,7 +456,7 @@ Aby rozwiązać omawiane problemy sieci rekurencyjnych została zaproponowana ar
     \caption{Komórki LSTM połączone między sobą.}\label{fig:lstm_chain}
 \end{figure}
 
-Główną częścią budowy komórki jest górna część reprezentowana przez czarną strzałkę na obrazku \ref*{fig:lstm_chain}, która posiadając jedynie proste operacje liniowe przekazuje z stany ukryte z jednej części do drugiej. Dolna część komórki zawiera tak zwane bramki, które kontrolują jaka które informacje są ważne i mają być zachowane a które można zignorować. Są one zbudowane z warstw sigmoidalnych oznaczonych na grafice literami $\sigma$. Wartościami zwrotnymi jest liczba pomiędzy $0$ a $1$ gdzie mała wartość znaczy niską ważność, a wysoka dużą. LSTM zwraca dwa wektory. Pierwszy to stan ukryty (\textit{hidden state}), który przechowuje informacje o bieżącym stanie sieci i jest aktualizowany przy każdym kroku czasowym. To ten wektor jest bezpośrednio wykorzystywany do przewidywania kolejnych słów lub innych zadań wyjściowych. Drugi nazywany stanem komórki (\textit{cell state}) jest dodatkowy i przechowuje informacje na dłuższą metę, przez co jest odpowiedzialny za przechowywanie bardziej trwałego kontekstu. Stan komórki jest modyfikowany przez tzw. bramki (gate), które decydują, które informacje powinny być dodane, usunięte lub zaktualizowane.
+Główną częścią budowy komórki jest górna część reprezentowana przez czarną strzałkę na obrazku \ref*{fig:lstm_chain}, która posiadając jedynie proste operacje liniowe przekazuje z stany ukryte z jednej części do drugiej. Dolna część komórki zawiera tak zwane bramki, które kontrolują które informacje są ważne i mają być zachowane a które można zignorować. Są one zbudowane z warstw sigmoidalnych oznaczonych na grafice literami $\sigma$. Wartościami zwrotnymi jest liczba pomiędzy $0$ a $1$ gdzie mała wartość znaczy niską a wysoka dużą ważność informacji. LSTM zwraca dwa wektory. Pierwszy to stan ukryty (\textit{hidden state}), który przechowuje informacje o bieżącym stanie sieci i jest aktualizowany przy każdym kroku czasowym. To ten wektor jest bezpośrednio wykorzystywany do przewidywania kolejnych słów lub innych zadań wyjściowych. Drugi nazywany stanem komórki (\textit{cell state}), jest dodatkowy i przechowuje informacje na dłuższą metę, przez co jest odpowiedzialny za przechowywanie bardziej trwałego kontekstu. Stan komórki jest modyfikowany przez tzw. bramki \textit{(gate)}, które decydują, które informacje powinny być dodane, usunięte lub zaktualizowane.
 
 Architektura takiego modelu sprawia, że jest on o wiele mniej podatny na problem zanikającego gradientu, jednak jest to sytuacja, która niestety może nadal występować \cite{vanishing_gradient}. Dodatkową wadą modelu LSTM jak i klasycznego RNN jest ich wysoka złożoność treningu, która występuje z powodu konieczności użycia specjalnego wariantu algorytmu wstecznej propagacji błędu nazywanego ``wsteczną propagacją błędu w czacie'' \textit{backpropagation through time}, która rozwija sieci rekurencyjne, aby propagować gradienty.
 
@@ -458,11 +464,11 @@ Istnieje kilka wariantów LSTM-ów np. dwukierunkowe LSTM, które pozwalają aby
 
 \subsection{Algorytm uwagi (ang. \textit{attention})}
 \label{sec:attention}
-Mechanizm uwagi (\textit{ang. attention}) został zaproponowany w przełomowym artykule ``\textit{Attention is All You Need}'' \cite{attention}. Algorytm ten działa w ustalonym oknie kontekstowym (\textit{ang. context window}), w którym przydziela każdemu słowu wagę reprezentującą jego ważność w danym kontekście. Metoda ta imituje sposób w jaki człowiek, czytając na przykład książkę, skupia się na różnych fragmentach tekstu w danym momencie, interpretując dane słowa w kontekście innych, już przeczytanych oraz tych, które zostaną przeczytane za chwile. Mechanizm uwagi został opracowany, aby rozwiązać problem występujący w rekurencyjnych sieciach neuronowych (\textit{RNN}), gdzie ``ważność'' słowa była tym większa, im bliżej końca sekwencji się znajdowało co sprawiało, że modele często ignorowały informacje znajdujące się na początku okna kontekstowego. Mechanizm uwagi został zaprojektowany tak, aby identyfikować najwyższe korelacje między słowami w zdaniu, zakładając, że nauczy się tych wzorców ze zbioru treningowego. Korelacja ta jest przechwytywana w wagach neuronów poprzez propagację wsteczną, albo z samonadzorowanego szkolenia wstępnego, albo z nadzorowanego \textit{fine-tuningu}. Algorytm działa na wartościach liczbowych, więc przez analizą, każda sekwencja musi zostać osadzona (\textit{embedded}) do wektora o określonej długości.
+Mechanizm uwagi (\textit{ang. attention}) został zaproponowany w przełomowym artykule ``\textit{Attention is All You Need}'' \cite{attention}. Algorytm ten działa w ustalonym oknie kontekstowym (\textit{ang. context window}), w którym przydziela każdemu słowu wagę reprezentującą jego ważność w danym kontekście. Metoda ta imituje sposób w jaki człowiek, czytając na przykład książkę, skupia się na różnych fragmentach tekstu w danym momencie, interpretując dane słowa w kontekście innych, już przeczytanych oraz tych, które zostaną przeczytane za chwilę. Mechanizm uwagi został opracowany, aby rozwiązać problem występujący w rekurencyjnych sieciach neuronowych, gdzie ``ważność'' słowa była tym większa, im bliżej końca sekwencji się ono znajdowało, co sprawiało, że modele często ignorowały informacje znajdujące się na początku okna kontekstowego. Mechanizm uwagi został zaprojektowany tak, aby identyfikować najwyższe korelacje między słowami w zdaniu, zakładając, że nauczy się tych wzorców ze zbioru treningowego. Korelacja ta jest przechwytywana w wagach neuronów poprzez propagację wsteczną, albo z samonadzorowanego szkolenia wstępnego, albo z nadzorowanego \textit{fine-tuningu}. Algorytm działa na wartościach liczbowych, więc przez analizą, każda sekwencja musi zostać osadzona (\textit{embedded}) do wektora o określonej długości.
 
 W kontekście muzyki problem zanikania kontekstu jest jeszcze bardziej widoczny niż w tradycyjnych problemach przetwarzania języka naturalnego, ponieważ na początku zapisu nutowego znajdują się kluczowe dla niego informacje, takie jak metrum czy tonacja utworu, zapisane za pomocą krzyżyków lub bemoli. Z tego powodu model, analizując dalsze części sekwencji, może ignorować te istotne elementy.
 
-Podstawowa wersja algorytmu nazywana jest \textit{self-attention} lub \textit{scaled dot-product attention} ponieważ sekwencja ``zwraca uwagę'' na samą siebie, czyli innymi słowy każdy token w sekwencji jest rozważany z każdym innym. Zależności pomiędzy słowami w mechanizmie uwagi można przedstawić jako graf pełny skierowany, gdzie wierzchołkami są poszczególne słowa lub inne tokeny z okna czasowego, a krawędziami są wartości określające, jak istotne są dla danego słowa wszystkie inne. Jest to zdecydowanie lepsze podejście niż w rekurencyjnych sieciach neuronowych lub LSTM-ach, gdzie zależności dla danego słowa są przekazywane jedynie w wektorze, który kompresuje kontekst ze wszystkich poprzednich słów. Dzięki temu mechanizm uwagi pozwala na bardziej dynamiczną kontrolę i monitorowanie, jak zależności pomiędzy tokenami formują się podczas treningu.
+Podstawowa wersja algorytmu nazywana jest \textit{self-attention} lub \textit{scaled dot-product attention} ponieważ sekwencja ``zwraca uwagę'' na samą siebie, czyli innymi słowy każdy token w sekwencji jest rozważany z każdym innym poza sobą. Zależności pomiędzy słowami w mechanizmie uwagi można przedstawić jako graf pełny skierowany, gdzie wierzchołkami są poszczególne słowa lub inne tokeny z okna czasowego, a krawędziami są wartości określające, jak istotne są dla danego słowa wszystkie inne. Jest to zdecydowanie lepsze podejście niż w to z rekurencyjnych sieciach neuronowych lub LSTM-ów, gdzie zależności dla danego słowa są przekazywane jedynie w wektorze, który kompresuje kontekst ze wszystkich poprzednich słów. Dzięki temu mechanizm uwagi pozwala na bardziej dynamiczną kontrolę i monitorowanie, jak zależności pomiędzy tokenami formują się podczas treningu.
 
 \begin{figure}[ht!]
     \centering
@@ -470,7 +476,7 @@ Podstawowa wersja algorytmu nazywana jest \textit{self-attention} lub \textit{sc
     \caption{Schemat mechanizmu uwagi oraz ich kilkukrotne złożenie.}\label{fig:attention_heads}
 \end{figure}
 
-Przedstawione na rysunku \ref*{fig:attention_heads} wartości $K$ (Key), $V$ (Value) i $Q$ (Query) w mechanizmie \textit{self-attention} są uzyskiwane z danych wejściowych za pomocą uczenia się odpowiadającym im macierzy wag.  Dla każdego elementu sekwencji (reprezentowanego przez jego zapytanie $Q$), obliczane jest podobieństwo z każdym innym elementem sekwencji (reprezentowanym przez klucze $K$). Najczęściej używa się iloczynu skalarnego, który jest normalizowany przez wymiar osadzonego wektora ($d_k$) aby uzyskać współczynniki uwagi a następnie aby wartości sumowały się do jedynki używana jest funkcja softmax. Ten krok można rozumiec jako tworzenie ``bazy danych'' gdzie kluczami są poszczególne tokeny, a odpowiadającymi im wartościami jest ich ważność w całej sekwencji. Każda wartość $V$ jest ważona przez współczynniki uwagi obliczone w poprzednim kroku, co pozwala modelowi skupić się na najistotniejszych elementach sekwencji. Cały ten złożony proces sprowadza się do jednego równania zapisanego w \ref*{equ:attention}. W algorytmie można dodać opcjonalną maskę, która umożliwia zasłonięcie niektórych wartości uwagi, dzięki czemu te tokeny nie będą na siebie wpływać. Prosty schemat tego algorytmu został pokazany na lewej stronie grafiki \ref*{fig:attention_heads}.
+Przedstawione na rysunku \ref*{fig:attention_heads} wartości $K$ (Key), $V$ (Value) i $Q$ (Query) w mechanizmie \textit{self-attention} są uzyskiwane przez przemnożenie danych wejściowych i odpowiadającym im nauczonych się macierzy wag. Dla każdego elementu sekwencji (reprezentowanego przez jego zapytanie $Q$), obliczane jest podobieństwo z każdym innym elementem sekwencji (reprezentowanym przez klucze $K$). Najczęściej używa się iloczynu skalarnego, który jest normalizowany przez wymiar osadzonego wektora ($d_k$) aby uzyskać współczynniki uwagi a następnie aby wartości sumowały się do jedynki używana jest funkcja softmax. Ten krok można rozumiec jako tworzenie ``bazy danych'' gdzie kluczami są poszczególne tokeny, a odpowiadającymi im wartościami jest ich ważność w całej sekwencji. Każda wartość $V$ jest ważona przez współczynniki uwagi obliczone w poprzednim kroku, co pozwala modelowi skupić się na najistotniejszych elementach sekwencji. Cały ten złożony proces sprowadza się do jednego równania zapisanego w \ref*{equ:attention}. W algorytmie można dodać opcjonalną maskę, która umożliwia zasłonięcie niektórych wartości uwagi, dzięki czemu te tokeny nie będą na siebie wpływać. Prosty schemat tego algorytmu został pokazany na lewej stronie grafiki \ref*{fig:attention_heads}.
 
 \begin{equation}
     \text{Attention}(Q, K, V) = \text{softmax}(\frac{QK^T}{\sqrt{d_k}})V
@@ -491,14 +497,13 @@ Wraz z wprowadzeniem algorytmu uwagi pisanego w \ref*{sec:attention} w tym samym
 \end{figure}
 
 \subsubsection*{Enkoder}
-Zadaniem enkodera jest zapoznanie się z całym korpusem tekstu i przekazanie zebranych informacji do dekodera. Mechanizm samo-uwagi \textit{self-attention} jest centralnym elementem każdej warstwy enkodera. Pozwala on modelowi analizować relacje między różnymi tokenami w sekwencji niezależnie od ich odległości od siebie. Warto zwrócić uwagę, że enkoder jest dwukierunkowy, czyli tokeny są w stanie ``patrzeć w przód'' analizowanej sekwencji. Drugi komponent każdej warstwy enkodera to sieć neuronowa typu \textit{feed forward}, która składa się z dwóch w pełni połączonych warstw z funkcjami aktywacji \textit{ReLU}. Każdy z dwóch głównych części składowych jest otoczony mechanizmem dodania rezydualnego (poprawiającego wydajność treningu) i warstwą normalizacji. Dane przed wejściem są kodowane przy pomocy tabeli kodowań do wektorów oraz, aby zapewnić modelowi informacje na temat kolejności słów we fragmencie, jest dodawany wektor kodujący ich kolejności. Omawiane w sekcji \ref*{sec:attention} pracy wartości $K$ (klucze) oraz $V$ (wartości) otrzymane na wyjściu enkodera zostają przekazane do dekodera.
+Zadaniem enkodera jest zapoznanie się z całym korpusem tekstu i przekazanie zebranych informacji do dekodera. Mechanizm samo-uwagi \textit{self-attention} jest centralnym elementem każdej warstwy enkodera. Pozwala on modelowi analizować relacje między różnymi tokenami w sekwencji niezależnie od ich odległości od siebie. Warto zwrócić uwagę, że enkoder jest dwukierunkowy, czyli tokeny są w stanie ``patrzeć w przód'' analizowanej sekwencji. Drugi komponent każdego enkodera to sieć neuronowa typu \textit{feed forward}, która składa się z dwóch w pełni połączonych warstw z funkcjami aktywacji \textit{ReLU}. Każdy z dwóch głównych części składowych jest otoczony mechanizmem dodania rezydualnego, poprawiającego wydajność treningu, oraz warstwą normalizacji. Dane przed wejściem są kodowane przy pomocy tabeli kodowań do wektorów oraz, aby zapewnić modelowi informacje na temat kolejności słów we fragmencie, jest dodawany wektor kodujący ich kolejności. Omawiane w sekcji \ref*{sec:attention} pracy wartości $K$ (klucze) oraz $V$ (wartości) otrzymane na wyjściu enkodera zostają przekazane do dekodera.
 
 \subsubsection*{Dekoder}
 Zadaniem Dekoder w architekturze transformerowej jest generowanie wyjścia na podstawie sekwencji wejściowej i dotychczas wygenerowanych tokenów wyjściowych. Podobnie jak w enkoderze, mechanizm samo-uwagi analizuje zależności między tokenami w sekwencji wyjściowej, jednak w dekoderze stosuje się maskowanie (\textit{ang. masking}), aby zablokować dostęp do przyszłych tokenów podczas generowania bieżącego tokena. Maskowanie uniemożliwia modelowi zobaczenie tokenów, które są generowane w późniejszych krokach. Maskę można zilustrować jako macierz trójkątną górną z wartościami $-\infty$, którą następnie dodaje się do wartości uwagi co zostało pokazane na grafice \ref*{fig:masked_attention}. Maska zawiera te wartości z tego powodu, że jedną z operacji jaką wykonuje funkcja softmax jest $e^{x_i}$, co w przypadku wartości $x_i = -\infty$ da zero, co sprawi że te wartości zostaną zignorowane w dalszych operacjach modelu.
 
 \begin{figure}[ht!]
     \begin{center}
-        % \includegraphics[width=0.9\linewidth]{./img/masked_Att.jpg}
         \begin{tikzpicture}
             % Define the first matrix
             \matrix (m1) [matrix of nodes,
@@ -550,8 +555,8 @@ Zadaniem Dekoder w architekturze transformerowej jest generowanie wyjścia na po
 
 Drugi mechanizm uwagi umożliwia dekoderowi skupienie się na odpowiednich częściach sekwencji wejściowej (wyjścia enkodera) podczas generowania każdego tokena wyjściowego. Proces ten jest podobny do mechanizmu samo-uwagi, ale tutaj zapytania ($Q$) pochodzą z poprzedniej warstwy uwagi dekodera, a klucze ($K$) i wartości ($V$) pochodzą z wyjścia enkodera. Następnie tak jak w poprzednim przypadku wystepuje warstwa \textit{feed forward} i warstwy normalizujące. W ostatniej części modelu znajduje się warstwa liniowa, której zadaniem jest wyprodukowanie wyjścia o rozmiarze ilości wszystkich słów lub tokenów, oraz warstwa \textit{softmax}, która przypisuje każdemu tokenowi prawdopodobieństwo bycia następnym słowem w sekwencji.
 
-Istnieją modele transformerowe nie korzystające z całej architektury. Przykładem \textit{encoder-only} transformer jest model BERT \cite{bert}, który jest typowo wykorzystywany do zadań np. klasyfikacji tekstu. W przypadku takiego zadania, nie potrzeba omawianej wcześniej maski, ponieważ model powinien analizować kontekst całego fragmentu w ``obie strony''. Wystarczy dołożyć jako ostatnią warstwę, warstwę liniową o odpowiednim rozmiarze oraz zastosować odpowiednią funkcję aktywacji, aby przerobić enkoder na model klasyfikacyjny.
-Analogicznie jeśli celem zadania jest wyłącznie generacja tekstu lub muzyki, enkoder nie jest koniecznie wymagany. W takim problemie należy usunąć drugą warstwę uwagi (bez maski), ponieważ wektory kluczy i wartości pochodzące z enkodera będą nieznane. Generacja będzie odbywała się jedynie na podstawie podanej sekwencji lub tokenu \texttt{BOS} (\textit{beginning of sequence}), co da modelowi największą wolność twórczą. Rozwiązania \textit{decoder-only} są obebnie bardzo popularne i są używane przez modele takie jak \textit{GPT} od OpenAI. Ciekawą obserwacją jest fakt, że dekoder pozbawiony drugiej warstwy uwagi, staje się w zasadzie enkoderem z dodaną maską w pierwszej warstwie \textit{attention}. Jest to często wykorzystywana ``sztuczka'', którą można wykorzystać w wielu bibliotekach implementujących gotowe części składowe modeli.
+Istnieją modele transformerowe nie korzystające z całej architektury. Przykładem \textit{encoder-only} transformer jest model BERT \cite{bert}, który jest typowo wykorzystywany do zadań np. klasyfikacji tekstu. W przypadku takiego zadania, nie potrzeba omawianej wcześniej maski, ponieważ model powinien analizować kontekst całego fragmentu w ``obie strony''. Wystarczy dołożyć na wyjście modelu warstwę liniową o odpowiednim rozmiarze oraz zastosować odpowiednią funkcję aktywacji, aby przerobić enkoder na model klasyfikacyjny.
+Analogicznie jeśli celem zadania jest wyłącznie generacja tekstu lub muzyki, enkoder nie jest koniecznie wymagany. W takim problemie należy usunąć drugą warstwę uwagi (bez maski), ponieważ wektory kluczy i wartości pochodzące z enkodera będą nieznane. Generacja będzie odbywała się jedynie na podstawie podanej sekwencji lub tokenu \texttt{BOS} (\textit{beginning of sequence}), co da modelowi największą wolność twórczą. Rozwiązania \textit{decoder-only} są obebnie bardzo popularne i są używane przez modele takie jak \textit{GPT} od OpenAI. Ciekawą obserwacją jest fakt, że dekoder pozbawiony drugiej warstwy uwagi, staje się w zasadzie enkoderem z dodaną maską w pierwszej warstwie \textit{attention}. Jest to często wykorzystywana ``sztuczka'', którą można wykorzystać w wielu bibliotekach implementujących gotowe części składowe modelu transformera.
 
 Trening transformera jest możliwy do bardzo dobrego zrównoleglenia. Wynika to z faktu, że mechanizm uwagi jest w stanie niezaleznie liczyć wartości pomiędzy słowami. Przykładowo w zadaniu ``\textit{Ala ma kota.}'' wartości pomiędzy \textit{ma} i \textit{kota} można policzyć nie znając wartości pomiędzy \textit{Ala} i \textit{ma}. Niestety podczas generacji kolejnych tokenów na podstawie istniejącej już sekwencji należy policzyć ponownie wartości uwagi, przez co dla sekwencji o długości $n$ należy wykonać $n^2$ operacji. Jest to niestety problematyczne jeśli chcemy rozważać bardzo długie sekwencje. Omawiany wcześniej model RNN, podczas predykcji, nie ma problemów ze złożonością, ponieważ cała informacja na temat wcześniejszej sekwencji jest skompresowana w stanie ukrytym. W takim przypadku okno kontekstu jest teoretycznie nieskończone, ponieważ stan ukryty zawiera informacje o wszytkach poprzednich stanach, jednak w praktyce nigdy nie mamy dostepu do takich informacji.
 
@@ -566,8 +571,8 @@ Modele przestrzeni stanów (\textit{State Space Models} - SSM) to matematyczne m
 \noindent Typowo, dla każdej jednostki czasu $t$ model:
 \begin{enumerate}
     \item mapuje sekwencje wejściową $x(t)$
-    \item do reprezentacji ukrytej $h(t)$
-    \item i przewiduje sekwencję wynikową $y(t)$
+    \item oblicza reprezentację ukrytą $h(t)$
+    \item przewiduje sekwencję wynikową $y(t)$
 \end{enumerate}
 
 Modele SSM zakładają, że każdy system dynamiczny może zostać opisany w momencie czasu $t$ używając dwóch równań.
@@ -582,7 +587,7 @@ Modele SSM zakładają, że każdy system dynamiczny może zostać opisany w mom
 
 Celem jest poznanie reprezentacji stanu $h(t)$  w taki sposób aby przejść z sekwencji wejściowej do sekwencji wynikowej.
 
-Równanie stanu \ref*{equ:rownanie_stanu} opisuje w jaki sposób zmienia się stan w zależności od tego, jak dane wejściowe mają na niego wpływ. Wykonywane jest to przez macierze $A$ oraz $B$. Celem równania \ref*{equ:rownanie_wynikowe} jest opisanie jak obecny stan ukryty wpływa na sekwencje wynikowym oraz jak sekwencja wejściowa wpływa na wynik. Te informacje są zapisywane odpowiednia w macierzy $C$ oraz $D$. Schematyczne przedstawienie działania modelu zostało przedstawione na grafice \ref*{fig:ssm_scheme} \cite*{mamba_guide}.
+Równanie stanu \ref*{equ:rownanie_stanu} opisuje w jaki sposób zmienia się stan w zależności od tego, jak dane wejściowe mają na niego wpływ. Wykonywane jest to przez macierze $A$ oraz $B$. Celem równania \ref*{equ:rownanie_wynikowe} jest opisanie jak obecny stan ukryty wpływa na sekwencje wynikową oraz jak sekwencja wejściowa wpływa na wynik. Te informacje są zapisywane odpowiednia w macierzy $C$ oraz $D$ \cite*{mamba_guide}. Schematyczne przedstawienie działania modelu zostało przedstawione na grafice \ref*{fig:ssm_scheme}.
 
 \begin{figure}[ht!]
     \begin{center}
@@ -631,8 +636,8 @@ Po dodaniu omawianych usprawnień do tradycyjnego modelu SSM (dyskretyzacja, mac
 \subsection{Mamba}
 Model Mamba jest architekturą, która bazuje na modelach 4S, jednak wprowadza dodatkowe usprawnienia takie jak:
 \begin{enumerate}
-    \item algorytm selektywnego skanowania (\textit{selective scan}) pozwala skutecznie skupiać się na istotnych danych wejściowych i ignorować te nieistotne. Zdolność ta umożliwia lepszą obsługę zależności dalekiego zasięgu i filtrowanie szumów, co stanowi znaczną poprawę w stosunku do standardowych transformatorów, które traktują wszystkie dane wejściowe jako tak samo ważne
-    \item algorytm, \textit{hardware-aware}, który pozwala uniknąć konieczności wykonywania rozległych operacji wejścia/wyjścia pomiędzy różnymi poziomami hierarchii pamięci GPU, co prowadzi do znacznej poprawy szybkości. W szczególności, skaluje się ona liniowo wraz z długością sekwencji
+    \item algorytm selektywnego skanowania (\textit{selective scan}) pozwala skutecznie skupiać się na istotnych danych wejściowych i ignorować te nieistotne. Zdolność ta umożliwia lepszą obsługę zależności dalekiego zasięgu i filtrowanie szumów, co stanowi znaczną poprawę w stosunku do standardowych transformatorów, które traktują wszystkie dane wejściowe jako tak samo ważne.
+    \item algorytm \textit{hardware-aware}, który pozwala uniknąć konieczności wykonywania rozległych operacji wejścia/wyjścia pomiędzy różnymi poziomami hierarchii pamięci GPU, co prowadzi do znacznej poprawy szybkości
 \end{enumerate}
 
 \begin{figure}[ht!]
@@ -643,19 +648,21 @@ Model Mamba jest architekturą, która bazuje na modelach 4S, jednak wprowadza d
     \label{fig:mamba1}
 \end{figure}
 
-Porównując grafiki \ref*{fig:mamba1} oraz \ref*{fig:ssm_scheme} można zobaczyć wiele podobieństw. Główne elementy pojawiają się w obu modelach, jednak w przypadku Mamby jest jasno zaznaczony jest mechanizm selekcji oraz dyskretyzacja modelu oznaczona jako $\Delta_t$. Model Mamba jest \textit{hardware aware} co oznacza, że jest świadomy i zoptymalizowany pod kątem specyficznych właściwości i możliwości kart graficznych (GPU), na których jest on typowo uruchamiany i trenowany. Kolorami jest zaznaczona sekcja pamięci na której są zaalokowane konkretne części modelu.
+Porównując grafiki \ref*{fig:mamba1} oraz \ref*{fig:ssm_scheme} można zobaczyć wiele podobieństw. Główne elementy pojawiają się w obu modelach, jednak w przypadku Mamby jest jasno zaznaczony jest mechanizm selekcji oraz dyskretyzacja modelu oznaczona jako $\Delta_t$. Model Mamba jest \textit{hardware aware} co oznacza, że jest świadomy i zoptymalizowany pod kątem specyficznych właściwości i możliwości kart graficznych (GPU), na których jest on typowo uruchamiany i trenowany. Sekcje pamięci, na których są zaalokowane konkretne części modelu, na grafice są zaznaczone kolorem pomarańczowym i zielonym.
 
 W przypadku zadań syntetycznych, takich jak kopiowanie sekwencji, Mamba nie tylko z łatwością rozwiązuje te zadania, ale może również ekstrapolować to rozwiązanie na bardzo długie sekwencje (ponad milion tokenów), gdzie ich długość znacząco przewyższa tą, na której model został wytrenowany. Mamba osiąga wydajność jakości transformatora w zadaniach modelowania języka. Zapewnia również pięciokrotnie szybszy czas generowania w porównaniu do transformatorów o podobnej wielkości i dorównuje wydajnością transformatorom dwukrotnie większym w testach porównawczych takich jak \textit{LAMBDA}, \textit{Pile} lub \textit{PIQA} \cite{mamba}.
 
 \chapter{Przeprowadzenie eksperymentów}
-W celu oceny skuteczności modeli generowania muzyki, przeprowadzono szereg eksperymentów, w których porównano modele transformerowe oraz model Mamba. Eksperymenty te były przeprowadzone na plikach muzycznych w formatach MIDI i ABC, a modele były trenowane w dwóch wariantach wielkościowych: z około 60 milionami parametrów oraz z 6 milionami parametrów. Celem tych badań było zrozumienie, jak różne podejścia i rozmiary modeli wpływają na jakość generowanej muzyki.
+W celu oceny skuteczności modeli generowania muzyki, przeprowadzono szereg eksperymentów, w których porównano modele transformerowe oraz Mamba. Eksperymenty te były przeprowadzone na plikach muzycznych w formatach MIDI i ABC, a modele były trenowane w dwóch wariantach wielkościowych: z około 60 milionami parametrów oraz z 6 milionami parametrów. Celem tych badań było zrozumienie, jak różne podejścia i rozmiary modeli wpływają na jakość generowanej muzyki.
 
 \section{Przygotowanie danych}
 Pliki w formacie ABC, dzięki swojej tekstowej naturze, nie wymagały skomplikowanego przetwarzania wstępnego. Format ABC zapisuje nuty i inne informacje muzyczne w postaci tekstu, co idealnie pasuje do modeli przystosowanych do pracy z sekwencjami tekstowymi.
 
-Do tokenizacji plików MIDI zastosowano algorytm REMI \textit{(\textbf{RE}presentation of \textbf{M}usical \textbf{I}nformation)} o którym była mowa w rozdziale \ref*{sec:REMI}. Przekształca on dane muzyczne z formatu MIDI w sekwencje tokenów, które mogą być interpretowane przez modele.
+Do tokenizacji plików MIDI zastosowano algorytm REMI o którym była mowa w rozdziale \ref*{sec:REMI}. Przekształca on dane muzyczne z formatu MIDI w sekwencje tokenów, które mogą być interpretowane przez modele.
 
 Aby jeszcze bardziej zredukować złożoność i objętość danych, zastosowano technikę \textit{Byte Pair Encoding} (BPE). BPE jest algorytmem kompresji tekstu, który jest szeroko stosowany w przetwarzaniu języka naturalnego do redukcji liczby unikalnych tokenów w sekwencjach tekstowych \cite{bpe}. W kontekście przetwarzania muzyki, BPE pomaga w optymalizacji danych wejściowych, co z kolei prowadzi do skrócenia sekwencji wejściowej modelu co przekłada sę na lepszej jakości predykcje \cite*{fradet2023byte}.
+
+\noindent Algorytm można opisać w następujących krokach:
 
 \begin{enumerate}
     \item Inicializacja: Każdy unikalny token (w kontekście muzyki będzie to nuta, pauza, zmiana tempa itp.) jest traktowany jako pojedynczy symbol.
@@ -664,16 +671,16 @@ Aby jeszcze bardziej zredukować złożoność i objętość danych, zastosowano
     \item Powtarzanie procesu: Kroki 2 i 3 są powtarzane, aż do osiągnięcia zdefiniowanego rozmiaru słownika \textit{(vocab size)}.
 \end{enumerate}
 
-Aby zilustrować działanie algorytmu BPE, można rozważyć prostą sekwencję liter \texttt{abcabcab}, na której zostanie przeprowadzony ten algorytm. Na początku należy zliczyć ilość par oraz zidentyfikować te najczęściej powtarzające się. W tym przypadku jest to para \texttt{ab}. Zostanie ona zamienione na nowy token np. \texttt{X}. Nowa sekwencja \texttt{XcXcX} zostaje poddana ponownej analizie z czego w tym przypadku wynika, że najczęstszą parą jest \texttt{Xc}. Zostanie ona zamieniona na nowy token \texttt{Y} z czego powstanie sekwencja \texttt{YYX}. W przypadku tekstu, tokenami na podstawie których obliczane są pary są kolejny bajty tekstu. W kontekście ztokenizowanego zbioru danych MIDI pary będą obliczane na podstawie tokenów takich jak: \texttt{Pitch\_C3}, \texttt{Velocity\_70}, \texttt{Duration\_1.0}. Jeśli tego rodzaju sekwencja będzie występowała wystarczająco często, to przy użyciu BPE zostanie ona zastąpiona jednym tokenem.
+\noindent Aby zilustrować działanie algorytmu BPE, można rozważyć prostą sekwencję liter \texttt{abcabcab}, na której zostanie przeprowadzony ten algorytm. Na początku należy zliczyć ilość par oraz zidentyfikować te najczęściej powtarzające się. W tym przypadku jest to para \texttt{ab}. Zostanie ona zamienione na nowy token np. \texttt{X}. Nowa sekwencja \texttt{XcXcX} zostaje poddana ponownej analizie z czego w tym przypadku wynika, że najczęstszą parą jest \texttt{Xc}. Zostanie ona zamieniona na nowy token \texttt{Y} z czego powstanie sekwencja \texttt{YYX}. W przypadku tekstu, tokenami na podstawie których obliczane są pary są kolejny bajty tekstu. W kontekście ztokenizowanego zbioru danych MIDI pary będą obliczane na podstawie tokenów takich jak: \texttt{Pitch\_C3}, \texttt{Velocity\_70}, \texttt{Duration\_1.0}. Jeśli tego rodzaju sekwencja będzie występowała wystarczająco często, to przy użyciu BPE zostanie ona zastąpiona jednym tokenem.
 
 W przeprowadzonych eksperymentach ustawiono rozmiar słownika na 20,000, co zapewniło odpowiednią równowagę między kompresją a zachowaniem istotnych informacji muzycznych.
 
 \section{Trening modeli}
-HuggingFace to wiodąca firma w dziedzinie przetwarzania języka naturalnego \textit{(NLP)} i uczenia maszynowego, znana z opracowywania narzędzi i bibliotek ułatwiających tworzenie, wdrażanie i udostępnianie modeli uczenia maszynowego. Jednym z jej flagowych produktów jest biblioteka Transformers, bardzo popularna biblioteka typu \textit{open-source}, która zapewnia łatwy dostęp do szerokiej gamy wstępnie wytrenowanych modeli dla różnych zadań NLP, takich jak klasyfikacja tekstu, tłumaczenie, podsumowywanie i odpowiadanie na pytania. Biblioteka obsługuje modele takie jak BERT, GPT, T5 i wiele innych, oferując zarówno podstawową architekturę, jak i wstępnie wytrenowane wagi, co znacznie skraca czas i zasoby obliczeniowe potrzebne do dostrajania modeli. HuggingFace udostępnia wysokopoziomowe API pozwalające na tworzenie oraz trening modeli przy pomocy klas takich jak \texttt{Trainer}, \texttt{AutoModelForCausalLM} czy \texttt{ModelConfig}.
+HuggingFace to wiodąca firma w dziedzinie przetwarzania języka naturalnego i uczenia maszynowego, znana z opracowywania narzędzi i bibliotek ułatwiających tworzenie, wdrażanie i udostępnianie modeli uczenia maszynowego. Jednym z jej flagowych produktów jest bardzo popularna biblioteka typu \textit{open-source} Transformers, która zapewnia łatwy dostęp do szerokiej gamy wstępnie wytrenowanych modeli dla różnych zadań NLP, takich jak klasyfikacja tekstu, tłumaczenie, podsumowywanie i odpowiadanie na pytania. Biblioteka obsługuje modele takie jak BERT, GPT, T5 i wiele innych, oferując zarówno podstawową architekturę, jak i wstępnie wytrenowane wagi, co znacznie skraca czas i zasoby obliczeniowe potrzebne do dostrajania modeli. HuggingFace udostępnia wysokopoziomowe API pozwalające na tworzenie oraz trening modeli przy pomocy klas takich jak \texttt{Trainer}, \texttt{AutoModelForCausalLM} czy \texttt{ModelConfig}.
 
 Jako reprezentant modelu transformerowego został wybrany model \textit{GPT-2} \cite{gpt2}. Model został stworzony przez OpenAI i jest to obecnie ich największy model udostepniony jako \textit{open source}. Jest oparty o architekturę \textit{decoder-only}.
 
-Trening modeli typu \textit{Causal Language Model (CausalLM)} jest trenowany w celu przewidywania następnego tokena w sekwencji, biorąc pod uwagę poprzednie tokeny. Podczas szkolenia tokeny wejściowe są wprowadzane do modelu, a model przewiduje rozkład prawdopodobieństwa następnego tokena. Funkcja straty (\textit{loss}) jest obliczana na podstawie przewidywań modelu i rzeczywistych tokenów docelowych, które są tokenami wejściowymi przesuniętymi o jedną pozycję. Typowo używaną funkcja jest funkcja entropii krzyżowej \textit{cross-entropy loss}, która mierzy różnicę między dwoma rozkładami prawdopodobieństwa: prawdziwym rozkładem (rozkładem docelowym) a rozkładem przewidywanym przez model.
+Celem trenigu modeli typu \textit{Causal Language Model (CausalLM)} jest jak najwierniejsze przewidzenie następnego tokena w sekwencji, biorąc pod uwagę poprzednie tokeny. Podczas szkolenia tokeny wejściowe są wprowadzane do modelu, a model przewiduje rozkład prawdopodobieństwa nad wektorem tokenów, a nasępnie z takim prawdopodobieństwem losowany jest kolenjy token. Funkcja straty (\textit{loss}) jest obliczana na podstawie przewidywań modelu i rzeczywistych tokenów docelowych, które są tokenami wejściowymi przesuniętymi o jedną pozycję. Typowo używaną funkcja jest funkcja entropii krzyżowej \textit{cross-entropy loss}, która mierzy różnicę między dwoma rozkładami prawdopodobieństwa: prawdziwym rozkładem (rozkładem docelowym) a rozkładem przewidywanym przez model.
 
 W poniższych tabelach zostały pokazane konfiguracje modeli jak i liczba parametrów trenowanych modeli:
 
@@ -762,7 +769,7 @@ Parametry modeli Mamba:
     \item \texttt{num\_hidden\_layers} - ilość warstw ukrytych modelu
 \end{itemize}
 
-Trening modeli odbywał się na karcie graficznej NVIDIA Tesla A100. Czas trenigu modeli przedstawia wykres \ref*{fig:czas_treningu}. Każdy model były trenowane przez około 800 tysiecy kroków, jednak ich dokłada liczba różniła się pomiędzy eksperymentami. Aby lepiej przedstawić różnice w czasie trenigu na wykresie przedstawiono tylko czas 100 tysiecy. Modele trenowane na plikach ABC, wymagały zdecydowanie krótszego czasu trenigu, co wynikało z mniejszej ilości unikatowych tokenów w stosunku do reprezentacji MIDI.
+Trening modeli odbywał się na karcie graficznej NVIDIA Tesla A100. Czas trenigu modeli przedstawia wykres \ref*{fig:czas_treningu}. Każdy model były trenowane przez około 800 tysiecy kroków, jednak ich dokłada liczba różniła się pomiędzy eksperymentami. Aby lepiej przedstawić różnice w czasie trenigu na wykresie przedstawiono tylko czas pierwszych 100 tysiecy. Modele trenowane na plikach ABC, wymagały zdecydowanie krótszego czasu trenigu, co wynikało z mniejszej ilości unikatowych tokenów w stosunku do reprezentacji MIDI.
 
 \begin{figure}[ht!]
     \centering
@@ -787,7 +794,7 @@ Trening modeli odbywał się na karcie graficznej NVIDIA Tesla A100. Czas trenig
     \caption{Czas trenigu 100 tysięcy kroków modeli.}\label{fig:czas_treningu}
 \end{figure}
 
-Porównując czasy treningu obu architektur można dojść do następujących wniosków. Dość oczywistą obserwacją jest fakt, że trening modeli mniejszych jest krótszy niż tych większych. Pomimo tego, że model Mamba powinien trenować się szybciej niż modele transformerowe, nie jest to prawdą dla mniejszych modeli. Model transformerowy GPT2 6M trenował się o 39.4\% szybciej niż jego odpowiednik w konkurencyjnej architekturze Mamba 6M. Różnica w szybkości treningu jest zdecydowanie bardziej widoczna w dużych modelach, gdzie model transformerowy GPT2 60M trenował się prawie 120\% dłużej niż model Mamba 60M o tej samej liczbie parametrów. Na podstawie tych obserwacji można stwierdzić, że w kontekście dużych modeli, architektura Mamba jest bardziej efektywna pod względem czasu treningu niż architektura GPT2.
+Porównując czasy treningu obu architektur można dojść do następujących wniosków. Dość oczywistą obserwacją jest fakt, że trening modeli mniejszych jest krótszy niż tych większych. Pomimo tego, że model Mamba powinien trenować się szybciej niż modele transformerowe, nie jest to prawdą dla mniejszego modelu. Model transformerowy GPT2 6M trenował się o 39.4\% szybciej niż jego odpowiednik w konkurencyjnej architekturze Mamba 6M. Różnica w szybkości treningu jest zdecydowanie bardziej widoczna w dużych modelach, gdzie model transformerowy GPT2 60M trenował się prawie 120\% dłużej niż model Mamba 60M o tej samej liczbie parametrów. Na podstawie tych obserwacji można stwierdzić, że w kontekście dużych modeli, architektura Mamba jest bardziej efektywna pod względem czasu treningu niż architektura GPT2.
 
 \begin{figure}[ht!]
     \centering
@@ -817,7 +824,33 @@ Porównując czasy treningu obu architektur można dojść do następujących wn
     \caption{Wykresy treningu pierwszych 250 tysięcy kroków modeli.}\label{fig:midi_train}
 \end{figure}
 
-Na grafice \ref*{fig:midi_train} przedstawiono \textit{loss} trenigu modeli. W celu dokonania lepszej wizualizacji ograniczono ilość kroków do 250 tysięcy. Modele z większą liczbą parametrów (60M) szybciej osiągnęły niższą funkcję straty w porównaniu do modeli z mniejszą liczbą parametrów (6M). Dzieje się tak, poniewaz większe modele mają lepszą zdolność do reprezentowania skomplikowanych zależności w danych przy pomocy swoich parametrów dzięki czemu mogą lepiej dopasować się do zbioru treningowych, co prowadzi do szybszej redukcji funkcji straty. Pomimo tego, że duże modele osiągnęły niższe wartości szybciej, wszystkie modele wytrenowały się do podobnego poziomu.
+Na grafice \ref*{fig:midi_train} przedstawiono \textit{loss} trenigu modeli. W celu dokonania lepszej wizualizacji ograniczono ilość kroków do 250 tysięcy. Modele z większą liczbą parametrów (60M) szybciej osiągnęły niższą funkcję straty w porównaniu do modeli z mniejszą liczbą parametrów (6M). Dzieje się tak, ponieważ większe modele mają lepszą zdolność do reprezentowania skomplikowanych zależności w danych przy pomocy swoich parametrów dzięki czemu mogą lepiej dopasować się do zbioru treningowych, co prowadzi do szybszej redukcji funkcji straty. Pomimo tego, że duże modele osiągnęły niższe wartości szybciej, wszystkie modele wytrenowały się do podobnego poziomu.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                width=14cm,
+                height=8cm,
+                xlabel={Liczba tokenów},
+                ylabel={Czas generacji [$s$]},
+                xtick=data,
+                xticklabels from table={data.dat}{date},
+                legend pos= north west
+            ]
+            \addplot[color=blue!60, mark=*] table[x expr=\coordindex, y=Mamba_60M] {data.dat};
+            \addplot[color=red!60, mark=square*] table[x expr=\coordindex, y=Mamba_6M] {data.dat};
+            \addplot[color=orange!60, mark=triangle*] table[x expr=\coordindex, y=GPT2_60M] {data.dat};
+            \addplot[color=green!60, mark=diamond*] table[x expr=\coordindex, y=GPT2_6M] {data.dat};
+            \legend{Mamba 60M, Mamba 6M, GPT2 60M, GPT2 6M}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Czas generacji tokenów przez modele.}\label{fig:time_generate}
+\end{figure}
+
+Na grafice \ref*{fig:time_generate} przedstawiono czas generacji konkretnej liczby tokenów przez modele. Najszybciej działa najmniejszy model GPT2, gdzie dla każdej wartości generuje sekwencje poniżej jednej sekundy. Porównując duże modele, widać że Mamba radzi sobie lepiej, szczególnie dla dłuższych sekwenji, działając prawie dwa razy szybciej. Dużym zasokoczeniem jest gwałtowny wzrost czasu dla modelu Mamba 6M.
+
+Przyglądając mały oraz duzy model Mamby, można zauważyć że różnica między nimi nie jest tak duża jak w przypadku modeli GPT2. Może wynikać to z tego, że model ten w swojej architekturze jest zoptymializowany pod bycie bardzo dużym. Najmniejszy model jaki został wytrenowany i udostępniony przez twórców miał 128 milionów parametrów.
 
 \section{Prezentacja otrzymanych wyników}
 Przedstawienie muzyki w pracy stanowi wyzwanie w porównaniu na przykład do wizualnych form sztuki, takich jak obrazy. Muzyka jest medium audytywnym, które oddziałuje na słuch i emocje poprzez dźwięki i rytm, co sprawia, że jej pełne doświadczenie jest trudne do przekazania za pomocą samego tekstu. Opisy muzyczne, notacja i partytury mogą dostarczyć informacji o strukturze i elementach utworu, ale nie oddają one w pełni jego brzmienia i atmosfery. W przeciwieństwie do obrazów, które można bezpośrednio zobaczyć i ocenić na papierze, muzyka wymaga aktywnego odtwarzania, by w pełni ją zrozumieć i docenić. W pracy zostaną przedstawione generacje w dwojaki sposób. W zależności od tego, czy model był wytrenowany na plikach MIDI lub notacji ABC, będzie przedstawiony wynik modelu w formie tekstowej lub \textit{piano roll}. Dodatkowo do każdego z tych przykładów zostanie dodana wygenerowana partytura, jednak należy pamiętać, że w związku z tym, że pliki MIDI są zapisem odegrania muzyki a nie samej jej notacji, reprezentacja plików MIDI na pięciolinii potrafi nie być idealna co jest spowodowane możliwymi nieregularnościami w rytmie.
@@ -866,9 +899,9 @@ Przykładowe predykcje stworzone przy pomocy modelu Mamba 6M można zobaczyć na
     \caption{Wygenerowana melodia MIDI.}\label{fig:music_genMIDI}
 \end{figure}
 
-Różnica, która jest widocza pomiędzy precykcjami \ref*{fig:music_genMIDI_notes} oraz \ref*{fig:music_gen1} jest sposób generacji powtórzeń w muzyce. W notacji ABC odbywa się to przy pomocy znaków notacji muzycznej, które mówią o tym jakie fragmenty mają zostać powtórzone. W przypadku predykcji plików MIDI, w drugiej linijce wygenerowanego fragmentu występuje powtórzenie pierwszej linijki (poza ostatnim taktem), które mogłby zostać zapisane na pięciolini przy pomocy odpowiednich znaków. Modelowi udało się zapamiętać i poprawnie odtworzyć wcześniej wygenerowaną sekwencję, co nie zawsze może się wydarzyć.
+Różnicą, która jest widocza pomiędzy precykcjami \ref*{fig:music_genMIDI_notes} oraz \ref*{fig:music_gen1} jest sposób generacji powtórzeń w muzyce. W notacji ABC odbywa się to przy pomocy znaków notacji muzycznej, które mówią o tym jakie fragmenty mają zostać powtórzone. W przypadku predykcji plików MIDI, w drugiej linijce wygenerowanego fragmentu występuje powtórzenie pierwszej linijki (poza ostatnim taktem), które mogłby zostać zapisane na pięciolini przy pomocy odpowiednich znaków. Modelowi udało się zapamiętać i poprawnie odtworzyć wcześniej wygenerowaną sekwencję, co nie zawsze może się wydarzyć.
 
-W pracy zostały przedstawione fragmentym, które zostały wybrane przez autora jako wyjątkowo dobre i brzmiące wiarygodnie, jednak nie wszystkie predykcje należą do tej grupy. Część predykcji jest nieudanymi prubami modelu, do generacji muzyki, która zwyczajnie nie brzmi dobrze. Część fragmentów kończy się za szybko, ponieważ model dodał w nich znak końca sekwencji w niepoprawnym miejscu lub fragmenty zawierają zdecydowanie zbyt dużą liczbę pauz następujących po sobie, co wprowadza dość niezręczną ciszę pomiędzy wygenerowanymi fragmentami. Zdecydowanie większa część udanych generacji modelu powstała na podstawie plików ABC, co jest następstwem prostrzej stuktury tych plików. Również w przypadku tego formatu, co jest szczególnie widoczenie w niedotrenowanych modelach, model jest w stanie wygenerować sekwencje, które nie są zgodne z notacją, przez co nie są one możliwe do odsłuchania w dostępnym oprogramowaniu. Takie fragmenty, należy pomijać, lub próbować poprawiać je ręcznie.
+W pracy zostały przedstawione fragmenty, które zostały wybrane przez autora jako wyjątkowo dobre i brzmiące wiarygodnie, jednak nie wszystkie predykcje należą do tej grupy. Część predykcji jest nieudanymi próbami modelu, do generacji muzyki, która zwyczajnie nie brzmi dobrze. Część fragmentów kończy się za szybko, ponieważ model dodał w nich znak końca sekwencji w niepoprawnym miejscu lub fragmenty zawierają zdecydowanie zbyt dużą liczbę pauz następujących po sobie, co wprowadza dość niezręczną ciszę w wygenerowanych fragmentach. Zdecydowanie większa część udanych generacji modelu powstała na podstawie plików ABC, co jest następstwem prostrzej stuktury tych plików. Również w przypadku tego formatu, co jest szczególnie widoczenie, kiedy model jest niedotrenowany jest on w stanie wygenerować sekwencje, które nie są zgodne z notacją, przez co nie są one możliwe do odsłuchania w dostępnym oprogramowaniu. Takie fragmenty, należy pomijać, lub próbować poprawiać je ręcznie.
 
 \section{Sposoby oceny wyników}
 Celem porównania otrzymanych wyników z dowolnych modeli, jest ocena jakości ich pracy. W kontekście modeli dyskryminujących (ang. \textit{discriminative model}), na przykład klasyfikatorów bądź modeli regresyjnych, ocena ich jakości jest dość prosta, ponieważ istnieje predefiniowana, prawdziwa wartość w zbiorze testowym, którą model próbuje przewidzieć. W takim przypadku ewaluacja jakości modelu to porównanie prawdziwych danych, z tymi przewidzianymi przez model. Porównanie odbywa się przez policzenie metryk np. dla modelu klasyfikującego celności, precyzji, \textit{F1-score} lub dla modelu regresyjnego MSE lub $R^2$. W przypadku modeli generacyjnych celem treningu jest jak najlepsza aproksymacja rozkładu prawdopodobieństwa danych $P(X_{data})$ lub w przypadku danych oznaczonych łączny rozkład $P(X, Y)$. W przypadku dużej wymiarowości danych, obliczenie obiektywnych metryk takich jak \textit{log-likelihood} lub dywergencja Kullbacka-Leiblera (\textit{KLD}) często jest nieobliczalne. Dla człowieka weryfikacja wyników modeli generacyjnych takich jak \textit{text-to-speech} lub \textit{text-to-image} jest trywialnym zadaniem, jednak nie jest to oczywiste zadanie algorytmiczne. Często odwołuje się do subiektywnych metryk takich jak (\textit{MOS ang. mean opinion score}), które oblicza się jako średnią opinię np. w skali od 1-5 braną z zazwyczaj niewielkiej grupy ludzi. Niestety metryka ta często nie jest wiarygodna ze względu na jej subiektywnośś oraz niewielką próbę badawczą. Aby wyeliminować te wady serwisy takie jak \textit{HuggingFace} udostępniają narzędzia dla członków społeczności, które pozwalają na ranking modeli, z nadzieją że zgodnie z prawem wielkich liczb, przy wystarczającej liczbie odpowiedzi, uda się otrzymać w miarę obiektywną ocenę. Przykładowym narzędziem tego rodzaju jest \textit{The TTS Arena}\cite{tts_arena}, która pozwala na ranking modeli \textit{text-to-speech}.
@@ -878,7 +911,7 @@ W przypadku muzyki, istnieje możliwość aby zweryfikować poprawność wygener
 Brak obiektywnych metryk, którymi można się posłużyć podczas ewaluacji modelu jest dodatkowym problemem w momencie \textit{fine-tunigu} modelu. Ciężko jest wybrać odpowiednie rozwiązanie architektoniczne lub odpowiednie hiperparametry, kiedy jedyną miarą jakości wygenerowanych danych jest subiektywna opinia programisty lub grupy osób wybranych jako wyrocznia.
 
 \subsection{Testowanie melodii innymi LLM-ami}
-Aby zweryfikować jakość predykcji, można zastosować podejście polegające na wytrenowaniu innego modelu na danych muzycznych. Tym sposobem można stworzyć model, który będzie w stanie ocenić oraz udzielić konstruktywnej krytyki na temat przedstawionego mu fragmentu muzycznego.
+Aby zweryfikować jakość predykcji, można zastosować podejście polegające na wytrenowaniu innego modelu na danych muzycznych. Tym sposobem powstanie model, który będzie w stanie ocenić oraz udzielić konstruktywnej krytyki na temat przedstawionego mu fragmentu muzycznego.
 \subsubsection*{ChatMusician}
 \textit{ChatMusician} to otwarty model językowy, który integruje zdolności muzyczne \cite{yuan2024chatmusician}. Model ten został zaprojektowany na bazie modelu LLaMA2 z 7 miliardów parametrów, jest trenowany i dostrajany z wykorzystaniem notacji muzycznej ABC, traktując muzykę jako drugi język. Dzięki temu ChatMusician jest w stanie rozumieć i generować muzykę za pomocą tekstowego tokenizatora, bez konieczności stosowania zewnętrznych struktur neuronowych czy tokenizatorów stworzonych specjalnie dla notacji muzycznej. \textit{ChatMusician} może komponować dobrze zorganizowane, pełnometrażowe utwory muzyczne na podstawie tekstu, akordów, melodii, motywów i form muzycznych, przewyższając wyniki modelu \textit{GPT-4}. Model ten osiąga lepsze wyniki niż \textit{LLaMA2} i \textit{GPT-3.5} w zadaniach związanych z rozumieniem teorii muzyki, co potwierdzono w benchmarku \textit{MusicTheoryBench}, zaprojektowanym do oceny zdolności modeli do rozumienia i rozumowania muzycznego. Model został udostepniony dla użytku publicznego na platformie \textit{HuggingFace}.
 
@@ -1035,365 +1068,27 @@ Istnieje technika nazwana \textit{RLHF} (\textit{reinforcement learning with hum
 Test Turinga dla muzyki, analogicznie do klasycznego Testu Turinga, jest próbą oceny, czy maszyna może wykazać się poziomem inteligencji muzycznej, który jest nieodróżnialny od ludzkiego. Pomysł ten pojawił się po raz pierwszy w 1988 roku w \textit{Computer Music Journal} jako forma identyfikacji inteligencji maszynowej w muzyce \cite{music_turing_test}. Test ten polega na tym, że maszyna i człowiek uczestniczą w sesji improwizacyjnej (\textit{jam session}), a zadaniem oceniającego jest rozpoznanie, który z uczestników jest maszyną. Maszyna musi być w stanie wykryć rytm, rozpoznać, co gra człowiek, i odpowiedzieć na to w czasie rzeczywistym, tworząc improwizowane ``solówki'', która swoją strukturą będzie niejako ``odpowiedzią'' na to, co zagrał człowiek.
 
 Oryginalny Test Turinga, zaproponowany przez Alana Turinga w 1950 roku, polegał na tym, że sędzia prowadził rozmowę z dwoma podmiotami, jednym ludzkim i jednym maszynowym, bez wiedzy, który jest który \cite{turing_test}. Jeśli sędzia nie mógłby odróżnić maszyny od człowieka na podstawie odpowiedzi, maszyna przechodziła test, wykazując inteligencję na poziomie ludzkim. Test Turinga dla muzyki rozszerza tę koncepcję na kontekst muzyczny, gdzie zamiast rozmowy mamy interaktywną improwizację muzyczną. Kluczowym elementem jest tutaj nie tylko wynik, ale również proces tworzenia muzyki w czasie rzeczywistym, który musi być na tyle ludzki, aby oceniający nie mógł odróżnić maszyny od człowieka. Obecnie każdy model, który generuje muzykę, skupia się na wyniku, a nie na procesie. Sztuczna inteligencja musiałaby być w stanie reagować na zmiany w muzyce w czasie rzeczywistym, co wymaga nie tylko analizy dźwięku, ale również interpretacji wizualnych sygnałów i dopasowania do tempa i stylu gry człowieka. Jest to znacznie bardziej skomplikowane niż generowanie statycznych utworów muzycznych. Czynniki te sprawiają, że chociaż modele generacyjne są w stanie generowac muzykę, przejście muzycznego Testu Turinga, który wymaga głębokiej interakcji i ludzkiego zrozumienia procesu twórczego, pozostaje wyzwaniem trudnym do osiągnięcia.
-
+\begin{comment}
+Tutaj dopiszę zdanie czy dwa z linkiem do playlisty na youtube albo coś takiego, żeby można było posłuchać modeli.
+\end{comment}
 
 \chapter{Zakończenie}
-\begin{enumerate}
-    \item Podsumowanie.
-    \item Możliwości dalszego rozwoju.
-    \item Potencjalne obszary zastosowania pracy.
-\end{enumerate}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \appendix % Dodatek
-% \chapter{Typowe elementy składowe pracy dyplomowej z informatyki}
-% \section{Tabele}
-% \begin{comment}
-% \begin{itemize}
-%     \item Każda tabela powinna być opisana w treści pracy.
-%     \item Podpis ma być przed tabelą.
-% \end{itemize}
-% \end{comment}
-% W tabeli \ref{tab:result} przedstawiono wyniki pomiarów.
-% \begin{table}[!h]
-%     \caption{Pomiary zużycia energii elektrycznej\label{tab:result}.}
-%     \centering
-%     \begin{tabular}{|l||r@{,}l|}
-%         \hline
-%         \textbf{L.p.} & \multicolumn{2}{|c|}{\textbf{Wartość}}          \\
-%         \hline
-%         \hline
-%         \cline{2-3}
-%         %\textbf{L.p.} & \multicolumn{1}{r@{\,\vline\,}}{Całkowita} & Ułamkowa \\
-%         \hline
-%         1             & 12345                                  & 6789   \\
-%         \cline{2-3}
-%                       & 45                                     & 89     \\
-%         \hline
-%         2             & 45                                     & 678901 \\
-%         \hline
-%     \end{tabular}
-% \end{table}
 
-% Jeżeli tabela zawiera dużą liczbę wierszy i może nie zmieścić się na stronie \pauza patrz tabela \ref{tab:longtable} \pauza skorzystaj z pakietu \emph{longtable} \cite{longtable}.
-% \begin{longtable}{|p{14ex}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|p{1.5em}|}
-%     \caption{Tabela, która zawiera dużą liczbę wierszy\label{tab:longtable}.}
-%     \endfirsthead
-%     \hline
-%               & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline
-%     \endhead
-%     \endfoot
-%     \hline\hline
-%               & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 1 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 2 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 3 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 4 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 5 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 6 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 7 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 8 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     Student 9 &   &   &   &   &   &   &   &   & \\
-%     \cline{2-9}
-%               &   &   &   &   &   &   &   &   & \\
-%     \hline\hline
-%     % Student 10 &   &   &   &   &   &   &   &   & \\
-%     % \cline{2-9}
-%     %            &   &   &   &   &   &   &   &   & \\
-%     % \hline\hline
-%     % Student 11 &   &   &   &   &   &   &   &   & \\
-%     % \cline{2-9}
-%     %            &   &   &   &   &   &   &   &   & \\
-%     % \hline\hline
-%     % Student 12 &   &   &   &   &   &   &   &   & \\
-%     % \cline{2-9}
-%     %            &   &   &   &   &   &   &   &   & \\
-%     % \hline\hline
-%     % Student 13 &   &   &   &   &   &   &   &   & \\
-%     % \cline{2-9}
-%     %            &   &   &   &   &   &   &   &   & \\
-%     % \hline\hline
-% \end{longtable}
+Omawiane w pracy modele przeznaczone do generacji i analizy teksty, sprawdziły się również w analogicznych zastosowaniach w kontekście muzyki. Mocno uznane modele transformerowe dość dobrze radzą sobie z tymi zagadnieniami, natomiast poprzez intensywne badania w tematach NLP pojawiają się nowe rozwiazania, na przykład modele Mamba, które równie dobrze, jak nawet nie lepiej dają sobie rade z generacją muzyki. Poruszone porównanie zapisu ABC oraz MIDI pozwala wybrać pasujące dane i model do potrzeb użytkownika rozwiązanie w taki sposób, który będzie dla niego zadowalający.
 
-% Tabele, w których występuje długi tekst, a co za tym idzie może się on nie zmieścić \pauza musi zostać zawinięty, z pomocą przychodzi środowisko 'tabularx' \cite{tabularx} \pauza  patrz tabela \ref{tab:tabularx}.
-% \begin{table}[!ht]
-%     \caption{Tabela zawierająca długi tekst\label{tab:tabularx}.}
-%     \centering
-%     \begin{tabularx}{300pt}{|c|X|c|X|}
-%         \hline
-%         \multicolumn{2}{|c|}{Wpis wielokolumnowy!} &
-%         TRZY                                       &
-%         CZTERY                                       \\
-%         \hline
-%         jeden                                      &
-%         \raggedright\arraybackslash Szerokość tej kolumny zależy od
-%         szerokości tabeli.                         &
-%         trzy                                       &
-%         \raggedright\arraybackslash Kolumna czwarta będzie zachowywać się w taki sam sposób jak
-%         druga kolumna o tej samej szerokości.        \\
-%         \hline
-%     \end{tabularx}
-% \end{table}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Rysunki}
-% \begin{comment}
-% \begin{itemize}
-%     \item Rysunki powinny być przerysowane samodzielnie albo używane tylko te,
-%           których twórcy zezwolili na ich rozpowszechnianie oraz kopiowanie, czyli
-%           np. rysunki objęte licencją Creative Commons.
-%     \item Każdy rysunek powinien być opisany w treści pracy.
-% \end{itemize}
-% \end{comment}
-% \subsection{Wewnętrzne}
-% Klasa \emph{agh-wi}, automatycznie, dołącza pakiet \emph{TikZ} \cite{tikz} \pauza dostarcza on komend pozwalających na tworzenie grafik. Przykładowe grafiki pokazano na rysunku \ref{fig:tikz1} oraz \ref{fig:tikz2}.
-% %%%%%%%%%%%%%%%%%
-% \begin{figure}[!h]
-%     \begin{center}
-%         \tikz \draw[thick,rounded corners=8pt]
-%         (0,0) -- (0,2) -- (1,3.25) -- (2,2) -- (2,0) -- (0,2) -- (2,2) -- (0,0) -- (2,0);
-%     \end{center}
-%     \caption{Prosty rysunek \emph{TikZ}\label{fig:tikz1}.}
-% \end{figure}
-% %%%%%%%%%%%%%%%%%
-% \begin{figure}[!ht]
-%     \begin{center}
-%         \begin{tikzpicture}
-%             \draw[step=.5cm,gray,very thin] (-1.4,-1.4) grid (1.4,1.4);
-%             \draw (-1.5,0) -- (1.5,0);
-%             \draw (0,-1.5) -- (0,1.5);
-%             \draw (0,0) circle [radius=1cm];
-%         \end{tikzpicture}
-%     \end{center}
-%     \caption{Bardziej złożony rysunek \emph{TikZ}\label{fig:tikz2}.}
-% \end{figure}
-% %%%%%%%%%%%%%%%%%
+Przedstawione metody generacji muzyki mogą być dalej w rozwijane głównie poprzez zwiększanie liczby parametrów modeli. Im większy model, tym jest on w stanie generować bardziej skomplikowane oraz innowacyjne melodie. Należy zwrócić uwagę również na zróżnicowanie danych treningowych. Większe modele mogą ``uczyć się na pamięć'' przedstawionych im danych, przez co dywersyfikacja oraz gromadzenie większej ilości danych jest istotnym elementem w kontekście poprawienie jakości modelu. Dodatkowo praca poryszyła dość innowacyjne rozwiązanie oceny muzyki przy pomocy LLM-ów. Rozwiązanie to może zostać dodane jako sposób końcowego dotrenowywania parametrów modelu przy pomocy technich uczenia ze wzmacnianiem, gdzie to nie człowiek, a algorytm dostarcza feedback na temat wygenerowanych fragmentów.
 
-% Oprócz rysunków eksponowanych możliwe jest tworzenie grafik będących  \tikz{\fill[orange] (0ex,0ex) circle (1ex);  \fill[red] (1ex,1ex) circle (1ex);} częścią \tikz{\draw (0pt,0pt) -- (20pt,6pt);} zdania.
+Przedstawione rozwiązania mogą prowadzieć do stworzenia pluginów lub podobnych narzędzi do programów takich jak \textit{FL Studio} lub \textit{MuseScore}, które pozwala generatywne kończenie muzyki, która jest tworzona przez kompozytora. Podobne rozwiązania zostały wprowadzone przez Adobe w programie Photoshop, gdzie osoba mogła zanaczyć dany fragment obrazku, a następnie poprosić AI, aby dokonało pewnych korekt według polecenia. Można wyobrazić sobie, że na przykałd we wcześniej wymienionym \textit{FL Studio}, artysta gra fragment muzyki, a następnie dostanie kilka podpowiedzi, w jaki sposób mółby wzbogacić lub kontunuować tworzony utwór. W taki sam sposób osoba tworząca zapis muzyczny w MuseScore, mogłaby dostawać propozycje od modelu, który dostaje automatycznie wygenrowaną notacje muzyczną w formacie ABC na podstawie innego zapisu. Tym sposobem, twórcy mogliby wspierać swoją kreatywność przy pomocy metod sztucznej inteligencji.
 
-% \emph{TikZ} pozwala również na kreślenie po powierzchni strony, np. możemy narysować strzałki pomiędzy elementami strony.
-% \begin{shaded}
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     % Zmodyfikowana wersja przykładu ze strony  https://texample.net/tikz/examples/global-nodes/
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     Ułamek \pauza patrz wzór \ref{eqn:tikz} \pauza składa się z:
-%     \begin{itemize}
-%         \item Licznika \tikz[na] \node (n1) {};
-%     \end{itemize}
-%     %%%%%%%%%%%%%%%%%
-%     \begin{equation}
-%         a =  \frac{\tikz[baseline] \node[fill=blue!20,rectangle] (t1){$x+y$};}{\tikz[baseline] \node[fill=red!20, ellipse] (t2){$y-z$}; }
-%         \label{eqn:tikz}
-%     \end{equation}
-%     %%%%%%%%%%%%%%%%%
-%     \begin{itemize}
-%         \item Mianownika \tikz\node[na] (n2) {};
-%     \end{itemize}
-%     %%%%%%%%%%%%%%%%%
-%     \begin{tikzpicture}[overlay]
-%         \path  (n1) edge [->,bend left] (t1);
-%         \path  (n2) edge [->,bend right] (t2);
-%     \end{tikzpicture}
-% \end{shaded}
-% \subsection{Zewnętrzne}
-% Oczywiście możliwe jest również dołączanie rysunków zewnętrznych \pauza
-% pakiet \emph{graphicx} \cite{graphicx} pozwala na wstawianie grafik zapisanych w  plikach: '.png', '.jpg' oraz '.pdf'. Rysunek \ref{fig:logo} wstawiono przy użyciu tego pakietu.
-% \begin{figure}[!ht]
-%     \begin{center}
-%         \IfFileExists{img/logo_podstawowe.png}{
-%             \includegraphics[width=0.7\linewidth]{img/logo_podstawowe}
-%         }
-%         {Nie znaleziono pliku 'img/logo\_podstawowe.png' \pauza pobierz go ze strony \url{https://www.informatyka.agh.edu.pl/media/uploads/Logo WI/PNG/logo_podstawowe.png}}
-%     \end{center}
-%     \caption{Logo Wydziału Informatyki.}
-%     \label{fig:logo}
-% \end{figure}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Kody źródłowe}
-% Najpopularniejszymi pakietami, które umożliwiają składanie kodów źródłowych programów, są:
-% \begin{description}
-%     \item[listings \cite{listings}] \pauza kod źródłowy jest formatowany bezpośrednio przez \LaTeX{}\dywiz{}a \pauza nie jest używany żaden, zewnętrzny, formater kodu.
-%         \begin{lstlisting}[language=C++, float=ht, label=lst:code1, caption={Przykładowy kod źródłowy sformatowany za pomocą pakietu 'listings'.}]
-% /* Pierwszy program w C++ */
+\cleardoublepage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{flushright}
+    \em
+    \begin{minipage}{0.75\textwidth}
+        We gratefully acknowledge Polish high-performance computing infrastructure PLGrid (HPC Center: ACK Cyfronet AGH) for providing computer facilities and support within computational grant no. PLG/2022/015801
+    \end{minipage}
+\end{flushright}
 
-% #include <iostream>
-
-% int main() {
-% std::cout << "Hello World!";
-% return 0;
-% }
-% \end{lstlisting}
-%     \item[minted \cite{minted}] \pauza formatuje kod źródłowy przy użyciu biblioteki języka Python  o nazwie \emph{Pygments} \cite{pygments}.
-%         \begin{listing}[!ht]
-%             \caption{Przykładowy listing sformatowany za pomocą pakietu 'minted'.\label{lst:code2}}
-%             \begin{minted}{c++}
-% /* Pierwszy program w C++ */
-
-% #include <iostream>
-
-% int main() {
-% std::cout << "Hello World!";
-% return 0;
-% }
-% \end{minted}
-%         \end{listing}
-% \end{description}
-
-% \begin{comment}
-% \begin{itemize}
-%     \item Podpis ma być przed kodem źródłowym.
-%     \item \alert{Proszę używać tylko jednego z tych pakietów}; w przeciwnym razie otrzymasz taki efekt, jak w przykładowej pracy \pauza obydwa listingi mają ten sam numer.
-% \end{itemize}
-% \end{comment}
-
-% Kod źródłowy w C++ sformatowany przy użyciu pakietu \emph{listings}, pokazano na listingu \ref{lst:code1}; sformatowany przy użyciu pakietu \emph{minted}, pokazano na listingu \ref{lst:code2}.
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Algorytmy}
-% Pakiet \emph{algorithm2e} \cite{algorithm2e} to jeden z kilku, które pozwalają zapisywać algorytmy w formie pseudokodu \pauza patrz
-% algorytm \ref{alg:algo_disjdecomp}.
-% \begin{comment}
-% Podpis ma być przed algorytmem.
-% \end{comment}
-% \begin{algorithm}[!htb]
-%     \caption{Disjoint decomposition.}\label{alg:algo_disjdecomp}
-%     %%%%%%%%%%%%%%%%%%%%%%%%%%     
-%     \SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up}
-%     \SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress}
-%     \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-%     \Input{A bitmap $Im$ of size $w\times l$}
-%     \Output{A partition of the bitmap}
-%     \BlankLine
-%     \emph{special treatment of the first line}\;
-%     \For{$i\leftarrow 2$ \KwTo $l$}{
-%         \emph{special treatment of the first element of line $i$}\;
-%         \For{$j\leftarrow 2$ \KwTo $w$}{\label{forins}
-%             \Left$\leftarrow$ \FindCompress{$Im[i,j-1]$}\;
-%             \Up$\leftarrow$ \FindCompress{$Im[i-1,]$}\;
-%             \This$\leftarrow$ \FindCompress{$Im[i,j]$}\;
-%             \If(\tcp*[h]{O(\Left,\This)==1}){\Left compatible with \This}{\label{lt}
-%                 \lIf{\Left $<$ \This}{\Union{\Left,\This}}
-%                 \lElse{\Union{\This,\Left}}
-%             }
-%             \If(\tcp*[f]{O(\Up,\This)==1}){\Up compatible with \This}{\label{ut}
-%                 \lIf{\Up $<$ \This}{\Union{\Up,\This}}
-%                 \tcp{\This is put under \Up to keep tree as flat as possible}\label{cmt}
-%                 \lElse{\Union{\This,\Up}}\tcp*[h]{\This linked to \Up}\label{lelse}
-%             }
-%         }
-%         \lForEach{element $e$ of the line $i$}{\FindCompress{p}}
-%     }
-% \end{algorithm}\DecMargin{1em}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Wzory}
-% \LaTeX{} bardzo dobrze sprawdza się w przypadku prac dyplomowych zawierających wzory matematyczne\footnote{ W przypadku złożonych wzorów warto zastosować pakiet \emph{amsmath} \cite{amsmath}.}.
-% \subsection{Przykłady}
-% Wzór $E = mc^{2}$\nomenclature{$c$}{Prędkość światła w próżni} jest częścią zdania.
-
-% \begin{equation}
-%     \left|\sum_{i=1}^n a_ib_i\right|
-%     \le
-%     \left(\sum_{i=1}^n a_i^2\right)^{1/2}
-%     \left(\sum_{i=1}^n b_i^2\right)^{1/2}
-% \end{equation}
-
-% % Do wstawienia poniższych wzorów użyto środowisk (otoczeń) zdefiniowanych w pakiecie 'amsmath'
-% Wartości zmiennej opisano wzorem \ref{eq:r1}.
-% \begin{equation}
-%     \label{eq:r1}
-%     x=\begin{cases}
-%         y           & \text{dla } y > 0    \\
-%         \frac{z}{y} & \text{dla } y \leq 0
-%     \end{cases}
-% \end{equation}
-
-% Wzór \ref{eq:r2} to wzór wielowierszowy.
-% \begin{align}
-%     \label{eq:r2}
-%     2x^2 + 3(x-1)(x-2) & =2x^2 + 3(x^2-3x+2)             \\
-%                        & = 2x^2 + 3x^2 - 9x + 6\nonumber \\
-%                        & = 5x^2 - 9x + 6\nonumber
-% \end{align}
-% \begin{comment}
-% Należy używać tylko dwóch rodzajów wzorów:
-% \begin{enumerate}
-%     \item \enquote{W linii}.
-%     \item Eksponowane, numerowane.
-% \end{enumerate}
-% \end{comment}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \section{Twierdzenia i podobne struktury}
-% Twierdzenie nr \ref{tw} opublikował, w roku 1691, francuski matematyk Michel Rolle.
-% \begin{theorem}[Rolle'a]
-%     \label{tw}
-%     Jeśli dana funkcja f: $\mathbb R \to \mathbb R$ jest:
-%     \begin{enumerate}
-%         \item ciągła w przedziale $[a,b]$
-%         \item jest różniczkowalna w przedziale $(a,b)$
-%         \item na końcach przedziału $[a,b]$ przyjmuje równe wartości: $f(a) = f(b)$,
-%     \end{enumerate}
-%     to w przedziale $(a,b)$ istnieje co najmniej jeden punkt c taki, że $f'(c) = 0$.
-% \end{theorem}
-
-% Teraz coś z informatyki \ldots
-% \begin{definition}
-%     Bit to najmniejsza jednostka informacji w komputerze.
-% \end{definition}
-% \begin{definition}
-%     Bajtem nazywamy ciąg ośmiu bitów.
-% \end{definition}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \backmatter % Część końcowa
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \chapter{Uwagi Autora}
-% \begin{itemize}
-%     \item Aktualna wersja klasy jest dostępna pod adresem \url{https://github.com/polaksta/LaTeX/tree/master/agh-wi}\footnote{W przypadku Overleaf-a jest ona pod adresem  \url{https://www.overleaf.com/read/fnvcvqjyrbyw\#5ac622}}.
-%     \item Skoro Twoja praca dyplomowa powstała w \LaTeX{}u, to zachęcam Cię również do przygotowania prezentacji (na obronę pracy magisterskiej) w tym języku. Najpopularniejszą klasą do tworzenia tego typu dokumentów jest \emph{beamer} \cite{beamer}.
-%     \item Pod adresem \url{https://github.com/polaksta/LaTeX/tree/master/beamerthemeAGH}\footnote{W przypadku Overleaf-a jest on pod adresem  \url{https://www.overleaf.com/read/fkjdthnbrfhj\#9c6184}} możesz znaleźć, stworzony przeze mnie,  nasz uczelniany szablon dla prezentacji \LaTeX{} Beamer.
-%     \item Treść wszystkich rozdziałów tej, przykładowej, pracy dyplomowej znajduje się w jednym pliku \pauza \textbf{nie jest to polecane rozwiązanie}. W przypadku pisania własnej pracy warto umieścić zawartość każdego z rozdziałów w osobnych plikach, a następnie dołączać je do dokumentu głównego \pauza patrz opis na stronie \url{https://www.dickimaw-books.com/latex/thesis/html/include.html}.
-%     \item Jeżeli pewne elementy mają być wyróżniane w \alert{jednakowy} \alert{sposób}, to proponuję nie używać bezpośredniego stylowania, tzn.
-%           \mint{tex}{\colorbox{red!50}{jednakowy} \colorbox{red!50}{sposób}} ale zdefiniować własną komendę stylującą, np. \verb+\alert+,
-%           \mint{tex}{\newcommand{\alert}[1]{\colorbox{red!50}{#1}}}
-%           a następnie użyć jej w dokumencie.
-%           \mint{tex}{\alert{jednakowy} \alert{sposób}}
-
-%           Dzięki temu, jeżeli będziesz chciał / chciała zmienić sposób stylowania tych elementów, np. niebieskie tło zamiast czerwonego, to wystarczy zmodyfikować, tylko, definicję komendy, zamiast zastępować, w tekście pracy dyplomowej, wybrane (niekoniecznie wszystkie!) wystąpienia tekstu \texttt{red}, tekstem \texttt{blue}.
-% \end{itemize}
-% Stanisław Polak
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Wyświetl spis literatury
-% UWAGA: Powinien zawierać tylko te publikacje, do których odwołujesz się w pracy
 \printbibliography
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
