@@ -280,8 +280,6 @@ Notacja ABC to system zapisywania nut w formie tekstowej przy użyciu znaków AS
 \begin{figure}[ht!]
     \begin{minted}[linenos=false]{text}
 X:1
-T:Chorał no.7
-A:J.S. Bach
 Q:1/4=120
 V:1
 L:1/16
@@ -436,19 +434,18 @@ Prezentowane podejście jest dość proste, jednak niesie ze sobą pewne problem
 Pierwszym z nich jest brak selekcji, które informacje są rzeczywiście istotne w danym kontekście, a które nie. W zadaniu przewidywania kolejnego słowa np. dla zdania ,,Kupiłem zegarek na \textit{rękę}'' nie jest wymagany żaden dodatkowy kontekst, a odległość pomiedzy ważnymi informacjami jest mała, jednak w zdaniu ,,Rok temu ukończyłem kurs lotnika ... Teraz staram się o licencję \textit{pilota}'' wymagane jest szersze spojrzenie na całą strukturę wypowiedzi i ,,przypomnienie'' informacji z początku zdania. W przypadku muzyki sytuacja wygląda dokładnie tak samo. Przykładowo, aby rozwiązać akord dysonansowy na konsonansowy lub dominantowy na tonikę, wymagana jest jedynie informacja na temat ich dzięków, tak aby dobrać odpowiedni nowy akord, jednak jeśli w muzyce przewija się pewien temat, to wymagane jest zachowanie informacji w sieci, w jakich momentach się on pojawia, aby móc dodać go w odpowiednie miejsce. W teorii zwyczajna sieć rekurencyjna jest zdolna do zapamiętywania długich zależności, jednak w praktyce jest to bardzo rzadko osiągalne.
 
 Dodatkowym problemem podczas treningu modeli jest problem zanikającego gradientu. Równanie \ref*{equ:gradient} przedstawia obliczenia przeprowadzane w celu wyznaczenia konkretnego stanu ukrytego $h_i$.
-% $A$ reprezentuje konkretny węzeł modelu, $W$ macierzą wag w warstwie a $Z$
 
-\begin{equation} % TUTAJ TRZEBA TO ZMIENIĆ TROCHĘ ALE TO WIADOMO...
+\begin{equation} 
     \begin{aligned}
          & h_{i+1}=Wh_i+Zx_i  \\
-         & h_1=Wh_0+Zx_i  \\
+         & h_1=Wh_0+Zx_1  \\
          & h_2=W^2h_0+WZx_1+Zx_2 \\
          & \vdots \\
          & h_N = W^Nh_0+W^{N-1}Zx_1 +\dots + Zx_N\\
     \end{aligned}
     \label{equ:gradient}
 \end{equation}
-\textcolor{blue}{W powyższym równaniu wartość $N$ oznacza długość okna kontekstowego na którym operuje model. Aby obliczyć stan ukryty, na podstawie którego zostanie dokonana dalsza predykcja, należy policzyć każdy poprzedni stan zaczynając od pierwszego. Aby uchwycić odpowiedni kontekst fragmentu testu długość okna kontekstowego powinna być maksymalnie długa. Z tego powodu podczas obliczeń macierz wag $W$ będzie podnoszona do bardzo wysokiej potęgi przez co jej wartości poniżej $1$ będą zanikać do $0$ (zanikający gradient), a te będące powyżej $1$ będą dążyły do nieskończoności (eksplodujący gradient). W przypadku drugiego problemu istnieją metody regularyzacyjne takie jak ,,ucinanie gradientu'' (\textit{gradient clipping}), które starają się go rozwiązać \cite*{deeplearning_book}. W przypadku zanikającego gradientu można zastosować normalizację pakietu danych (\textit{batch normalization}), która jednak nie zawsze rozwiązuje tan problem \cite*{batch_norm}.}
+\textcolor{blue}{W powyższym równaniu wartość $N$ oznacza długość okna kontekstowego na którym operuje model, $W$ macierz wag z obecnego kroku, a $Z$ jest wagami z kroku poprzedniego. Aby obliczyć stan ukryty, na podstawie którego zostanie dokonana dalsza predykcja, należy policzyć każdy poprzedni stan zaczynając od pierwszego. Aby uchwycić odpowiedni kontekst fragmentu testu długość okna kontekstowego powinna być maksymalnie długa. Z tego powodu podczas obliczeń macierz wag $W$ będzie podnoszona do bardzo wysokiej potęgi przez co jej wartości poniżej $1$ będą zanikać do $0$ (zanikający gradient), a te będące powyżej $1$ będą dążyły do nieskończoności (eksplodujący gradient). W przypadku drugiego problemu istnieją metody regularyzacyjne takie jak ,,ucinanie gradientu'' (\textit{gradient clipping}), które starają się go rozwiązać \cite*{deeplearning_book}. W przypadku zanikającego gradientu można zastosować normalizację pakietu danych (\textit{batch normalization}), która jednak nie zawsze rozwiązuje tan problem \cite*{batch_norm}.}
 
 \subsection{LSTM}
 Aby rozwiązać omawiane problemy sieci rekurencyjnych została zaproponowana architektura sieci nazwana \textit{Long Short Term Memory} \cite{lstm_og}. Ich budowa pozwala na długofalowe zapamiętywanie i przekazywanie informacji. Warstwy LSTM są zazwyczaj łączone między sobą co pozytywnie wpływa na działanie sieci.
@@ -463,7 +460,7 @@ Aby rozwiązać omawiane problemy sieci rekurencyjnych została zaproponowana ar
     \caption{Komórki LSTM połączone między sobą.}\label{fig:lstm_chain}
 \end{figure}
 
-\textcolor{blue}{Główną częścią budowy komórki jest górna część reprezentowana przez prostą, biegnącą przez całą jej długość strzałkę na ilustracji \ref*{fig:lstm_chain}, która posiadając jedynie proste operacje liniowe przekazuje stany ukryte z jednej części do drugiej. Dolna część komórki zawiera wcześniej wspomniane bramki, które kontrolują, które informacje są ważne i mają być zachowane, a które można zignorować. Są one zbudowane z warstw sigmoidalnych oznaczonych na grafice literami $\sigma$. Wartościami zwrotnymi \textcolor{blue}{bramek} jest liczba pomiędzy $0$ a $1$, gdzie mała wartość znaczy niską, a wysoka dużą ważność informacji.} 
+\textcolor{blue}{Główną częścią budowy komórki jest górna część reprezentowana przez prostą, biegnącą przez całą jej długość strzałkę na ilustracji \ref*{fig:lstm_chain} \cite{Understanding_lstm}, która posiadając jedynie proste operacje liniowe przekazuje stany ukryte z jednej części do drugiej. Dolna część komórki zawiera wcześniej wspomniane bramki, które kontrolują, które informacje są ważne i mają być zachowane, a które można zignorować. Są one zbudowane z warstw sigmoidalnych oznaczonych na grafice literami $\sigma$. Wartościami zwrotnymi \textcolor{blue}{bramek} jest liczba pomiędzy $0$ a $1$, gdzie mała wartość znaczy niską, a wysoka dużą ważność informacji.} 
 
 Architektura takiego modelu sprawia, że jest on o wiele mniej podatny na problem zanikającego gradientu, jednak jest to sytuacja, która niestety może nadal występować \cite{vanishing_gradient}. \textcolor{blue}{Dodatkową wadą modelu LSTM jak i klasycznego RNN jest ich wysoka złożoność treningu, która występuje z powodu konieczności użycia specjalnego wariantu algorytmu wstecznej propagacji błędu nazywanego ,,wsteczną propagacją błędu w czasie'' (\textit{backpropagation through time}), która generuje rozwinięcie sieci rekurencyjnej na wiele kroków czasowych, tworząc rozłożony na warstwy graf obliczeń. Następnie stosowana jest tradycyjna propagacja wsteczna do obliczenia gradientów błędów w stosunku do wag sieci na każdym kroku czasowym. Gradienty te są sumowane, a wagi są aktualizowane w celu minimalizacji błędu predykcji w całej sekwencji, umożliwiając sieci lepsze dopasowanie do danych sekwencyjnych.}
 
@@ -618,10 +615,10 @@ Modele tego typu działaja domyślnie w domenie danych ciągłych. Tekst lub muz
 Model operuje teraz na sekwencjach a nie na sygnałach. Notacja została zmieniona z $t$ na $k$ aby lepiej zobrazować, że obecnie model pracuje na dyskretnych znacznikach czasu. Dodatkowo w zapisie równania usunięto macierz $D$.
 
 \subsubsection*{Reprezentacja konwolucyjna}
-Patrząc na zapis obu równań od razu można zaobserwować ich podobieństwo do rekurencyjnych sieci neuronowych. Każdy stan ukryty $h$ zależy w głównej mierze od stanu z \textcolor{blue}{poprzedniego} kroku czasowego. \textcolor{blue}{Modele przestrzeni stanów} mogą również być reprezentowane w postaci konwolucji. W związku z tym, że tekst lub muzyka są sekwencjami jednowymiarowymi w przeciwieństwie do typowego zastosowania sieci konwolucyjnych czyli obrazów, które są \textcolor{blue}{dwu- lub trzywymiarowe} należy zastosować \textcolor{blue}{jądro o wymiarze jeden. W tym przypadku jądrem konwolucji (funkcji splotu) są odpowiednio przemnożone macierze $A, B$ oraz $C$, które są aktualizowane podczas treningu.} Tego rodzaju interpretacja modelu jest o tyle wygodna, że pozwala zrównoleglić trening modelu a co za tym idzie zmniejszyć jego czas \cite{ssm_notacja}. Kiedy model jest już wytrenowany i gotowy do generowania, można bez problemu przejść na interpretację rekurencyjną.
+Patrząc na zapis obu równań od razu można zaobserwować ich podobieństwo do rekurencyjnych sieci neuronowych. Każdy stan ukryty $h$ zależy w głównej mierze od stanu z \textcolor{blue}{poprzedniego} kroku czasowego. \textcolor{blue}{Modele przestrzeni stanów} mogą również być reprezentowane w postaci konwolucji. W związku z tym, że tekst lub muzyka są sekwencjami jednowymiarowymi w przeciwieństwie do typowego zastosowania sieci konwolucyjnych czyli obrazów, które są \textcolor{blue}{dwu- lub trzywymiarowe} należy zastosować \textcolor{blue}{jądro o wymiarze jeden.  Jednowymiarowa konwolucja działa poprzez przesuwanie filtru o ustalonej szerokości wzdłuż jednowymiarowego sygnału wejściowego, obliczając iloczyn skalarny wartości filtru i fragmentów sygnału w każdej pozycji. Wynik tej operacji tworzy nowy sygnał wyjściowy, który zawiera informacje o lokalnych cechach oryginalnego sygnału. W tym przypadku jądrem konwolucji (funkcji splotu) są odpowiednio przemnożone macierze $A, B$ oraz $C$, które są aktualizowane podczas treningu.} Tego rodzaju interpretacja modelu jest o tyle wygodna, że pozwala zrównoleglić trening modelu a co za tym idzie zmniejszyć jego czas \cite{ssm_notacja}. Kiedy model jest już wytrenowany i gotowy do generowania, można bez problemu przejść na interpretację rekurencyjną.
 
 \subsubsection*{Macierz HiPPO}
-Macierz $A$ modelu jest jego jednym z najistotniejszych elementów. To od niej zależy, czy model zapamięta cały kontekst wypowiedzi czy tylko kilka ostatnich tokenów. Jest to szczególnie ważne w przypadku predykcji, ponieważ model \textcolor{blue}{wykorzystuje jedynie ostatni stan ukryty}. Aby zapewnić dobrą kompresję kontekstu stosuje się macierz HiPPO \cite{hippo}. Zadaniem macierzy \textit{\textbf{Hi}gh-order \textbf{P}olynomial \textbf{P}rojection \textbf{O}perators} jest jak najlepsze skompresowanie wejścia do wektora cech. Konstrukcję macierzy pokazano w równaniu \ref*{equ:hippo_matrix}. W tym przypadku można założyć, że macierz jest kwadratowa.
+Macierz $A$ modelu jest jego jednym z najistotniejszych elementów. To od niej zależy, czy model zapamięta cały kontekst wypowiedzi czy tylko kilka ostatnich tokenów. Jest to szczególnie ważne w przypadku predykcji, ponieważ model \textcolor{blue}{wykorzystuje jedynie ostatni stan ukryty}. Aby zapewnić dobrą kompresję kontekstu, jako $A$ stosuje się macierz HiPPO \cite{hippo}. Zadaniem macierzy \textit{\textbf{Hi}gh-order \textbf{P}olynomial \textbf{P}rojection \textbf{O}perators} jest jak najlepsze skompresowanie wejścia do wektora cech. Konstrukcję macierzy pokazano w równaniu \ref*{equ:hippo_matrix}. W tym przypadku można założyć, że macierz jest kwadratowa.
 
 \begin{equation}
     A_{nk} = -
@@ -633,7 +630,7 @@ Macierz $A$ modelu jest jego jednym z najistotniejszych elementów. To od niej z
     \label{equ:hippo_matrix}
 \end{equation}
 
-Zbudowanie macierzy w taki sposób prowadzi do zdecydowanie lepszych wyników niż zainicjalizowanie jej losowo. Macierz HiPPO reprodukuje sekwencje w taki sposób, że dane, które są bliżej końca sekwencji są reprodukowane lepiej, niż te na początku. Ideą stojącą za używaniem takiego rozwiązania jest chęć zachowania jak największej liczby informacji w stanie ukrytym. Użycie współczynników wielomianów Lagrange'a pozwala aby macierz pomagała zapamiętywać długie zależności pomiędzy tokenami \cite{lagrange}.
+Zbudowanie macierzy w taki sposób prowadzi do zdecydowanie lepszych wyników niż zainicjalizowanie jej losowo. Macierz HiPPO reprodukuje sekwencje w taki sposób, że dane, które są bliżej końca sekwencji są reprodukowane lepiej, niż te na początku. Ideą stojącą za używaniem takiego rozwiązania tp chęć zachowania jak największej liczby informacji w stanie ukrytym.
 
 \subsubsection*{Modele 4S}
 Po dodaniu omawianych usprawnień do tradycyjnego modelu SSM (dyskretyzacja, macierz HiPPO) nowo powstały model otrzymał nazwę \textit{Structured State Space for Sequences} (4S). Tego rodzaju modele pozwalają na śledzenie długich zależności w sekwencji dzięki macierzy HiPPO, a możliwość ich reprezentacji w postaci rekurencyjnej i konwolucyjnej rozwiązuje problemy między innymi złożoności obliczeniowej treningu oraz \textcolor{blue}{wykorzystywania modelu podczas prekcykcji.}
@@ -830,7 +827,10 @@ Przedstawienie muzyki w pracy stanowi wyzwanie w porównaniu na przykład do wiz
 
 Na grafice \ref*{code:music_gen1} przedstawiono wynik modelu GPT-2 60M w wersji ABC. Część oznaczoną kolorem niebieskim należy traktować jako sekwencje wejściową dla modelu, na której podstawie model generuje kolejne tokeny. Dodatkowo zostały podane kody kontrolne \texttt{S}, \texttt{B} oraz \texttt{E}. Reprezentacje otrzymanej muzyki zapisanej na pięciolinii przedstawia grafika \ref*{fig:music_gen1}.
 
-Należy zwrócić uwagę, że model został poproszony o wygenerowanie melodii w tonacji C-dur (\texttt{K:C}), jednak jak można zaobserwować na obu reprezentacjach, model zaczął dodawać do dźwięków \texttt{c} krzyzyki (\texttt{\string^c} w notacji ABC). Prawdopodobnie wzięło się to z faktu, że podane jako początek sekwencji dźwięki \texttt{d}, nie są typowym rozpoczęciem melodii w tonacji C-dur. Model oczekiwał podania toniki (pierwszego stopnia skali) ponieważ takie fragmenty są najbardziej popularne i dominowały zbiór uczący.
+Należy zwrócić uwagę, że model został poproszony o wygenerowanie melodii w tonacji C-dur (\texttt{K:C}), jednak jak można zaobserwować na obu reprezentacjach, model zignorował tą część zapytania i wygenerował melodię w tonacji d-moll. Prawdopodobnie wzięło się to z faktu, że podane jako początek sekwencji dźwięki \texttt{d}, nie są typowym rozpoczęciem melodii w tonacji C-dur. Model oczekiwał podania toniki (pierwszego stopnia skali) ponieważ takie fragmenty są najbardziej popularne i dominowały zbiór uczący. Kody kontrolne są dodawane do zbioru danych, jednak model nie jest bezpośrednio penalizowany podczas treningu za to, że ich się nie trzyma. Pomimo tego, większość melodii wygenerowanych przez modele trzymają się podanych kodów. W tabeli [tautaj ref będzie] zostało przedstawione porównanie dwudziestu wygenerowanych 
+\begin{comment}
+Tutaj jutro dodam tabelkę z tym 
+\end{comment}
 
 \begin{figure}
     \begin{minted}[breaklines,escapeinside=++,breaksymbolleft=,linenos=false]{text}
@@ -1052,7 +1052,7 @@ Przedstawione rozwiązania mogą prowadzieć do stworzenia pluginów lub podobny
 \chapter{Podziękowania}
 
 Dziękujemy Polskiej Infrastrukturze Komputerów wysokiej wydajności PLGrid (Centrum HPC: ACK Cyfronet AGH) za udostępnienie sprzętu komputerowego i wsparcie w ramach grantu obliczeniowego nr. PLG/2024/017281
-\vspace*{2cm}
+\vspace*{1.5cm}
 
 We gratefully acknowledge Polish high-performance computing infrastructure PLGrid (HPC Center: ACK Cyfronet AGH) for providing computer facilities and support within computational grant no. PLG/2024/017281
 
