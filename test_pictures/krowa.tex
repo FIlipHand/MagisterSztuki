@@ -1,0 +1,30 @@
+\documentclass[tikz, border=1cm]{standalone}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\begin{document}
+\begin{tikzpicture}
+    \begin{axis}[
+            width=14cm,
+            height=8cm,
+            % xmin=0, xmax=1e4,
+            % ymin=1e-4, ymax=1e-1,
+            scaled x ticks=false,
+            xlabel={Liczba kroków},
+            ylabel={Wartość \textit{loss}},
+            % label style={font=\bfseries\boldmath},
+            % tick label style={font=\bfseries\boldmath},
+        ]
+        \addplot[scatter, no marks, draw=blue!60]
+        table [x=index, y=Mamba_60M, col sep=comma] {data.csv};
+        \addplot[scatter, no marks, draw=red!60]
+        table [x=index, y=Mamba_6M, col sep=comma] {data.csv};
+        \addplot[scatter, no marks, draw=orange!60]
+        table [x=index, y=GPT2_60M, col sep=comma] {data.csv};
+        \addplot[scatter, no marks, draw=green!60]
+        table [x=index, y=GPT2_6M, col sep=comma] {data.csv};
+
+        \legend{Mamba 60M, Mamba 6M, GPT-2 60M, GPT-2 6M}
+    \end{axis}
+\end{tikzpicture}
+\end{document}

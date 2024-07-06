@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage{pgfplots}
+\usepackage{filecontents}
+
+\begin{filecontents}{data.dat}
+date  Mamba_60M  Mamba_6M  GPT2_60M  GPT2_6M
+128   1.910      1.360     2.418     1.125
+256   1.613      1.159     2.515     0.628
+512   1.610      2.407     3.574     0.903
+1024  1.638      4.518     3.565     0.885
+2048  1.618      5.133     3.562     0.901
+4096  1.614      5.144     3.717     0.904
+8192  1.660      5.146     3.571     0.904
+16384 1.776      5.234     3.556     0.906
+\end{filecontents}
+
+\pgfplotsset{compat=1.16}
+
+\begin{document}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+                width=14cm,
+                height=8cm,
+                xlabel={Date},
+                ylabel={Czas generacji [$s$]},
+                xtick=data,
+                xticklabels from table={data.dat}{date},
+                legend pos= north west
+            ]
+            \addplot table[x expr=\coordindex, y=Mamba_60M] {data.dat};
+            \addplot table[x expr=\coordindex, y=Mamba_6M] {data.dat};
+            \addplot table[x expr=\coordindex, y=GPT2_60M] {data.dat};
+            \addplot table[x expr=\coordindex, y=GPT2_6M] {data.dat};
+            \legend{Mamba 60M, Mamba 6M, GPT2 60M, GPT2 6M}
+        \end{axis}
+    \end{tikzpicture}
+\end{figure}
+
+\end{document}
