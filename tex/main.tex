@@ -751,7 +751,7 @@ Trening modeli odbywał się na~karcie graficznej NVIDIA Tesla A100. Czas trenin
                 nodes near coords,
                 ymin=0,
                 % xlabel={Modele},
-                ylabel={Czas treningu w $h$},
+                ylabel={Train time in $h$},
                 bar width=15pt,
                 enlarge x limits=0.3,
                 enlarge y limits={value=0.2, upper}
@@ -800,8 +800,8 @@ Na grafice \ref*{fig:midi_train} przedstawiono wartość funkcji straty podczas 
         \begin{axis}[
                 width=14cm,
                 height=8cm,
-                xlabel={Liczba tokenów},
-                ylabel={Czas generowania [$s$]},
+                xlabel={Number of tokens},
+                ylabel={Inference time in $s$},
                 xtick=data,
                 xticklabels from table={data.dat}{date},
                 legend pos= north west
